@@ -59,22 +59,22 @@ ATDN
 
 Below are the Opcodes used by Craig Walton's group **(SUBJECT TO CHANGE DEPENDENT ON OUR IMPLEMENTATION)**
 
-| Opcode | Name | Parameters | Description |
-|:-------:|:----:|------------|-------------|
-| 1 | RESET | None       | Tells arduino to reset the instruction counter to 0 |
-| 2 | STOP  | None       | Halts and deletes all instructions |
-| 3 | UPDATEWM | uint32_t, int16_t, int16_t, int16_t | Sends a new world model to the arduino |
-| 4 | GO | None | Drives robot forward until halted |
-| 5 | GOXY | int16_t, int16_t, int16_t, int16_t, int16_t | Drives robot to specified coordinates given its current coordinates |
-| 6 | GETBALL | int16_t, int16_t, int16_t, int16_t, int16_t | Drives robot to coordinate, opening grabber and stopping upon detecting the ball |
-| 7 | TURN | int16_t, uint8_t | Turns robot by specified degrees, second parameter is number of attempts for correction |
-| 8 | GRAB | int8_t | Lifts (and keeps open) grabber or closes grabber |
-| 9 | RECEIVE | uint32_t | Opens grabber to receive a pass until ball is detected or timeout reached |
-| 10 | PREPKICK | uint8_t | Prepares kick of given strength
-| 11 | KICK | uint8_t | Kicks for a given strength |
-| 12 | REVERSE | uint16_t | Reverses robot a certain distance |
-| 13 | ABORT | None | Same as STOP, but also closes grabber. Responds with `hasBall()` |
-| 14 | HASBALL | None | Returns true if ball in robot's possession, false otherwise |
-| 15 | RETARG | uint16_t, int16_t, int16_t | Updates target coordinates of GOXY or GETBALL |
-| 16 | PENDEF | None | Initiates a penalty defence instruction |
-| 17 | PENDEFUPD | int16_t | Updates the penalty defence instruction of where to move to |
+| Opcode |    Name   |                 Parameters                  | Description |
+|:------:|:---------:|---------------------------------------------|-------------|
+|   1    | RESET     | None                                        | Tells arduino to reset the instruction counter to 0 |
+|   2    | STOP      | None                                        | Halts and deletes all instructions |
+|   3    | UPDATEWM  | uint32_t, int16_t, int16_t, int16_t         | Sends a new world model to the arduino |
+|   4    | GO        | None | Drives robot forward until halted |
+|   5    | GOXY      | int16_t, int16_t, int16_t, int16_t, int16_t | Drives robot to specified coordinates given its current coordinates |
+|   6    | GETBALL   | int16_t, int16_t, int16_t, int16_t, int16_t | Drives robot to coordinate, opening grabber and stopping upon detecting the ball |
+|   7    | TURN      | int16_t, uint8_t                            | Turns robot by specified degrees, second parameter is number of attempts for correction |
+|   8    | GRAB      | int8_t                                      | Lifts (and keeps open) grabber or closes grabber |
+|   9    | RECEIVE   | uint32_t                                    | Opens grabber to receive a pass until ball is detected or timeout reached |
+|   10   | PREPKICK  | uint8_t                                     | Prepares kick of given strength
+|   11   | KICK      | uint8_t                                     | Kicks for a given strength |
+|   12   | REVERSE   | uint16_t                                    | Reverses robot a certain distance |
+|   13   | ABORT     | None                                        | Same as STOP, but also closes grabber. Responds with `hasBall()` |
+|   14   | HASBALL   | None                                        | Returns true if ball in robot's possession, false otherwise |
+|   15   | RETARG    | uint16_t, int16_t, int16_t                  | Updates target coordinates of GOXY or GETBALL |
+|   16   | PENDEF    | None                                        | Initiates a penalty defence instruction |
+|   17   | PENDEFUPD | int16_t                                     | Updates the penalty defence instruction of where to move to |
