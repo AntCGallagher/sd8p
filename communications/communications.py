@@ -61,33 +61,38 @@ class Comms(object):
 
 	def send_messages(self):
 		# Open a new terminal 	
-		sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
+		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
-		while self.arduino_initialised:
-			try:
-				# Get message at the front of the queue
-				msg = self.messages.get(0)
-				print "@send_messages ", msg
+		while True:
+			# Check the arduino is ready to receive messages
+			if (self.arduino_initialised):
+				try:
+					# Get message at the front of the queue
+					msg = self.messages.get(0)
+					print "@send_messages ", msg
 
-				# Write to file
-				with self.outputLock:
-					with open(self.outputFilename , "a" , False) as file:
-						file.write(str(msg) + "\n")
+					# Write to file
+					with self.outputLock:
+						with open(self.outputFilename , "a" , False) as file:
+							file.write(str(msg) + "\n")
 
-				# Send message to arduino
-				self.port.write(msg)
-				time.sleep(0.01)
-			except Exception, ex:
-				# Print exception details 
-				print ex.args
-				time.sleep(1)
-	
+					# Send message to arduino
+					self.port.write(msg)
+					time.sleep(0.01)
+				except Exception, ex:
+					# Print exception details 
+					print ex.args
+					time.sleep(1)
+			else:
+				# Recheck every 100ms
+				time.sleep(0.1)
 	def receive_messages(self):
 		# Flush any leftover data
 		self.port.flush()
 		while True:
 			response = self.port.readlines()
 			if response:
+				# Convert sequence of bytes to string
 				joined = "".join(response)
 				print "@receive_messages ", joined
 
@@ -97,7 +102,7 @@ class Comms(object):
 						file.write(str(joined) + "\n")
 
 				# If we get a "Ready!" message, we can start to send commands
-				if (response == "Ready!"):
+				if (joined == "Ready!"):
 					self.arduino_initialised = True
 			self.port.flush()
 			# Try again every 10ms
@@ -110,4 +115,4 @@ comms.start()
 comms.messages.put("ping")
 
 while True:
-	time.sleep(0.01)
+	pass
