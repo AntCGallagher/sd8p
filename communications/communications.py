@@ -5,6 +5,7 @@ import time
 
 from Queue import Queue
 from threading import Thread, Lock
+from message import Message
 
 # Based on code taken from https://bitbucket.org/craigwalton/sdp-g7
 class Comms(object):
@@ -26,6 +27,10 @@ class Comms(object):
 				self.port = serial.Serial("/dev/ttyACM1", 115200, timeout=0.01)
 				print "Serial found at /dev/ttyACM1"
 			except Exception:
+				try:
+					self.port = serial.Serial("/dev/ttyACM2", 115200, timeout=0.01)
+					print "Serial found at /dev/ttyACM2"
+				except Exception:
 					print "Serial not found!!"
 
 		# Create log directory if it doesn't already exist
@@ -40,8 +45,6 @@ class Comms(object):
 	def start(self):
 		if (not self.active):
 			self.active = True
-			# Initial message will have id=1
-			self.message_id = 1
 
 			# Create thread to handle outgoing messages
 			sender = Thread(target=self.send_messages)
@@ -54,7 +57,7 @@ class Comms(object):
 			receiver.start()
 
 			# Reset arduino communications. TO BE IMPLEMENTED
-			# self.reset()
+			self.reset()
 		else:
 			print "Cannot start again as Comms already active!"
 		
@@ -64,28 +67,32 @@ class Comms(object):
 		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
 		while True:
-			# Check the arduino is ready to receive messages
-			if (self.arduino_initialised):
-				try:
-					# Get message at the front of the queue
-					msg = self.messages.get(0)
-					print "@send_messages ", msg
+			try:
+				# Get message at the front of the queue
+				msg = self.messages.get(0)
+				print "@send_messages", msg
 
-					# Write to file
-					with self.outputLock:
-						with open(self.outputFilename , "a" , False) as file:
-							file.write(str(msg) + "\n")
+				# Write to file
+				with self.outputLock:
+					with open(self.outputFilename , "a" , False) as file:
+						file.write("@send_messages " + str(msg) + "\n")
 
-					# Send message to arduino
-					self.port.write(msg)
-					time.sleep(0.01)
-				except Exception, ex:
-					# Print exception details 
-					print ex.args
-					time.sleep(1)
-			else:
-				# Recheck every 100ms
-				time.sleep(0.1)
+				# Pack and send message to arduino
+				packed = msg.pack_message()
+				msg.set_transmit_time(time.time())
+				
+				self.port.write(packed)
+				time.sleep(0.01)
+
+			except Exception, ex:
+				# In case of error, print exception details 
+				print ex.args
+				time.sleep(1)
+
+		else:
+			# Recheck every 100ms
+			time.sleep(0.1)
+
 	def receive_messages(self):
 		# Flush any leftover data
 		self.port.flush()
@@ -94,25 +101,38 @@ class Comms(object):
 			if response:
 				# Convert sequence of bytes to string
 				joined = "".join(response)
-				print "@receive_messages ", joined
+				print "@receive_messages", joined
 
 				# Print response to log
 				with self.outputLock:
-					with open(self.outputFilename , "a" , False) as file:
-						file.write(str(joined) + "\n")
+					with open(self.outputFilename, "a", False) as file:
+						file.write("@receive_messages " + str(joined) + "\n")
 
-				# If we get a "Ready!" message, we can start to send commands
-				if (joined == "Ready!"):
-					self.arduino_initialised = True
+				# self.update_message_status(joined)
+
+				# Otherwise, check for OK or ERR message
 			self.port.flush()
 			# Try again every 10ms
 			time.sleep(0.01)
 
+	# name : string, params : int[]
+	def add_message(self, name, params):
+		# Iterate current message_id
+		self.message_id = self.message_id + 1
+		msg = Message(self.message_id, name, params)
+		self.messages.put(msg)
+
+	def reset(self):
+		self.messages = Queue()
+		self.add_message("RESET", [])
+
 # Create and start a Comms object
 comms = Comms()
 comms.start()
-# Queue a ping message
-comms.messages.put("ping")
+# Queue a stop message
+comms.add_message("GO", [])
+comms.add_message("STOP", [])
+comms.add_message("GO", [])
 
 while True:
 	pass
