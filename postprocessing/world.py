@@ -2,10 +2,8 @@ from __future__ import division
 from math import atan2 , pi , sqrt, degrees
 from time import time
 from threading import Lock
-from vision.tools import get_croppings 
+from vision.tools import get_croppings
 from numpy import *
-import command.helpers as com
-import comunications as coms
 
 
 """
@@ -32,7 +30,7 @@ class World(object):
 	points_lock = Lock()
 	points = None
 	last_world = None
-	last_time = 0 
+	last_time = 0
 
 	ball_colour = "red"
 	our_team_colour = "blue"
@@ -58,20 +56,20 @@ class World(object):
 		if World.ball_colour in points and len(points[World.ball_colour]) > 0 :
 			ball = points[World.ball_colour][0]
 			x, y = self.px_to_cm(ball[0] , ball[1])
-			self.ball = Ball(x, y , old_world.ball if old_world != None else None, c_time)		
+			self.ball = Ball(x, y , old_world.ball if old_world != None else None, c_time)
 		else :
 			self.ball = old_world.ball if old_world != None else None
 		"""
-		self.time = c_time 
+		self.time = c_time
 
 	def __str__(self):
-		return "World\n" + str(self.__dict__) 
+		return "World\n" + str(self.__dict__)
 
-	
+
 	@staticmethod
 	def set_globals(no , side):
 		"""
-		Call before starting the system, no should be the pithc number, 0 or 1 
+		Call before starting the system, no should be the pithc number, 0 or 1
 		and side should be the side our goal is on, "left" or "right"
 		"""
 		World.pitch_no = no
@@ -99,7 +97,7 @@ class World(object):
 		return World.last_world
 
 	#our_team_colour should be the center dot of our robot
-	#our_primary should be the colour of which we have 3 on our top plate 
+	#our_primary should be the colour of which we have 3 on our top plate
 	@staticmethod
 	def set_colours(our_team_colour , our_primary):
 		if our_team_colour == "blue" :
@@ -250,7 +248,7 @@ class World(object):
 
 	def get_boxes_to_avoid(self , ignore = 0 ):
 		"""
-		Returns a set of boxes that the robot with index ignore should avoid. 
+		Returns a set of boxes that the robot with index ignore should avoid.
 		"""
 
 		boxes = [self.get_enemy_goal()]
@@ -302,7 +300,7 @@ class World(object):
 		#The ball needs to be reconstructed every time even if we know nothing of it's position.
 		#this is used to calculate who owns it.
 		elif last_world and last_world.ball:
-			ball = Ball(last_world.ball.x , last_world.ball.y , last_world.ball.dir , last_world.ball , last_world.ball.t , self.robots)		
+			ball = Ball(last_world.ball.x , last_world.ball.y , last_world.ball.dir , last_world.ball , last_world.ball.t , self.robots)
 		else :
 			ball = last_world.ball if last_world != None else None
 
@@ -331,7 +329,7 @@ Legacy code
 			secondary_points.extend(points[World.our_primary])
 		if World.other_primary in points:
 			secondary_points.extend(points[World.other_primary])
-		for colour in [World.our_team_colour , World.oposite_team_colour] :		
+		for colour in [World.our_team_colour , World.oposite_team_colour] :
 			if colour in points :
 				for x , y in points[colour] :
 					#find at most 4 points that are closest to the center point of the top plate
@@ -341,7 +339,7 @@ Legacy code
 					#If there are enough fo them to calculate rotation
 					if len(ranking) >= 4:
 						closest = ranking[0:4]
-						
+
 
 						identity = self.identify_robot(colour , closest , points)
 						rot = self.calculate_robot_rotation((x,y) , closest , identity , points)
@@ -392,7 +390,7 @@ Legacy code
 			start_p = ((closeness[0][0] + rotation_point[0])/2 , (closeness[0][1] + rotation_point[1] )/2)
 			end_p   = ((closeness[1][0] + closeness[2][0])/2,(closeness[1][1] + closeness[2][1])/2)
 
-			
+
 			#Trigonometry, (dx,dy) represents direction vector of the robot
 			dx = end_p[0] - start_p[0]
 			dy = end_p[1] - start_p[1]
@@ -464,7 +462,7 @@ class Robot(object):
 
 	def get_bounding_box(self):
 		"""
-		Returns a bounding box for the robot in question. 
+		Returns a bounding box for the robot in question.
 		"""
 		pos = array((self.x, self.y))
 		x1 = self.x
@@ -482,13 +480,13 @@ class Robot(object):
 
 	def is_on_field(self):
 		"""
-		Checks if the robot has been seen in the last second. 
+		Checks if the robot has been seen in the last second.
 		"""
 		return self.t + 1 > time()
 
 
 	def __str__(self):
-		return "Robot\n" + str(self.__dict__) 
+		return "Robot\n" + str(self.__dict__)
 
 
 
@@ -496,13 +494,13 @@ class Ball(object):
 	last_held_by_us = 0
 	last_ask = 0
 
-	def __init__(self , x , y , direction, last_ball ,t, robots):	
-		self.x = int(x) 
+	def __init__(self , x , y , direction, last_ball ,t, robots):
+		self.x = int(x)
 		self.y = int(y)
 		self.t = t
 
 		self.dir = direction
-		
+
 		#Check that time has actually passed, this should not happen often but who knows
 		"""
 		if (last_ball != None) and t-last_ball.t > 0:
@@ -512,18 +510,21 @@ class Ball(object):
 		else :
 			self.dir = (0,0)
 		"""
-
+		holder = 0
+		self.owner = 0
+		"""
+		Temporarly commenting because it uses communications.
 		#Try to figgure our who currently has the ball. if anyone
 		holder  = com.isBallHeld(ball = self , robots = robots)
 
 		if last_ball and last_ball.owner == 0 and holder != 0 :
-			if Ball.last_ask + 1 < time() : 
+			if Ball.last_ask + 1 < time() :
 				Ball.last_ask = time()
 				coms.comunications.Coms.hasball()
 				print "HAsball sent"
 			self.owner = 0
 		elif holder == 0 and last_ball and last_ball.owner != 0:
-			if Ball.last_ask + 1 < time() : 
+			if Ball.last_ask + 1 < time() :
 				Ball.last_ask = time()
 				coms.comunications.Coms.hasball()
 				print "HAsball sent"
@@ -534,7 +535,8 @@ class Ball(object):
 			self.owner = last_ball.owner
 		else:
 			self.owner = holder
-		
+		"""
+
 
 	def get_pos(self):
 		"""
@@ -544,7 +546,7 @@ class Ball(object):
 
 
 	def __str__(self):
-		return "Ball\n" + str(self.__dict__) 
+		return "Ball\n" + str(self.__dict__)
 
 	def get_zone(self):
 		"""
@@ -554,7 +556,7 @@ class Ball(object):
 		if World.our_side == "Left" :
 			for i in range(0,4):
 				if self.x < pitch_x_cm/4 *(i+1) :
-					return i 
+					return i
 		else :
 			for i in range(0,4):
 				if self.x > pitch_x_cm/4*(3-i):
@@ -606,5 +608,3 @@ class Box(object):
 			self.outer=array(self.outer).astype(int)
 
 		return self.outer
-
-
