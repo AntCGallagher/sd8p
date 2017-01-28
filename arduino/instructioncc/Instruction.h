@@ -17,13 +17,13 @@ public:
   virtual void halt(void) = 0;  // stops/cancels
   virtual bool progress(void) = 0;  // true means done/complete
   virtual bool hasBallForbidden();
-
+  
 protected:
   bool begun;
   unsigned long startTime;  // time (using millis()) at which instruction begun
 public:
   int cmdID;
-
+  
 };
 
 
@@ -41,10 +41,10 @@ void deleteFirstInstruction();
 
 /* Helper Methods */
 
-void resetMotorPositions() ;
-void updateMotorPositions();
-void printMotorPositions();
-void motorMove(int motorNo, int speed);
+// void resetMotorPositions() ;
+// void updateMotorPositions();
+// void printMotorPositions();
+// void motorMove(int motorNo, int speed);
 
 bool isLeft(Point a, Point b, Point c);
 int distanceFromLine(Point pa, Point pb, Point pc);
