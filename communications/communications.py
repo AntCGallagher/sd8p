@@ -19,19 +19,10 @@ class Comms(object):
 
 	def __init__(self):
 		# Find the SRF USB stick (should be on ttyACM0 or ttyACM1)
-		try :
-			self.port = serial.Serial("/dev/ttyACM0", 115200, timeout=0.01)
-			print "Serial found at /dev/ttyACM0"
-		except Exception:
-			try:
-				self.port = serial.Serial("/dev/ttyACM1", 115200, timeout=0.01)
-				print "Serial found at /dev/ttyACM1"
-			except Exception:
-				try:
-					self.port = serial.Serial("/dev/ttyACM2", 115200, timeout=0.01)
-					print "Serial found at /dev/ttyACM2"
-				except Exception:
-					print "Serial not found!!"
+		for i in range(0,10):
+			self.__findport__(i)
+			if (self.port != None):
+				break
 
 		# Create log directory if it doesn't already exist
 		if (not os.path.exists("communications/logs")):
@@ -42,6 +33,13 @@ class Comms(object):
 			with open(self.outputFilename, "w", False) as file:
 				file.write("")
 
+	def __findport__(self, idx):
+		try:
+			self.port = serial.Serial("/dev/ttyACM" + str(idx), 115200, timeout=0.01)
+			print "Serial found at /dev/ttyACM" + str(idx)
+			return
+		except Exception:
+			return
 	def start(self):
 		if (not self.active):
 			self.active = True
@@ -78,7 +76,7 @@ class Comms(object):
 						file.write("@send_messages " + str(msg) + "\n")
 
 				# Pack and send message to arduino
-				packed = msg.pack_message()
+				packed = msg.pack_message()	
 				msg.set_transmit_time(time.time())
 				
 				self.port.write(packed)
@@ -124,14 +122,20 @@ class Comms(object):
 	def reset(self):
 		self.messages = Queue()
 		self.add_message("RESET", [])
+		self.message_id=0
 
 # Create and start a Comms object
 comms = Comms()
 comms.start()
+
+time.sleep(2)
 # Queue a stop message
+#comms.add_message("GO", [])
+# comms.add_message("STOP", [])
 comms.add_message("GO", [])
-comms.add_message("STOP", [])
-comms.add_message("GO", [])
+#time.sleep(2)
+#comms.add_message("STOP", [])
 
 while True:
 	pass
+

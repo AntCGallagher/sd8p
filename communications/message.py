@@ -40,7 +40,7 @@ class Message(object):
 	# pack() : byte[]
 	def pack_message(self):
 		# Details of the formatting can be found at https://docs.python.org/2/library/struct.html
-		if (self.op in [1,2,3,4]):
+		if (self.op in [1,2,4]):
 			# Op codes 1,2,4 take None as args
 			packed = struct.pack(">HB", self.id, self.op)
 
