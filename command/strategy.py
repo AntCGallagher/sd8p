@@ -11,5 +11,5 @@ class Strategy(object):
     @staticmethod
     def start():
         curr_world = World.get_world()
-        ball = curr_world.get_ball()
-        print ball.center
+        ball = curr_world.ball
+        print ball

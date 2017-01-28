@@ -27,6 +27,9 @@ if __name__ == "__main__" :
 	# start vision system in background thread
 	vis = VisionWrapper(pitch=pitch_number)
 	t = Thread(target = vis.run)
+	t.daemon = True
 	t.start()
 	time.sleep(5)
-	ball = Strategy.start()
+	while True:
+		time.sleep(2)
+		Strategy.start()
