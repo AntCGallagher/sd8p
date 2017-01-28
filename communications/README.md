@@ -38,4 +38,7 @@ else if (err_message)
 else
 	// Check if any of the messages have timed out, and if so resend
 	resend messages m : Queue where (m.timeout > time.now)
-```
+```	
+
+## Message Format
+[ID - 2 bytes][opcode - 1 byte][params - variable length][hash - 2 bytes]

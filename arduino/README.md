@@ -76,5 +76,3 @@ Below are the Opcodes used by Craig Walton's group **(SUBJECT TO CHANGE DEPENDEN
 |   13   | ABORT     | None                                        | Same as STOP, but also closes grabber. Responds with `hasBall()` |
 |   14   | HASBALL   | None                                        | Returns true if ball in robot's possession, false otherwise |
 |   15   | RETARG    | uint16_t, int16_t, int16_t                  | Updates target coordinates of GOXY or GETBALL |
-|   16   | PENDEF    | None                                        | Initiates a penalty defence instruction |
-|   17   | PENDEFUPD | int16_t                                     | Updates the penalty defence instruction of where to move to |
