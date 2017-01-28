@@ -1,17 +1,32 @@
-#from communications.communications import Comms
+from visionwrapper import VisionWrapper
+from threading import Thread
+from postprocessing.world import World
+from command.strategy import Strategy
+import time
 
 """
-This script will be used to run a few trials to test the robot's functionalities.
+This script will be used to test some of the robot's functionalities.
 """
+
 if __name__ == "__main__" :
-    inp = ""
-    while inp != "END":
-        inp = raw_input("Trial to run:")
-        if inp == "":
-            inp = lastinp
-        else:
-            lastinp = inp
-        if inp == "1":
-            print "1 running"
-        elif inp == "2":
-            print "2 running"
+
+	# parse arguments
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument("pitch", help="[0] Main pitch (3.D04), [1] Secondary pitch (3.D03)")
+	parser.add_argument("team" , help="yellow or blue" )
+	parser.add_argument("our" , help="our 3 dots are: pink or bright_green" )
+	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
+	args = parser.parse_args()
+
+	# setup World model
+	World.set_colours(args.team , args.our)
+	pitch_number = int(args.pitch)
+	World.set_globals(pitch_number , args.side)
+
+	# start vision system in background thread
+	vis = VisionWrapper(pitch=pitch_number)
+	t = Thread(target = vis.run)
+	t.start()
+	time.sleep(5)
+	ball = Strategy.start()
