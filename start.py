@@ -31,5 +31,5 @@ if __name__ == "__main__" :
 	t.start()
 	time.sleep(5)
 	while True:
-		time.sleep(2)
+		time.sleep(4)
 		Strategy.start()

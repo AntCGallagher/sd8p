@@ -13,3 +13,5 @@ class Strategy(object):
         curr_world = World.get_world()
         ball = curr_world.ball
         print ball
+        our_robot = curr_world.robots[1]
+        print our_robot
