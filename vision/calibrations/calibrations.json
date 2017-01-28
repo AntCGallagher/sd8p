@@ -1,0 +1,362 @@
+{
+    "default": {
+        "PITCH0": {
+            "blue": {
+                "object_count": 2.0, 
+                "erode": 0, 
+                "min": [
+                    83.0, 
+                    99.0, 
+                    128.0
+                ], 
+                "max": [
+                    117.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 10, 
+                "contrast": 50.0
+            }, 
+            "plate": {
+                "object_count": 4.0, 
+                "erode": 0, 
+                "min": [
+                    43.0, 
+                    99.0, 
+                    125.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 7, 
+                "open_kernel": 3, 
+                "blur": 10, 
+                "contrast": 0.0
+            }, 
+            "bright_green": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    40.0, 
+                    156.0, 
+                    203.0
+                ], 
+                "max": [
+                    64.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 5, 
+                "contrast": 0.0
+            }, 
+            "camera": {
+                "hue": 50.0, 
+                "saturation": 50.0, 
+                "contrast": 50.0, 
+                "brightness": 11.0
+            }, 
+            "yellow": {
+                "object_count": 2.0, 
+                "erode": 0, 
+                "min": [
+                    27.0, 
+                    164.0, 
+                    177.0
+                ], 
+                "max": [
+                    45.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 5, 
+                "contrast": 0.0
+            }, 
+            "pink": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    155.0, 
+                    132.0, 
+                    213.0
+                ], 
+                "max": [
+                    185.0, 
+                    240.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 5, 
+                "contrast": 0.0
+            }, 
+            "green": {
+                "object_count": 4.0, 
+                "erode": 0, 
+                "min": [
+                    50.0, 
+                    177.0, 
+                    58.0
+                ], 
+                "max": [
+                    80.0, 
+                    255.0, 
+                    201.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 5, 
+                "open_kernel": 0, 
+                "blur": 5, 
+                "contrast": 0.0
+            }, 
+            "dot": {
+                "object_count": 1.0, 
+                "erode": 0.0, 
+                "min": [
+                    0.0, 
+                    0.0, 
+                    3.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    91.0
+                ], 
+                "highpass": 0.0, 
+                "blur": 0, 
+                "close": 0.0, 
+                "open": 0.0, 
+                "contrast": 0.0
+            }, 
+            "violet": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    164.0, 
+                    206.0, 
+                    110.0
+                ], 
+                "max": [
+                    194.0, 
+                    255.0, 
+                    210.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 10, 
+                "contrast": 0.0
+            }, 
+            "red": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    0.0, 
+                    168.0, 
+                    189.0
+                ], 
+                "max": [
+                    16.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 5, 
+                "contrast": 15.0
+            }
+        }, 
+        "PITCH1": {
+            "blue": {
+                "object_count": 2.0, 
+                "erode": 0, 
+                "min": [
+                    80.0, 
+                    80.0, 
+                    103.0
+                ], 
+                "max": [
+                    110.0, 
+                    195.0, 
+                    244.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 3, 
+                "contrast": 0.0
+            }, 
+            "plate": {
+                "object_count": 4.0, 
+                "erode": 0, 
+                "min": [
+                    43.0, 
+                    126.0, 
+                    47.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 5, 
+                "open_kernel": 3, 
+                "blur": 10, 
+                "contrast": 0.0
+            }, 
+            "bright_green": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    46.0, 
+                    175.0, 
+                    200.0
+                ], 
+                "max": [
+                    88.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 6, 
+                "contrast": 0.0
+            }, 
+            "camera": {
+                "hue": 50.0, 
+                "saturation": 50.0, 
+                "contrast": 50.0, 
+                "brightness": 7.0
+            }, 
+            "yellow": {
+                "object_count": 2.0, 
+                "erode": 0, 
+                "min": [
+                    23.0, 
+                    150.0, 
+                    205.0
+                ], 
+                "max": [
+                    39.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 0, 
+                "contrast": 34.0
+            }, 
+            "pink": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    158.0, 
+                    129.0, 
+                    150.0
+                ], 
+                "max": [
+                    188.0, 
+                    231.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 7, 
+                "contrast": 0.0
+            }, 
+            "green": {
+                "object_count": 4.0, 
+                "erode": 0, 
+                "min": [
+                    43.0, 
+                    91.0, 
+                    70.0
+                ], 
+                "max": [
+                    78.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 5, 
+                "contrast": 0.0
+            }, 
+            "red": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    0.0, 
+                    186.0, 
+                    143.0
+                ], 
+                "max": [
+                    15.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 9, 
+                "contrast": 44.0
+            }, 
+            "violet": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    174.0, 
+                    175.0, 
+                    95.0
+                ], 
+                "max": [
+                    194.0, 
+                    255.0, 
+                    195.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 9, 
+                "contrast": 0.0
+            }, 
+            "dot": {
+                "object_count": 1.0, 
+                "erode": 0.0, 
+                "min": [
+                    0.0, 
+                    0.0, 
+                    3.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    91.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 0, 
+                "contrast": 0.0
+            }
+        }
+    }
+}
