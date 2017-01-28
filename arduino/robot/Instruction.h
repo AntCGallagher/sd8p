@@ -50,3 +50,4 @@ bool isLeft(Point a, Point b, Point c);
 int distanceFromLine(Point pa, Point pb, Point pc);
 
 #endif
+

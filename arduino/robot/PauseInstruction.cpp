@@ -22,10 +22,11 @@ bool PauseInstruction::progress() {
   // if pause time has elapsed
   if (millis() - this->startTime >= this->pause) {
   	if (this->cmdID > -1)
-  	  comms.sendInstructionCompleteParam(this->cmdID, hasBall());
+  	  //comms.sendInstructionCompleteParam(this->cmdID, hasBall());
   	return true;
   }
 
   return false;
 }
+
 

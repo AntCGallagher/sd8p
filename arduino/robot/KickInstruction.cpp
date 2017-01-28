@@ -26,7 +26,7 @@ void KickInstruction::halt(void) {
   greenMotorMove(ROT_FINGER_IDX, 0, MOTOR_FLOAT);
 }
 
-void KickInstruction::progress(void) {
+bool KickInstruction::progress(void) {
   //kick
   greenMotorMove(ROT_FINGER_IDX, 0, MOTOR_FWD);
   //unkick
@@ -35,16 +35,18 @@ void KickInstruction::progress(void) {
 
 // given initialPos and kick strength, returns position at which kick will have occurred
 int kickedPos(int initialPos, unsigned int stren) {
-
-  int distAheadOfPrepPos = distanceAhead(prepPos(stren), initialPos);
+  return 0;
+  //int distAheadOfPrepPos = distanceAhead(prepPos(stren), initialPos);
 
   // wasn't prepared correctly, make any kick lobe travel over it.
-  if (distAheadOfPrepPos > KICKED_AFTER_PREP_POS)
-    return initialPos + GUARANTEED_TO_KICK;
+  //if (distAheadOfPrepPos > KICKED_AFTER_PREP_POS)
+    //return initialPos + GUARANTEED_TO_KICK;
 
-  return initialPos + (KICKED_AFTER_PREP_POS - distAheadOfPrepPos);
+  //return initialPos + (KICKED_AFTER_PREP_POS - distAheadOfPrepPos);
 }
 
 bool KickInstruction::positionAcceptable(int pos, unsigned int stren, bool moving) {
-  return (pos >= kickedPos(this->initialPosition, stren));
+  return true;
+  //return (pos >= kickedPos(this->initialPosition, stren));
 }
+

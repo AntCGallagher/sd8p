@@ -67,3 +67,4 @@ void print(float f);
 void print(bool b);
 
 #endif
+

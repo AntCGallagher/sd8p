@@ -5,7 +5,6 @@
 #include "ReverseInstruction.h"
 #include "GoXYInstruction.h"
 #include "TurnInstruction.h"
-#include "PenDefInstruction.h"
 #include "PauseInstruction.h"
 #include "GetBallInstruction.h"
 #include "KickInstruction.h"
@@ -65,14 +64,9 @@ void Comms::readSerial() {
       return;
     }
 
-    //Serial.println(inByte, BIN);
-    //delay(100);
-
     // append byte to buffer
     this->buffer[this->bufferPos] = inByte;
     this->bufferPos++;
-    Serial.println(F("buffer:"));
-    Serial.println(inByte);
     // check to see if a whole command is contained within buffer
     this->checkForCompleteCommand();
   }
@@ -144,16 +138,16 @@ void Comms::checkForCompleteCommand() {
  Opcode must be valid
 */
 bool Comms::validateNewCommand(Command c) {
-
   if (c.id == 1 && c.opcode == RESET)
     return true;
-
+  
   if (c.id != this->maxIDSuccessPCToArd + 1) {
     Serial.println(F("ERRid"));
     Serial.println(c.id);
     Serial.println(this->maxIDSuccessPCToArd);
     return false;
   }
+    
 
   if (!c.hashAddsUp()) {
     Serial.println(F("ERRhash"));
@@ -306,18 +300,40 @@ void Command::instantiateInstruction() {
   switch (this->opcode) {
     case RESET: {
       comms.resetMessID();
+      comms.sendArdReset();
+      resetWorldModel();
       deleteAllInstructions();
       break;
     }
     case STOP:
       deleteAllInstructions();
-      Serial.println(F("STOP"));
+      break;
+    case UPDATEWM:
+      updateWorldModel(this->params);
       break;
     case GO:
-      Serial.println(F("GO"));
+      GoInstruction::initFromCommand(*this);
+      break;
+    case GOXY:
+      GoXYInstruction::initFromCommand(*this);
+      break;
+    case GETBALL:
+      GetBallInstruction::initFromCommand(*this);
+      break;
+    case TURN:
+      TurnInstruction::initFromCommand(*this);
+      break;
+    case KICK:
+      KickInstruction::initFromCommand(*this);
+      break;
+    case REVERSE:
+      ReverseInstruction::initFromCommand(*this);
       break;
     default:
       Serial.println(F("Error: opcode not defined"));
       break;
   }
 }
+
+
+

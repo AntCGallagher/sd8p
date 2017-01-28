@@ -40,9 +40,9 @@ void TurnInstruction::initFromCommand(Command cmd) {
 }
 
 void TurnInstruction::halt(void) {
-  greenMotorMove(GREEN_LH_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(GREEN_RH_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
 }
 
 float clicksToDeg(float clicks) {
@@ -94,9 +94,9 @@ bool TurnInstruction::progress() {
     Serial.println(F(" deg)"));
 #endif
     
-    greenMotorMove(GREEN_LH_IDX, -50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(GREEN_RH_IDX, 50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(GREEN_REAR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(ROT_LH_MOTOR_IDX, -50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(ROT_RH_MOTOR_IDX, 50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(ROT_REAR_MOTOR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
   }
   
   float totalClicksRequired = degToClicks(this->deg);
@@ -114,9 +114,9 @@ bool TurnInstruction::progress() {
     if (millis() - max(this->lastClickTime, this->brakeTime) > MAX_CLICK_PERIOD_FOR_STOPPED) {
       
       // return motors to floating
-      greenMotorMove(GREEN_LH_IDX, 0, MOTOR_FLOAT);
-      greenMotorMove(GREEN_RH_IDX, 0, MOTOR_FLOAT);
-      greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
       
 #ifdef DEBUG_PRINT_TURN
       Serial.print(F("Braking covered "));
@@ -181,9 +181,9 @@ bool TurnInstruction::progress() {
     this->braking = true;
     clicksAtBrake = positions[ROT_REAR_MOTOR_IDX];
     
-    greenMotorMove(GREEN_LH_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(GREEN_RH_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(GREEN_REAR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_BRAKE);
     
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("BRAKING at"));
@@ -207,4 +207,5 @@ bool TurnInstruction::progress() {
   
   return false;
 }
+
 

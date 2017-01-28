@@ -38,9 +38,9 @@ void GoXYInstruction::initFromCommand(Command cmd) {
 }
 
 void GoXYInstruction::halt(void) {
-  greenMotorMove(GREEN_LH_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(GREEN_RH_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
 #ifdef DEBUG_PRINT_GOXY
   Serial.println(F("halt"));
 #endif
@@ -54,9 +54,9 @@ bool GoXYInstruction::brake(void) {
   
   // first call to brake()
   if (!this->braking) {
-    greenMotorMove(GREEN_LH_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(GREEN_RH_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(GREEN_REAR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_BRAKE);
     this->braking = true;
     this->brakeLastClicksTime = millis();
     this->brakeLastClicks = clicks;
@@ -160,6 +160,7 @@ Position GoXYInstruction::projectedPosition() {
 
 // can be called to alter target point
 // will only be called if the target is still roughly on the same line
+/*
 void GoXYInstruction::retarg(byte params[]) {
   
   // if instruction is already in braking phase, do not attempt to retarg
@@ -174,12 +175,12 @@ void GoXYInstruction::retarg(byte params[]) {
   
   // cancel ongoing course correction
   if (this->rearClicksRequired > 0) {
-    greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+    greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
     this->rearClicksRequired = 0;
     this->lastCompletedCC = millis();
   }
 }
-
+*/
 // debug only
 long last;
 long unsigned lastWM = 0;
@@ -206,9 +207,9 @@ bool GoXYInstruction::progress() {
     Serial.println(F("Starting GoXY"));
 #endif
     // fire motors up
-    greenMotorMove(GREEN_LH_IDX, 100, MOTOR_FWD);
-    greenMotorMove(GREEN_RH_IDX, 100, MOTOR_FWD);
-    greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_FWD);
+    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_FWD);
+    greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
   }
   
   if (this->braking)
@@ -245,7 +246,7 @@ bool GoXYInstruction::progress() {
        Serial.print(F("Completed cc of "));
        println(this->rearClicksRequired);
 #endif
-       greenMotorMove(GREEN_REAR_IDX, 0, MOTOR_FLOAT);
+       greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
        this->rearClicksRequired = 0;
        this->lastCompletedCC = millis();
     }
@@ -260,7 +261,7 @@ bool GoXYInstruction::progress() {
 #endif
        this->rearClicksRequired = turnRequired / (360.0/180.0);
        positions[ROT_REAR_MOTOR_IDX] = 0;
-       greenMotorMove(GREEN_REAR_IDX, (rearClicksRequired > 0) ? -100 : 100, MOTOR_FWD);
+       greenMotorMove(ROT_REAR_MOTOR_IDX, (rearClicksRequired > 0) ? -100 : 100, MOTOR_FWD);
     }
   }
   
@@ -323,3 +324,4 @@ bool GoXYInstruction::progress() {
   
   return false;
 }
+

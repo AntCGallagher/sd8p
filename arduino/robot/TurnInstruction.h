@@ -25,3 +25,4 @@ void shiftClicksTimeArray(int left);
 float speedFromClicksTimeArray(long unsigned curTime);
 
 #endif
+
