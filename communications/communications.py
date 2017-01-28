@@ -86,8 +86,7 @@ class Comms(object):
 
 			except Exception, ex:
 				# In case of error, print exception details 
-				print ex.args
-				time.sleep(1)
+				pass
 
 		else:
 			# Recheck every 100ms
