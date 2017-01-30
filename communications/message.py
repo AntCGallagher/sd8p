@@ -34,9 +34,6 @@ class Message(object):
 		self.op = opcodes[op_string]
 		self.params = params
 
-		# Calculate hash (VERY SIMPLE, CONSIDER CHANGING)
-		self.hash = self.id + self.op + sum(self.params)
-
 	# pack() : byte[]
 	def pack_message(self):
 		# Details of the formatting can be found at https://docs.python.org/2/library/struct.html
@@ -49,6 +46,14 @@ class Message(object):
 	# set_transmit_time(transmit_time : double) : void
 	def set_transmit_time(self, transmit_time):
 		self.trans = transmit_time
+	
+	# hash(packed_msg : string) : string
+	def hash(self, packed_msg):
+		b = bytes(msg)
+		val = 0
+		for by in list(b):
+			val = val + ord(by)
+		return struct.pack(">H", val)
 
 	# __str__() : string
 	def __str__(self):
