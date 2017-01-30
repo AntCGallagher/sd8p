@@ -1,11 +1,11 @@
 #include "GoInstruction.h"
 
 void GoInstruction::initFromCommand(Command cmd) {
-  //Serial.println(F("GO Initiating"));
+  Serial.println(F("GO Initiating"));
   GoInstruction *fwd = new GoInstruction();
   fwd->cmdID = cmd.id;
   appendInstruction(fwd);
-  //Serial.println(F("GO Initiated"));
+  Serial.println(F("GO Initiated"));
 }
 
 void GoInstruction::halt(void) {
@@ -14,7 +14,6 @@ void GoInstruction::halt(void) {
 }
 
 bool GoInstruction::progress() {
-
   if (this->begun == false) {
     this->begun = true;
     this->startTime = millis();
@@ -22,8 +21,5 @@ bool GoInstruction::progress() {
     greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_FWD);
   }
 
-
-
   return false;
 }
-

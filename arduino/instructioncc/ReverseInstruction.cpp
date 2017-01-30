@@ -1,4 +1,4 @@
-#import "ReverseInstruction.h"
+#include "ReverseInstruction.h"
 
 // 180 clicks per rotation, one rotation is 26.5cm dist
 #define CLICKS_PER_CM (180.0/26.5)

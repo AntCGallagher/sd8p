@@ -312,7 +312,9 @@ void Command::instantiateInstruction() {
       updateWorldModel(this->params);
       break;
     case GO:
+      Serial.println("comms log: GO initiating");
       GoInstruction::initFromCommand(*this);
+      Serial.println("comms log: GO initiated");
       break;
     case GOXY:
       GoXYInstruction::initFromCommand(*this);
