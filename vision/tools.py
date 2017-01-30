@@ -128,7 +128,7 @@ def save_croppings(pitch, data, filename=PATH+'/calibrations/croppings.json'):
 
 def save_data(pitch, data, filename):
     """
-        Save some data to filename(json) 
+        Save some data to filename(json)
     """
     settings = get_json(filename)
     settings[PITCHES[pitch]] = data

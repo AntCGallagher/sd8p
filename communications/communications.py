@@ -26,7 +26,7 @@ class Comms(object):
 
 		# Create log directory if it doesn't already exist
 		if (not os.path.exists("communications/logs")):
-			os.mkdir("communications/logs")	
+			os.mkdir("communications/logs")
 
 		# Create output log (initially blank)
 		with self.outputLock:
@@ -48,7 +48,7 @@ class Comms(object):
 			sender = Thread(target=self.send_messages)
 			sender.daemon = True
 			sender.start()
-			
+
 			# Create thread to listen for incoming messages
 			receiver = Thread(target=self.receive_messages)
 			receiver.daemon = True
@@ -58,10 +58,10 @@ class Comms(object):
 			self.reset()
 		else:
 			print "Cannot start again as Comms already active!"
-		
+
 
 	def send_messages(self):
-		# Open a new terminal 	
+		# Open a new terminal
 		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
 		while True:
@@ -76,14 +76,14 @@ class Comms(object):
 						file.write("@send_messages " + str(msg) + "\n")
 
 				# Pack and send message to arduino
-				packed = msg.pack_message()	
+				packed = msg.pack_message()
 				msg.set_transmit_time(time.time())
-				
+
 				self.port.write(packed)
 				time.sleep(0.01)
 
 			except Exception, ex:
-				# In case of error, print exception details 
+				# In case of error, print exception details
 				pass
 
 		else:
@@ -93,8 +93,10 @@ class Comms(object):
 	def receive_messages(self):
 		# Flush any leftover data
 		self.port.flush()
+
 		while True:
 			response = self.port.readlines()
+
 			if response:
 				# Convert sequence of bytes to string
 				joined = "".join(response)
@@ -108,7 +110,9 @@ class Comms(object):
 				# self.update_message_status(joined)
 
 				# Otherwise, check for OK or ERR message
+
 			self.port.flush()
+
 			# Try again every 10ms
 			time.sleep(0.01)
 
@@ -130,12 +134,11 @@ comms.start()
 
 time.sleep(2)
 # Queue a stop message
-#comms.add_message("GO", [])
+# comms.add_message("GO", [])
 # comms.add_message("STOP", [])
 comms.add_message("GO", [])
-#time.sleep(2)
-#comms.add_message("STOP", [])
+# time.sleep(2)
+# comms.add_message("STOP", [])
 
 while True:
 	pass
-
