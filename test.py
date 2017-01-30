@@ -36,12 +36,12 @@ if __name__ == "__main__" :
 			Coms.turn(deg)
 		elif cmd == 'kick':
 			Coms.stop()
-			stren = raw_input('Strength: ')
-			Coms.kick(stren)
+			Coms.kick(10)
 		elif cmd == 'hasball':
 			pass
 		elif cmd == 'reverse':
-			pass
+			dist = raw_input('Distance???: ')
+			Coms.reverse(dist)
 		elif cmd == 'abort':
 			Coms.abort()
 		elif cmd == 'grab':

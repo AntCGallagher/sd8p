@@ -1,2 +1,0 @@
-@send_messages 1 RESET
-@send_messages 1 GO

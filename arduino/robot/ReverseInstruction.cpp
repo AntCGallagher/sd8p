@@ -11,21 +11,21 @@ void ReverseInstruction::initFromCommand(Command cmd) {
 }
 
 void ReverseInstruction::halt(void) {
-  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
 }
 
 bool ReverseInstruction::brake(void) {
 
   updateMotorPositions();
   
-  int clicks = positions[ROT_LH_MOTOR_IDX] + positions[ROT_RH_MOTOR_IDX];
+  int clicks = positions[LH_IDX] + positions[RH_IDX];
   
   // first call to brake()
   if (!this->braking) {
-    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
     this->braking = true;
     this->brakeLastClicksTime = millis();
     this->brakeLastClicks = clicks;
@@ -57,14 +57,14 @@ bool ReverseInstruction::progress() {
     this->begun = true;
     this->braking = false;
     this->startTime = millis();
-    positions[ROT_LH_MOTOR_IDX] = 0;
-    positions[ROT_RH_MOTOR_IDX] = 0;
-    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BWD);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BWD);
+    positions[LH_IDX] = 0;
+    positions[RH_IDX] = 0;
+    greenMotorMove(LH_IDX, 100, MOTOR_BWD);
+    greenMotorMove(RH_IDX, 100, MOTOR_BWD);
   }
   
   // note both values are expected to be -ve
-  int totalClicks = positions[ROT_LH_MOTOR_IDX] + positions[ROT_RH_MOTOR_IDX];
+  int totalClicks = positions[LH_IDX] + positions[RH_IDX];
   int clicksRequired = this->dist * CLICKS_PER_CM * (-2);
   
   if (totalClicks <= clicksRequired) {
@@ -73,5 +73,7 @@ bool ReverseInstruction::progress() {
   
   return false;
 }
+
+
 
 

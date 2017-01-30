@@ -17,7 +17,7 @@
 
 #define CORRECTION_TOLERANCE 1 // clicks
 
-//#define DEBUG_PRINT_TURN
+#define DEBUG_PRINT_TURN
 
 /* increase denominator to make robot turn more
  * it's rare this will have to be changed
@@ -40,9 +40,9 @@ void TurnInstruction::initFromCommand(Command cmd) {
 }
 
 void TurnInstruction::halt(void) {
-  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
 }
 
 float clicksToDeg(float clicks) {
@@ -84,7 +84,7 @@ bool TurnInstruction::progress() {
     this->lastClickTime = millis();
     
     // reset motor position counter
-    positions[ROT_REAR_MOTOR_IDX] = 0;
+    positions[REAR_IDX] = 0;
     
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("Begin turn "));
@@ -94,18 +94,23 @@ bool TurnInstruction::progress() {
     Serial.println(F(" deg)"));
 #endif
     
-    greenMotorMove(ROT_LH_MOTOR_IDX, -50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 50, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(ROT_REAR_MOTOR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(LH_IDX, -80, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(RH_IDX, 100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
   }
   
+  
+  
   float totalClicksRequired = degToClicks(this->deg);
-  float travelled = positions[ROT_REAR_MOTOR_IDX] + projectedAdditionalClicksFromSum(positions[ROT_REAR_MOTOR_IDX]);
+  float travelled = positions[REAR_IDX] + projectedAdditionalClicksFromSum(positions[REAR_IDX]);
+  
+  //Serial.println(F("Travelled:"));
+  //Serial.print(travelled);
   
   // keep effective timer of when a click occurs
-  if (positions[ROT_REAR_MOTOR_IDX] != this->lastClicks) {
+  if (positions[REAR_IDX] != this->lastClicks) {
     this->lastClickTime = millis();
-    this->lastClicks = positions[ROT_REAR_MOTOR_IDX];
+    this->lastClicks = positions[REAR_IDX];
   }
   
   if (this->braking) {
@@ -114,23 +119,23 @@ bool TurnInstruction::progress() {
     if (millis() - max(this->lastClickTime, this->brakeTime) > MAX_CLICK_PERIOD_FOR_STOPPED) {
       
       // return motors to floating
-      greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
-      greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
-      greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
       
 #ifdef DEBUG_PRINT_TURN
       Serial.print(F("Braking covered "));
-      Serial.print(positions[ROT_REAR_MOTOR_IDX] - clicksAtBrake);
+      Serial.print(positions[REAR_IDX] - clicksAtBrake);
       Serial.print(F(" clicks ("));
-      Serial.print(clicksToDeg(positions[ROT_REAR_MOTOR_IDX] - clicksAtBrake));
+      Serial.print(clicksToDeg(positions[REAR_IDX] - clicksAtBrake));
       Serial.print(F(" deg) total "));
-      Serial.print(positions[ROT_REAR_MOTOR_IDX]);
+      Serial.print(positions[REAR_IDX]);
       Serial.print(F(" clicks ("));
-      Serial.print(clicksToDeg(positions[ROT_REAR_MOTOR_IDX]));
+      Serial.print(clicksToDeg(positions[REAR_IDX]));
       Serial.println(F(" deg)"));
 #endif
       
-      float miss = totalClicksRequired - positions[ROT_REAR_MOTOR_IDX];
+      float miss = totalClicksRequired - positions[REAR_IDX];
       if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
         TurnInstruction *nextTurn = new TurnInstruction();
         nextTurn->deg = clicksToDeg(miss);
@@ -175,15 +180,15 @@ bool TurnInstruction::progress() {
   }
   
   // check if complete - either by clicks or by duration (small turns only)
-  if ((signsEqual && abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
+  if ((/*signsEqual && */abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
     
     this->brakeTime = millis();
     this->braking = true;
-    clicksAtBrake = positions[ROT_REAR_MOTOR_IDX];
+    clicksAtBrake = positions[REAR_IDX];
     
-    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
     
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("BRAKING at"));
@@ -192,7 +197,7 @@ bool TurnInstruction::progress() {
     Serial.print(clicksToDeg(clicksAtBrake));
     Serial.println(F(" deg)"));
     Serial.print(F("Estimating "));
-    Serial.print(projectedAdditionalClicksFromSum(positions[ROT_REAR_MOTOR_IDX]));
+    Serial.print(projectedAdditionalClicksFromSum(positions[REAR_IDX]));
     Serial.println(F(" extra clicks"));
     if (smallTurnTimeElapsed)
       Serial.println(F("Stopped based on time for small turn"));
@@ -207,5 +212,7 @@ bool TurnInstruction::progress() {
   
   return false;
 }
+
+
 
 

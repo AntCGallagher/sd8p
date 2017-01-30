@@ -96,7 +96,12 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  if(dir == MOTOR_FWD) motorBackward(motorNum, motorPower);
  else if (dir == MOTOR_BWD) motorForward(motorNum, motorPower);
  //float break and normal break are treated the same way
- else motorStop(motorNum);
+ else if (dir == MOTOR_FLOAT)
+   motorStop(motorNum);
+ else {
+   motorForward(motorNum, 100);
+   motorStop(motorNum);
+ }
 
  // Wire.beginTransmission(address);
  // Wire.write((motorNum*2)-1);
@@ -104,4 +109,5 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  // Wire.write(int(motorPower*2.55));
  // Wire.endTransmission();
 }
+
 

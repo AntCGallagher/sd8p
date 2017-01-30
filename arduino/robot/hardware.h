@@ -1,10 +1,10 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define ROT_LH_MOTOR_IDX 0
-#define ROT_RH_MOTOR_IDX 1
-#define ROT_REAR_MOTOR_IDX 2
-#define ROT_FINGER_IDX 3
+#define LH_IDX 0
+#define RH_IDX 1
+#define REAR_IDX 2
+#define KICKER_IDX 3
 //#define ROT_GRABBER_IDX 4
 
 // // "green" refers to lego-style motor board
@@ -57,4 +57,6 @@ void greenMotorAllStop(void);
 
 
 #endif
+
+
 

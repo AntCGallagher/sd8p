@@ -23,7 +23,7 @@ debug_print_sent_msg = False
 debug_print_received_msg = False
 debug_print_mess_succ = False
 debug_print_resending = False
-debug_print_ignoring_new_mess = True
+debug_print_ignoring_new_mess = False
 debug_print_replacing_wm = False
 
 class Coms(object):

@@ -140,14 +140,14 @@ void Comms::checkForCompleteCommand() {
 bool Comms::validateNewCommand(Command c) {
   if (c.id == 1 && c.opcode == RESET)
     return true;
-  
+
   if (c.id != this->maxIDSuccessPCToArd + 1) {
     Serial.println(F("ERRid"));
     Serial.println(c.id);
     Serial.println(this->maxIDSuccessPCToArd);
     return false;
   }
-    
+
 
   if (!c.hashAddsUp()) {
     Serial.println(F("ERRhash"));
@@ -312,9 +312,7 @@ void Command::instantiateInstruction() {
       updateWorldModel(this->params);
       break;
     case GO:
-      Serial.println("comms log: GO initiating");
       GoInstruction::initFromCommand(*this);
-      Serial.println("comms log: GO initiated");
       break;
     case GOXY:
       GoXYInstruction::initFromCommand(*this);
@@ -336,6 +334,5 @@ void Command::instantiateInstruction() {
       break;
   }
 }
-
 
 

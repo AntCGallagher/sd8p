@@ -14,22 +14,19 @@ void KickInstruction::initFromCommand(Command cmd) {
 
 void KickInstruction::halt(void) {
   //retract motor
-  greenMotorMove(ROT_FINGER_IDX, 100, MOTOR_BWD);
+  greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
   PauseInstruction *pause = new PauseInstruction();
   pause->pause = 1000;
   appendInstruction(pause);
-  //stop motor
-  greenMotorMove(ROT_FINGER_IDX, 0, MOTOR_FLOAT);
 }
 
 bool KickInstruction::progress(void) {
-  //kick
-  greenMotorMove(ROT_FINGER_IDX, 100, MOTOR_FWD);
-  PauseInstruction *pause = new PauseInstruction();
-  pause->pause = 1000;
-  appendInstruction(pause);
-  //unkick
-  greenMotorMove(ROT_FINGER_IDX, 100, MOTOR_BWD);
+  Serial.println("kicking");
+  greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
+  delay(2180);
+  Serial.println("stopping");
+  greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
+  return true;
 }
 
 // given initialPos and kick strength, returns position at which kick will have occurred
@@ -48,3 +45,5 @@ bool KickInstruction::positionAcceptable(int pos, unsigned int stren, bool movin
   return true;
   //return (pos >= kickedPos(this->initialPosition, stren));
 }
+
+

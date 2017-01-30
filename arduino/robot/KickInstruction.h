@@ -12,8 +12,9 @@ public:
   virtual bool positionAcceptable(int pos, unsigned int stren, bool moving);
   virtual void halt();
   virtual bool progress();
-  //int preparedForKickOfStrength(int pos);
 };
 
 #endif
+
+
 

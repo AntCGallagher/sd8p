@@ -38,9 +38,9 @@ void GoXYInstruction::initFromCommand(Command cmd) {
 }
 
 void GoXYInstruction::halt(void) {
-  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
 #ifdef DEBUG_PRINT_GOXY
   Serial.println(F("halt"));
 #endif
@@ -50,13 +50,13 @@ bool GoXYInstruction::brake(void) {
 
   updateMotorPositions();
   
-  int clicks = positions[ROT_LH_MOTOR_IDX] + positions[ROT_RH_MOTOR_IDX];
+  int clicks = positions[LH_IDX] + positions[RH_IDX];
   
   // first call to brake()
   if (!this->braking) {
-    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_BRAKE);
-    greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
     this->braking = true;
     this->brakeLastClicksTime = millis();
     this->brakeLastClicks = clicks;
@@ -175,7 +175,7 @@ void GoXYInstruction::retarg(byte params[]) {
   
   // cancel ongoing course correction
   if (this->rearClicksRequired > 0) {
-    greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+    greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
     this->rearClicksRequired = 0;
     this->lastCompletedCC = millis();
   }
@@ -200,16 +200,16 @@ bool GoXYInstruction::progress() {
     this->braking = false;
     
     // reset motor position counters
-    positions[ROT_LH_MOTOR_IDX] = 0;
-    positions[ROT_RH_MOTOR_IDX] = 0;
-    positions[ROT_REAR_MOTOR_IDX] = 0;
+    positions[LH_IDX] = 0;
+    positions[RH_IDX] = 0;
+    positions[REAR_IDX] = 0;
 #ifdef DEBUG_PRINT_GOXY
     Serial.println(F("Starting GoXY"));
 #endif
     // fire motors up
-    greenMotorMove(ROT_LH_MOTOR_IDX, 100, MOTOR_FWD);
-    greenMotorMove(ROT_RH_MOTOR_IDX, 100, MOTOR_FWD);
-    greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+    greenMotorMove(LH_IDX, 100, MOTOR_FWD);
+    greenMotorMove(RH_IDX, 80, MOTOR_FWD);
+    greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
   }
   
   if (this->braking)
@@ -241,12 +241,12 @@ bool GoXYInstruction::progress() {
   // if course correct operation is in operation
   if (this->rearClicksRequired != 0) {
     // if course correct is complete
-    if (abs(positions[ROT_REAR_MOTOR_IDX]) >= abs(this->rearClicksRequired)) {
+    if (abs(positions[REAR_IDX]) >= abs(this->rearClicksRequired)) {
 #ifdef DEBUG_PRINT_CC
        Serial.print(F("Completed cc of "));
        println(this->rearClicksRequired);
 #endif
-       greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+       greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
        this->rearClicksRequired = 0;
        this->lastCompletedCC = millis();
     }
@@ -260,8 +260,8 @@ bool GoXYInstruction::progress() {
        println(turnRequired);
 #endif
        this->rearClicksRequired = turnRequired / (360.0/180.0);
-       positions[ROT_REAR_MOTOR_IDX] = 0;
-       greenMotorMove(ROT_REAR_MOTOR_IDX, (rearClicksRequired > 0) ? -100 : 100, MOTOR_FWD);
+       positions[REAR_IDX] = 0;
+       greenMotorMove(REAR_IDX, (rearClicksRequired > 0) ? -100 : 100, MOTOR_FWD);
     }
   }
   
@@ -324,4 +324,6 @@ bool GoXYInstruction::progress() {
   
   return false;
 }
+
+
 

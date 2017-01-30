@@ -37,9 +37,9 @@ bool GetBallInstruction::hasBallForbidden() {
 }
 
 void GetBallInstruction::halt(void) {
-  greenMotorMove(ROT_LH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_RH_MOTOR_IDX, 0, MOTOR_FLOAT);
-  greenMotorMove(ROT_REAR_MOTOR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
 }
 
 bool GetBallInstruction::progress() {
@@ -114,4 +114,6 @@ bool GetBallInstruction::progress() {
 
   return false;
 }
+
+
 

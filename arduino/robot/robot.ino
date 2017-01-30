@@ -1,6 +1,3 @@
-
-
-
 #include <SDPArduino.h>
 
 #include <SoftwareSerial.h>
@@ -26,26 +23,11 @@ void setup() {
   comms.sendArdReset();
   
   Serial.print(F("READY")) ;
+  
+  //motorAllStop();
 }
 
 void loop() {
-  Serial.println("Go FW");
-  //delay(2000);
-  //greenMotorMove(ROT_LH_MOTOR_IDX, 32, MOTOR_FWD);
-  //greenMotorMove(ROT_RH_MOTOR_IDX, 20, MOTOR_FWD);
-  //greenMotorMove(ROT_REAR_MOTOR_IDX, 100, MOTOR_FWD);
-  //greenMotorMove(ROT_FINGER_IDX, 100, MOTOR_FWD);
-  delay(1000);
-  greenMotorMove(ROT_FINGER_IDX, 100, MOTOR_BWD);
-  delay(1000);
-  //delay(2000);
-  //Serial.println("Go BW");
-  //greenMotorMove(ROT_LH_MOTOR_IDX, 50, MOTOR_BWD);
-  //greenMotorMove(ROT_RH_MOTOR_IDX, 50, MOTOR_BWD);
-}
-
-/*
-void loop() {    
   // calls progress method on instruction at index 0
   progressInstruction();
   
@@ -274,4 +256,6 @@ void print(bool b) {
 }
 
  /* END */
+
+
 
