@@ -29,7 +29,7 @@ if __name__ == "__main__" :
 	t = Thread(target = vis.run)
 	t.daemon = True
 	t.start()
-	time.sleep(4)
+
 	while True:
 		time.sleep(1)
 		Strategy.start()

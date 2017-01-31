@@ -1,6 +1,6 @@
 from postprocessing.world import World
 from communications.originalcomms import Coms
-import helpers
+from helpers import *
 import time
 """
 This script will be used to test a simple strategy.
@@ -14,33 +14,44 @@ class Strategy(object):
 
     @staticmethod
     def start():
-        # Start communications
         #Coms.start_comunications()
 
         # Get world model and some values
-        curr_world = World.get_world()
+        curr_world = waitForWorld(False , requireBall = True , no_oponents = 0)
         ball = curr_world.ball
         robots = curr_world.robots
         robot1 = curr_world.robots[0]
-        robot2 = curr_world.robots[1]
+        robot2 = curr_world.robots[1] #ours
         robot3 = curr_world.robots[2]
         robot4 = curr_world.robots[3]
-        if robot1 != None:
-            angle = helpers.us_to_obj_angle(robot1,ball)
-        #Coms.stop()
-        time.sleep(2)
-        #Coms.goxy(our_robot.x, our_robot.y, angle, ball.x, ball.y)
-        #Coms.turn(angle2)
-        if robot1 != None:
-            print robot1.x," robot 1",robot1.y
-        if robot2 != None:
-            print robot2.x," robot 2",robot2.y
-        if robot3 != None:
-            print robot3.x," robot 3",robot3.y
-        if robot4 != None:
-            print robot4.x," robot 4",robot4.y
-        print ball.x," ",ball.y
+
+        if robot2 != None and ball != None:
+            ball_zone = ball.get_zone()
+            print ball.get_zone()
+            side = World.our_side
+            print "Robot2: " , robot2.x,"  ",robot2.y
+            print "Ball: ", ball.x, "  ", ball.y
+            angle_to_ball = us_to_obj_angle(robot2,ball)
+            print "Angle to ball: " , angle_to_ball
+            goal_center = World.get_goal_center(False)
+            C = namedtuple("C" , "x y")
+            angle_to_goal = us_to_obj_angle(robot2,C(goal_center[0],goal_center[1]))
+            print "Angle to goal: ", angle_to_goal
+
+            #Change strategy depending on the zone
+            if side == "left":
+                if ball_zone == 0 or ball_zone == 1:
+                    print "On the left preparing to attack"
+                else:
+                    print "On the left preparing to defend"
+            else:
+                if ball_zone == 0 or ball_zone == 1:
+                    print "On the right preparing to attack"
+                else:
+                    print "On the right preparing to defend"
+
         #print angle
+
 """
         # Set up fields
         owner = ball.owner

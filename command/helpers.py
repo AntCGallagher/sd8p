@@ -1,7 +1,7 @@
-import postprocessing as pp 
+import postprocessing as pp
 from math import atan2 , pi , sqrt , cos , sin , radians , pow  , isinf , isnan
 from time import sleep , time
-from numpy import * 
+from numpy import *
 from numpy import linalg as la
 import numpy as np
 from collections import namedtuple
@@ -9,12 +9,12 @@ from collections import namedtuple
 
 
 """
-This file defines a number of helper methods that can be used to 
+This file defines a number of helper methods that can be used to
 calculate all manners of usefull things.
 """
 
 def rotate_vector(v , angle):
-	m = array([[numpy.cos(angle), -numpy.sin(theta)], 
+	m = array([[numpy.cos(angle), -numpy.sin(theta)],
                          [numpy.sin(theta),  numpy.cos(theta)]])
 
 
@@ -37,7 +37,7 @@ def point_zone(xcoor, left):
 	if left :
 		for i in range(0,4):
 			if xcoor < 300/4 *(i+1) :
-				return i 
+				return i
 	else :
 		for i in range(0,4):
 			if xcoor > 300/4*(3-i):
@@ -107,7 +107,7 @@ def calculate_path(start , target, boxes):
 
 	This method needs more testing if it is to be used reliably
 	"""
-	
+
 	col = []
 	for box in boxes:
 		if point_in_box(target , box) :
@@ -120,7 +120,7 @@ def calculate_path(start , target, boxes):
 		if ret != None :
 			_ , _ , tmp = ret
 			target = tmp
-			
+
 
 
 	changed = True
@@ -156,7 +156,7 @@ def calculate_path_around(start , target , box):
 	Calculate a path from start to target around a box
 	a box is defined as four points where if two are next to each other in the collection
 	there is a bounding line between them. Note that the first and the last are considdered linked
-	
+
 	Returns a list of points to travel by, the final point is allways target, does not include start
 	"""
 
@@ -203,7 +203,7 @@ def calculate_path_around(start , target , box):
 	line1 = crossed_segments[0]
 	line2 = crossed_segments[1]
 
-	#If the two lines we are intercepting are next to each other we just travel by their shared point. 
+	#If the two lines we are intercepting are next to each other we just travel by their shared point.
 	if (line1[1].tolist() ==line2[0].tolist() ) :
 		return [line1[1] , target]
 	elif( line1[0].tolist() == line2[1].tolist()) :
@@ -219,7 +219,7 @@ def calculate_path_around(start , target , box):
 
 		#find the shortest path
 		length1 = dist(start , path1[0]) + dist(path1[0],path1[1])  + dist(path1[1] , target)
-		length2	= dist(start , path2[0]) + dist(path2[0],path2[1])  + dist(path2[1] , target)	
+		length2	= dist(start , path2[0]) + dist(path2[0],path2[1])  + dist(path2[1] , target)
 
 		#if one of the paths contain points which are outside the pitch it pick the other
 		if len([p for p in path1 if not  point_in_box(p , pp.world.World.get_pitch().get_inner_box())]) != 0 :
@@ -238,7 +238,7 @@ def calculate_path_around(start , target , box):
 			return [final[1] , target]
 		else :
 			return final
-		
+
 		return final
 
 
@@ -329,7 +329,7 @@ def find_closest_edge(point ,  box ):
 
 
 def isBallHeld(ball = None , robots = None):
-	"""	
+	"""
 	If we can't see the ball, return 4
 	If a robot holds the ball return the index of that robot
 	Otherwise return -1
@@ -346,7 +346,7 @@ def isBallHeld(ball = None , robots = None):
 	if ball.x == 0 and ball.y == 0:
 		return 4
 
-	t = time()	 
+	t = time()
 
 	if t - ball.t > 0.2 and t - ball.t < 1:
 		#If we can't see the ball try to determine if someone might have grabbed it recently.
@@ -385,17 +385,18 @@ def isBallStill():
 def waitForWorld(requireTeammate = False , requireBall = True , no_oponents = 0):
 	"""
 	Waits for a world model that fullfills the required conditions and returns that
+	CHANGED TO ROBOT1 FROM ROBOT0 LOOK LATER
 	"""
 	world = pp.world.World.get_world()
 	no_oponents = no_oponents if no_oponents <= 2 else 2
-	while world == None or world.robots[0] == None or (requireBall and world.ball == None) or (requireTeammate and world.robots[1] == None) or (no_oponents > len([world.robots[i] for i in range(2,4) if world.robots[i] != None])) : #Congratulations on making it to the end of the conditional
+	while world == None or world.robots[1] == None or (requireBall and world.ball == None) or (requireTeammate and world.robots[1] == None) or (no_oponents > len([world.robots[i] for i in range(2,4) if world.robots[i] != None])) : #Congratulations on making it to the end of the conditional
 		world = pp.world.World.get_world()
 	return world
 
 
 def robotIsGoalie(robot, left):
 	"""
-	Given a robot object and side of pitch, 
+	Given a robot object and side of pitch,
 	checks if they're in suitable position for goalkeeping in penalty situation
 	"""
 	if robot == None or (time() - robot.t) > 5:
@@ -404,7 +405,7 @@ def robotIsGoalie(robot, left):
 	if left:
 		x_okay = robot.get_pos()[0] < 50
 	else:
-		x_okay = robot.get_pos()[0] > 250 
+		x_okay = robot.get_pos()[0] > 250
 	return y_okay and x_okay
 
 
