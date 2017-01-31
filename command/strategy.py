@@ -15,19 +15,32 @@ class Strategy(object):
     @staticmethod
     def start():
         # Start communications
-        Coms.start_comunications()
+        #Coms.start_comunications()
 
         # Get world model and some values
         curr_world = World.get_world()
         ball = curr_world.ball
         robots = curr_world.robots
-        our_robot = curr_world.robots[1]
-        angle = helpers.us_to_obj_angle(our_robot,ball)
-        Coms.stop()
-        Coms.goxy(our_robot.x, our_robot.y, angle, ball.x, ball.y)
-        time.sleep(5)
-        angle2 = helpers.us_to_obj_angle(our_robot,ball)
-        Coms.turn(angle2)
+        robot1 = curr_world.robots[0]
+        robot2 = curr_world.robots[1]
+        robot3 = curr_world.robots[2]
+        robot4 = curr_world.robots[3]
+        if robot1 != None:
+            angle = helpers.us_to_obj_angle(robot1,ball)
+        #Coms.stop()
+        time.sleep(2)
+        #Coms.goxy(our_robot.x, our_robot.y, angle, ball.x, ball.y)
+        #Coms.turn(angle2)
+        if robot1 != None:
+            print robot1.x," robot 1",robot1.y
+        if robot2 != None:
+            print robot2.x," robot 2",robot2.y
+        if robot3 != None:
+            print robot3.x," robot 3",robot3.y
+        if robot4 != None:
+            print robot4.x," robot 4",robot4.y
+        print ball.x," ",ball.y
+        #print angle
 """
         # Set up fields
         owner = ball.owner
