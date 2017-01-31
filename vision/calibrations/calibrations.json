@@ -5,28 +5,28 @@
                 "object_count": 2.0, 
                 "erode": 0, 
                 "min": [
-                    83.0, 
-                    99.0, 
-                    128.0
+                    91.0, 
+                    155.0, 
+                    16.0
                 ], 
                 "max": [
-                    117.0, 
+                    121.0, 
                     255.0, 
-                    255.0
+                    116.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 3, 
                 "open_kernel": 3, 
-                "blur": 10, 
-                "contrast": 50.0
+                "blur": 5, 
+                "contrast": 0.0
             }, 
             "plate": {
                 "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
-                    43.0, 
-                    99.0, 
-                    125.0
+                    47.0, 
+                    91.0, 
+                    103.0
                 ], 
                 "max": [
                     360.0, 
@@ -34,111 +34,149 @@
                     255.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 7, 
-                "open_kernel": 3, 
-                "blur": 10, 
-                "contrast": 0.0
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 5, 
+                "contrast": 58.0
             }, 
             "bright_green": {
                 "object_count": 8.0, 
                 "erode": 0, 
                 "min": [
-                    40.0, 
-                    156.0, 
-                    203.0
+                    43.0, 
+                    177.0, 
+                    69.0
                 ], 
                 "max": [
-                    64.0, 
+                    73.0, 
                     255.0, 
-                    255.0
+                    148.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 3, 
                 "open_kernel": 3, 
-                "blur": 5, 
+                "blur": 4, 
                 "contrast": 0.0
             }, 
             "camera": {
                 "hue": 50.0, 
                 "saturation": 50.0, 
                 "contrast": 50.0, 
-                "brightness": 11.0
+                "brightness": 9.0
             }, 
             "yellow": {
-                "object_count": 2.0, 
+                "object_count": 3.0, 
                 "erode": 0, 
                 "min": [
-                    27.0, 
-                    164.0, 
-                    177.0
+                    19.0, 
+                    161.0, 
+                    196.0
                 ], 
                 "max": [
-                    45.0, 
+                    38.0, 
                     255.0, 
                     255.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 3, 
-                "open_kernel": 3, 
-                "blur": 5, 
-                "contrast": 0.0
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 0, 
+                "contrast": 7.0
             }, 
             "pink": {
-                "object_count": -1.0, 
-                "erode": -1, 
+                "object_count": 8.0, 
+                "erode": 0, 
                 "min": [
-                    -1.0, 
-                    -1.0, 
-                    -1.0
+                    155.0, 
+                    136.0, 
+                    115.0
                 ], 
                 "max": [
-                    -1.0, 
-                    -1.0, 
-                    -1.0
+                    182.0, 
+                    241.0, 
+                    250.0
                 ], 
-                "highpass": -1.0, 
-                "close_kernel": -1, 
-                "open_kernel": -1, 
-                "blur": -1, 
-                "contrast": -1.0
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 3, 
+                "contrast": 0.0
             }, 
             "green": {
                 "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
-                    50.0, 
-                    177.0, 
-                    58.0
+                    43.0, 
+                    91.0, 
+                    70.0
                 ], 
                 "max": [
-                    80.0, 
+                    78.0, 
                     255.0, 
-                    201.0
+                    255.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 5, 
+                "close_kernel": 0, 
                 "open_kernel": 0, 
                 "blur": 5, 
                 "contrast": 0.0
+            }, 
+            "dot": {
+                "object_count": 1.0, 
+                "erode": 0.0, 
+                "min": [
+                    0.0, 
+                    0.0, 
+                    3.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    91.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 0, 
+                "contrast": 0.0
+            }, 
+            "violet": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    171.0, 
+                    213.0, 
+                    0.0
+                ], 
+                "max": [
+                    225.0, 
+                    255.0, 
+                    189.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 1, 
+                "blur": 4, 
+                "contrast": 9.0
             }, 
             "red": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    0.0, 
-                    168.0, 
-                    189.0
+                    171.0, 
+                    220.0, 
+                    0.0
                 ], 
                 "max": [
-                    16.0, 
+                    360.0, 
                     255.0, 
                     255.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 3, 
-                "open_kernel": 3, 
+                "open_kernel": 0, 
                 "blur": 5, 
-                "contrast": 15.0
+                "contrast": 11.0
             }, 
             "violet": {
                 "object_count": 1.0, 
