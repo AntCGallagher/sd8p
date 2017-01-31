@@ -14,7 +14,7 @@ class Strategy(object):
 
     @staticmethod
     def start():
-        #Coms.start_comunications()
+        Coms.start_comunications()
 
         # Get world model and some values
         curr_world = waitForWorld(False , requireBall = True , no_oponents = 0)
@@ -41,14 +41,17 @@ class Strategy(object):
             #Change strategy depending on the zone
             if side == "left":
                 if ball_zone == 0 or ball_zone == 1:
-                    print "On the left preparing to attack"
+                    Coms.turn(95)
                 else:
-                    print "On the left preparing to defend"
+                    Coms.turn(190)
             else:
                 if ball_zone == 0 or ball_zone == 1:
-                    print "On the right preparing to attack"
+                    Coms.go()
+                    time.sleep(1)
+                    Coms.stop()
                 else:
-                    print "On the right preparing to defend"
+                    Coms.kick(10)
+                    Coms.stop()
 
         #print angle
 
