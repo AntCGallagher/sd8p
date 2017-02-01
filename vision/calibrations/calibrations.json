@@ -69,19 +69,19 @@
                 "erode": 0, 
                 "min": [
                     29.0, 
-                    161.0, 
-                    181.0
+                    136.0, 
+                    243.0
                 ], 
                 "max": [
-                    46.0, 
-                    255.0, 
+                    37.0, 
+                    184.0, 
                     255.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
                 "open_kernel": 0, 
-                "blur": 0, 
-                "contrast": 2.0
+                "blur": 9, 
+                "contrast": 100.0
             }, 
             "pink": {
                 "object_count": 8.0, 

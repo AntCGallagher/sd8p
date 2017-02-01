@@ -32,7 +32,7 @@ if __name__ == "__main__" :
 
 	inp = ""
 	while inp != "done":
-		inp = raw_input("calibrate and type done")
+		inp = raw_input("calibrate and type done: ")
 		time.sleep(0.5)
 	while inp != "end":
 		time.sleep(0.9)
