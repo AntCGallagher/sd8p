@@ -88,7 +88,6 @@ class Strategy(object):
                     Coms.reverse(1)
                     time.sleep(0.7)
                     Coms.stop()
-                    justdefended = True
                 else:
                     if math.fabs(angle_to_ball) < 10:
                         Coms.go()
@@ -122,7 +121,6 @@ class Strategy(object):
                     Coms.reverse(1)
                     time.sleep(0.7)
                     Coms.stop()
-                    justdefended = True
                 else:
                     if math.fabs(angle_to_ball) < 10:
                         Coms.go()
