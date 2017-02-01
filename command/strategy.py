@@ -60,7 +60,10 @@ class Strategy(object):
             else:
                 Coms.stop()
                 Coms.turn(-angle_to_ball)
-                time.sleep(1.5)
+                time.sleep(1)
+                Coms.go()
+                time.sleep(0.6)
+                Coms.stop()
             """
             #Change strategy depending on the zone
             if side == "left":
