@@ -144,39 +144,39 @@
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    164.0, 
-                    206.0, 
-                    110.0
+                    0.0, 
+                    196.0, 
+                    105.0
                 ], 
                 "max": [
-                    194.0, 
+                    3.0, 
                     255.0, 
-                    210.0
+                    220.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 3, 
-                "open_kernel": 3, 
-                "blur": 10, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 17, 
                 "contrast": 0.0
             }, 
             "red": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    171.0, 
-                    220.0, 
-                    0.0
+                    0.0, 
+                    206.0, 
+                    113.0
                 ], 
                 "max": [
-                    360.0, 
+                    3.0, 
                     255.0, 
                     255.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 3, 
                 "open_kernel": 0, 
-                "blur": 5, 
-                "contrast": 11.0
+                "blur": 8, 
+                "contrast": 0.0
             }
         }, 
         "PITCH1": {
