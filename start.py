@@ -30,6 +30,10 @@ if __name__ == "__main__" :
 	t.daemon = True
 	t.start()
 
-	while True:
-		time.sleep(4)
+	inp = ""
+	while inp != "done":
+		inp = raw_input("calibrate and type done")
+		time.sleep(2)
+	while inp != "end":
+		time.sleep(1.5)
 		Strategy.start()

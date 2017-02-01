@@ -31,6 +31,10 @@ def point_dist(x1 , y1 , x2 , y2 ):
 def midpoint(x1, y1, x2, y2):
 	return array(((x1+x2)/2, (y1+y2)/2))
 
+def mathgod(x,y,angle,i,j):
+	angle_to_ball = math.acos(sqrt(pow(x-i,2)+pow(y,2)/pow(j,2)))
+	neg_angle = -angle
+	return neg_angle + angle_to_ball
 
 # returns which zone a xcoor point is in
 def point_zone(xcoor, left):

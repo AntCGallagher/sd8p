@@ -1,7 +1,9 @@
 from postprocessing.world import World
 from communications.originalcomms import Coms
 from helpers import *
+import math
 import time
+import numpy
 """
 This script will be used to test a simple strategy.
 At the moment owner represents who has the ball.
@@ -26,9 +28,6 @@ class Strategy(object):
         robot3 = curr_world.robots[2]
         robot4 = curr_world.robots[3]
 
-        if robot1 != None:
-            print "Robot1: ", robot1.x , "  " , robot1.y # ours
-            print robot1
         #if robot2 != None:
         #    print "Robot2: ", robot2.x , "  " , robot2.y
         #if robot3 != None:
@@ -37,19 +36,31 @@ class Strategy(object):
         #    print "Robot4: ", robot4.x , "  " , robot4.y
     #    print "Ball: " , ball.x , "  " , ball.y
 
-        if robot2 != None and ball != None:
+        if robot1 != None and ball != None:
+            list = []
+            calculated_time = time.time() + 1
+            while(calculated_time > time.time()):
+                list.append(robot1.rot)
             ball_zone = ball.get_zone()
             print ball.get_zone()
             side = World.our_side
-            print "Robot2: " , robot2.x,"  ",robot2.y
             print "Ball: ", ball.x, "  ", ball.y
-            angle_to_ball = us_to_obj_angle(robot2,ball)
+            robot1.rot = np.median(list)
+            angle_to_ball = us_to_obj_angle(robot1,ball)
             print "Angle to ball: " , angle_to_ball
+            #print "Math god angle: " , mathgod(robot1.x,robot1.y,robot1.rot,ball.x,ball.y)
             goal_center = World.get_goal_center(False)
             C = namedtuple("C" , "x y")
-            angle_to_goal = us_to_obj_angle(robot2,C(goal_center[0],goal_center[1]))
+            angle_to_goal = us_to_obj_angle(robot1,C(goal_center[0],goal_center[1]))
             #print "Angle to goal: ", angle_to_goal
-            #Coms.turn(angle_to_ball)
+            if math.fabs(angle_to_ball) < 10:
+                Coms.go()
+                time.sleep(1.5)
+                Coms.stop()
+            else:
+                Coms.stop()
+                Coms.turn(-angle_to_ball)
+                time.sleep(1.5)
             """
             #Change strategy depending on the zone
             if side == "left":
