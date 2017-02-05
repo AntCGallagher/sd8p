@@ -36,4 +36,4 @@ if __name__ == "__main__" :
 		time.sleep(0.5)
 	while inp != "end":
 		time.sleep(0.9)
-		Strategy.start()
+		Strategy.tests()

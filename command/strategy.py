@@ -27,6 +27,27 @@ class Strategy(object):
         self.teammate_on = 0
 
     @staticmethod
+    def tests():
+        curr_world = World.get_world()
+        ball = curr_world.ball
+        robots = curr_world.robots
+        robot0 = curr_world.robots[0]
+        robot1 = curr_world.robots[1]
+        robot2 = curr_world.robots[2]
+        robot3 = curr_world.robots[3]
+        if robot0 != None:
+            print "Robot0: ", robot0.x , "  " , robot0.y
+        if robot1 != None:
+            print "Robot1: ", robot1.x , "  " , robot1.y
+        if robot2 != None:
+            print "Robot2: ", robot2.x , "  " , robot2.y
+        if robot3 != None:
+            print "Robot3: ", robot3.x , "  " , robot3.y
+        if ball != None:
+            print "Ball: " , ball.x , "  " , ball.y
+        time.sleep(4)
+
+    @staticmethod
     def start():
 
         Coms.start_comunications()
@@ -35,18 +56,10 @@ class Strategy(object):
         curr_world = waitForWorld(False , requireBall = True , no_oponents = 0)
         ball = curr_world.ball
         robots = curr_world.robots
-        robot1 = curr_world.robots[0] #ours
+        robot1 = curr_world.robots[0]
         robot2 = curr_world.robots[1]
         robot3 = curr_world.robots[2]
         robot4 = curr_world.robots[3]
-
-        #if robot2 != None:
-        #    print "Robot2: ", robot2.x , "  " , robot2.y
-        #if robot3 != None:
-    #    #    print "Robot3: ", robot3.x , "  " , robot3.y
-    #    if robot4 != None:
-        #    print "Robot4: ", robot4.x , "  " , robot4.y
-    #    print "Ball: " , ball.x , "  " , ball.y
 
         if robot1 != None and ball != None:
             list = []
