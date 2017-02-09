@@ -5,6 +5,7 @@
 #define RH_IDX 1
 #define REAR_IDX 2
 #define KICKER_IDX 3
+#define GRABBER_IDX 4
 //#define ROT_GRABBER_IDX 4
 
 // // "green" refers to lego-style motor board
@@ -52,11 +53,10 @@ void greenMotorAllStop(void);
 // int sonarDistance(int trigPin, int echoPin, int maxDist);
 // bool ballInReach(int *counter, int countsRequired);
 //
-// /* GRABBER */
-// bool hasBall();
+
+/* GRABBER */
+bool hasBall();
 
 
 #endif
-
-
 

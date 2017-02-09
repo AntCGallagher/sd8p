@@ -24,8 +24,29 @@ void setup() {
   
   Serial.print(F("READY")) ;
   
-  //motorAllStop();
+  motorAllStop();
 }
+/*
+void loop() {
+  //Serial.println("Left motor") ;
+  motorForward(GRABBER_IDX, 20);
+  delay(200);
+  motorStop(GRABBER_IDX);
+  delay(1000);
+  motorBackward(GRABBER_IDX, 20);
+  delay(150);
+  motorStop(GRABBER_IDX);
+  delay(1000);
+  //greenMotorMove(GRABBER_IDX, 100, MOTOR_FWD);
+//  delay(500);
+//  greenMotorMove(GRABBER_IDX, 0, MOTOR_BRAKE);
+//  delay(500);
+//  greenMotorMove(GRABBER_IDX, 100, MOTOR_BWD);
+//  delay(500);
+//  greenMotorMove(GRABBER_IDX, 0, MOTOR_BRAKE);
+//  delay(500);
+}*/
+
 
 void loop() {
   // calls progress method on instruction at index 0
@@ -256,6 +277,8 @@ void print(bool b) {
 }
 
  /* END */
+
+
 
 
 

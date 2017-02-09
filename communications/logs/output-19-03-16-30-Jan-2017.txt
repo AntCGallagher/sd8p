@@ -1,0 +1,3 @@
+1_RESET
+$SUC&1;
+$ARDRESET;

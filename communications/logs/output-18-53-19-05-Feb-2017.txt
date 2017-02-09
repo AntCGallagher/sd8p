@@ -1,0 +1,81 @@
+1_RESET
+$SUC&1;
+$ARDRESET;
+1_STOP
+ERRid
+1
+1
+$ERR&1;
+
+2_TURN 20 0
+$SUC&2;
+Turn 20.00
+Begin turn 5.11 clicks (20.00 deg)
+
+BRAKING at2 clicks (7.83 deg)
+Estimating 4.82 extra clicks
+
+Braking covered 0 clicks (0.00 deg) total 2 clicks (7.83 deg)
+$COMP&2;
+3_STOP
+$SUC&3;
+
+4_TURN 45 0
+$SUC&4;
+Turn 45.00
+Begin turn 11.50 clicks (45.00 deg)
+
+BRAKING at5 clicks (19.57 deg)
+Estimating 6.64 extra clicks
+
+Braking covered 0 clicks (0.00 deg) total 5 clicks (19.57 deg)
+$COMP&4;
+5_STOP
+$SUC&5;
+
+6_TURN 90 0
+$SUC&6;
+Turn 90.00
+Begin turn 23.00 clicks (90.00 deg)
+
+BRAKING at15 clicks (58.70 deg)
+Estimating 8.81 extra clicks
+
+Braking covered 1 clicks (3.91 deg) total 16 clicks (62.61 deg)
+$COMP&6;
+7_STOP
+$SUC&7;
+
+8_TURN -90 0
+$SUC&8;
+Turn -90.00
+Begin turn -23.00 clicks (-90.00 deg)
+
+BRAKING at-15 clicks (-58.70 deg)
+Estimating -8.81 extra clicks
+
+Braking covered -1 clicks (-3.91 deg) total -16 clicks (-62.61 deg)
+$COMP&8;
+9_GRAB 1
+$SUC&9;
+Error: opcode not defined
+
+10_GRAB 1
+$SUC&10;
+Error: opcode not defined
+
+11_STOP
+$SUC&11;
+
+12_KICK 10
+$SUC&12;
+kicking
+
+stopping
+
+13_STOP
+$SUC&13;
+
+14_STOP
+$SUC&14;
+

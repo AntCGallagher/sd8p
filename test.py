@@ -46,7 +46,11 @@ if __name__ == "__main__" :
 			Coms.abort()
 		elif cmd == 'grab':
 			grab = raw_input('0 to grab 1 otherwise: ')
-			Coms.grab(grab)
+			# Coms.grab(grab)
+			if grab == 0:
+			    Coms.grab(ungrab=False)
+			else:
+			    Coms.grab(ungrab=True)
 		elif cmd == 'prepkick':
 			pass
 		elif cmd == 'receive':

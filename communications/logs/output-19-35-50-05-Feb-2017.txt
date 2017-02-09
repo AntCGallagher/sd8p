@@ -1,0 +1,22 @@
+1_RESET
+1_RESET
+$ARDRESET;READY
+1_GRAB 1
+$SUC&1;
+
+2_GRAB 1
+$SUC&2;
+
+3_STOP
+$SUC&3;
+
+4_TURN 20 0
+$SUC&4;
+Turn 20.00
+Begin turn 5.11 clicks (20.00 deg)
+
+BRAKING at2 clicks (7.83 deg)
+Estimating 4.82 extra clicks
+
+Braking covered 0 clicks (0.00 deg) total 2 clicks (7.83 deg)
+$COMP&4;

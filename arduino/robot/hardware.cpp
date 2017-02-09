@@ -75,15 +75,6 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  if (motorNum > 3 || motorNum < 0)
    return;
 
-// // 2 motor boards in use: 1-4 have seperate address to 5-8
-// int address;
-// if (motorNum <= 4)
-//   address = GREEN_ADDRESS_1_4;
-// else {
-//   address = GREEN_ADDRESS_5_8;
-//   motorNum -= 4;
-// }
-
  if (motorPower < 0) {
    motorPower = abs(motorPower);
    if (dir == MOTOR_FWD) dir = MOTOR_BWD;
@@ -103,11 +94,6 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
    motorStop(motorNum);
  }
 
- // Wire.beginTransmission(address);
- // Wire.write((motorNum*2)-1);
- // Wire.write(dir);
- // Wire.write(int(motorPower*2.55));
- // Wire.endTransmission();
 }
 
 

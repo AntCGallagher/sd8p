@@ -4,9 +4,9 @@
 WorldModel worldModel;
 
 void updateWorldModel(byte params[]) {
-  
+
   unsigned long sent = byteArrToUnsignedLong(params, 0);
-  
+
   // if this is an old or already known piece of info, ignore
   if (sent <= worldModel.sentTimestamp) {
     Serial.print(F("Old WM Received. Stored time "));
@@ -15,20 +15,20 @@ void updateWorldModel(byte params[]) {
     Serial.println(sent);
     return;
   }
-  
+
   worldModel.sentTimestamp = sent;
   worldModel.receivedTimestamp = millis();
   worldModel.rob.coor.x = byteArrToSignedInt(params, 4);
   worldModel.rob.coor.y = byteArrToSignedInt(params, 6);
   worldModel.rob.head = byteArrToSignedInt(params, 8);
-  //worldModel.ball.x = byteArrToSignedInt(params, 10);
-  //worldModel.ball.y = byteArrToSignedInt(params, 12);
-  
+  // worldModel.ball.x = byteArrToSignedInt(params, 10);
+  // worldModel.ball.y = byteArrToSignedInt(params, 12);
+
   Serial.println(F("WM RC'd"));
 }
 
 void resetWorldModel() {
-  worldModel.sentTimestamp = 0; 
+  worldModel.sentTimestamp = 0;
   worldModel.receivedTimestamp = 0;
 }
 
@@ -45,6 +45,4 @@ void WorldModel::debugPrint(void) {
   Serial.print(this->receivedTimestamp);
   Serial.println(F(""));
 }
-
-
 

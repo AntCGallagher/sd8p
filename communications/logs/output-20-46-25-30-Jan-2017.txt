@@ -1,0 +1,26 @@
+1_RESET
+1_RESET
+$ARDRESET;READY
+1_STOP
+$SUC&1;
+
+2_KICK 10
+$SUC&2;
+kicking
+
+stopping
+kicking
+
+stopping
+kicking
+
+stopping
+kicking
+
+3_STOP
+stopping
+$SUC&3;
+
+
+
+ARDRESET;READY

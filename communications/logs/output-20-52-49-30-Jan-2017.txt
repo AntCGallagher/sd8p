@@ -1,0 +1,58 @@
+1_RESET
+ADY
+1_RESET
+$ARDRESET;READY
+1_STOP
+$SUC&1;
+
+2_KICK 10
+$SUC&2;
+kicking
+
+stopping
+
+3_STOP
+$SUC&3;
+
+4_KICK 10
+$SUC&4;
+kicking
+
+stopping
+
+5_STOP
+$SUC&5;
+
+6_KICK 10
+$SUC&6;
+kicking
+
+stopping
+
+7_STOP
+$SUC&7;
+
+8_KICK 10
+$SUC&8;
+kicking
+
+stopping
+
+9_STOP
+$SUC&9;
+
+10_KICK 10
+$SUC&10;
+kicking
+
+stopping
+
+11_STOP
+$SUC&11;
+
+12_KICK 10
+$SUC&12;
+kicking
+
+stopping
+

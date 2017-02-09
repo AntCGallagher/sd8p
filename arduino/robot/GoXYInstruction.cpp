@@ -207,8 +207,8 @@ bool GoXYInstruction::progress() {
     Serial.println(F("Starting GoXY"));
 #endif
     // fire motors up
-    greenMotorMove(LH_IDX, 100, MOTOR_FWD);
-    greenMotorMove(RH_IDX, 80, MOTOR_FWD);
+    greenMotorMove(LH_IDX, 80, MOTOR_FWD);
+    greenMotorMove(RH_IDX, 100, MOTOR_FWD);
     greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
   }
   
@@ -324,6 +324,8 @@ bool GoXYInstruction::progress() {
   
   return false;
 }
+
+
 
 
 

@@ -1,0 +1,35 @@
+1_RESET
+1_RESET
+$ARDRESET;READY
+1_GO 
+$SUC&1;
+comms log: GO initiating
+GO Initiating
+GO Initiated
+comms log: GO initiated
+
+2_STOP
+$SUC&2;
+
+3_GO 
+$SUC&3;
+comms log: GO initiating
+GO Initiating
+GO Initiated
+comms log: GO initiated
+
+4_STOP
+$SUC&4;
+
+5_STOP
+$SUC&5;
+
+6_TURN 45 0
+$SUC&6;
+
+7_STOP
+$SUC&7;
+
+
+
+$ARDRESET;READY

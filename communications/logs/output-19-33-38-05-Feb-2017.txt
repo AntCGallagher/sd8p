@@ -1,0 +1,17 @@
+1_RESET
+$SUC&1;
+$ARDRESET;
+1_GRAB 1
+ERRid
+1
+1
+$ERR&1;
+
+2_GRAB 1
+$SUC&2;
+Ungrab true
+
+3_GRAB 1
+$SUC&3;
+Ungrab true
+

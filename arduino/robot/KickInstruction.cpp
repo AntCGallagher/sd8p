@@ -1,5 +1,8 @@
+#include <SDPArduino.h>
+
 #include "KickInstruction.h"
 #include "PauseInstruction.h"
+
 
 // number of clicks after prep pos that we know we've kicked
 #define KICKED_AFTER_PREP_POS 4
@@ -26,6 +29,9 @@ bool KickInstruction::progress(void) {
   delay(2180);
   Serial.println("stopping");
   greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
+  //motorBackward(GRABBER_IDX, 20);
+  //delay(200);
+
   return true;
 }
 
@@ -45,5 +51,4 @@ bool KickInstruction::positionAcceptable(int pos, unsigned int stren, bool movin
   return true;
   //return (pos >= kickedPos(this->initialPosition, stren));
 }
-
 

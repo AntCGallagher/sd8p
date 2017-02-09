@@ -8,6 +8,11 @@
 #include "PauseInstruction.h"
 #include "GetBallInstruction.h"
 #include "KickInstruction.h"
+#include "GrabInstruction.h"
+#include "ReceiveInstruction.h"
+// #include "PrepKickInstruction.h"
+// #include "PenDefInstruction.h"
+
 
 #define ID_BYTES 2
 #define OPCODE_BYTES 1
@@ -329,10 +334,12 @@ void Command::instantiateInstruction() {
     case REVERSE:
       ReverseInstruction::initFromCommand(*this);
       break;
+    case GRAB:
+      GrabInstruction::initFromCommand(*this);
+      break;
     default:
       Serial.println(F("Error: opcode not defined"));
       break;
   }
 }
-
 
