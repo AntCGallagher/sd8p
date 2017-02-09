@@ -391,7 +391,7 @@ def waitForWorld(requireTeammate = False , requireBall = True , no_oponents = 0)
 	"""
 	world = pp.world.World.get_world()
 	no_oponents = no_oponents if no_oponents <= 2 else 2
-	while world == None or world.robots[1] == None or (requireBall and world.ball == None) or (requireTeammate and world.robots[1] == None) or (no_oponents > len([world.robots[i] for i in range(2,4) if world.robots[i] != None])) : #Congratulations on making it to the end of the conditional
+	while world == None or world.robots[0] == None or (requireBall and world.ball == None) or (requireTeammate and world.robots[1] == None) or (no_oponents > len([world.robots[i] for i in range(2,4) if world.robots[i] != None])) : #Congratulations on making it to the end of the conditional
 		world = pp.world.World.get_world()
 	return world
 

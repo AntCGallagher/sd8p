@@ -61,6 +61,7 @@ class Strategy(object):
         robot3 = curr_world.robots[2]
         robot4 = curr_world.robots[3]
 
+
         if robot1 != None and ball != None:
             list = []
             calculated_time = time.time() + 1
