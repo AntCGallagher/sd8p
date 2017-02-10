@@ -6,7 +6,7 @@ from postprocessing.world import World
 import cv2
 from math import radians,cos,sin , pi
 from numpy import array
-from vision.colors import BGR_COMMON 
+from vision.colors import BGR_COMMON
 from vision.findCameraSettings import CameraCalibrationGUI
 
 class VisionWrapper(object):
@@ -60,9 +60,9 @@ class VisionWrapper(object):
 
 
             # TODO: think about tracked points sometimes jerking arround
-            # maybe get a threshold of how far of a distance change should 
-            # be accounted 
-            
+            # maybe get a threshold of how far of a distance change should
+            # be accounted
+
             # TODO: implement functions to find robots using points
             # dictionary
 
@@ -70,7 +70,7 @@ class VisionWrapper(object):
             # along with connection to the robot
             # Better to have two classes, one for robot logic
             # Another for communication handling
-            
+
             World.set_points(self.points)
             w = World.get_world()
 
@@ -83,7 +83,13 @@ class VisionWrapper(object):
                     y2 = int(y1 + sin(rads) * 50);
                     cv2.arrowedLine(image, (int(x1), int(y1)), (x2,y2), BGR_COMMON[ World.our_team_colour if i3 < 2 else World.oposite_team_colour], 2)
                     corners = [(int(x1 + cos(rads + radians(45) + 90*pi/180*i)*20) , (int(y1 + sin(rads + radians(45)+ 90*pi/180*i)*20))) for i in range(4)]
-                    
+                    cv2.putText	(img=image,
+                                text=str(i3),
+                                org=(int(x1-10), int(y1+10)),
+                                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=1,
+                                color=(255,0,0))
+
                     for i2 in range(4):
                         col = BGR_COMMON[ World.our_primary if i3  % 2 == 0 else World.other_primary]
                         cv2.line(image, corners[i2] , corners[(i2+1)%4] , col , 2)
@@ -127,4 +133,3 @@ if __name__ == '__main__':
 
     wrapper = VisionWrapper(pitch=pitch_number)
     wrapper.run()
-
