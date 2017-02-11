@@ -15,7 +15,7 @@ class MyTracker(object):
         self.ball_queue     = []
 
     def processed_mask(self, image, color):
-        BLUR_VALUE      = self.calibration[color]['blur'] 
+        BLUR_VALUE      = self.calibration[color]['blur']
         MIN_VALUE       = self.calibration[color]['min']
         MAX_VALUE       = self.calibration[color]['max']
         CONTRAST_VALUE  = self.calibration[color]['contrast']
@@ -94,13 +94,13 @@ class MyTracker(object):
         # set processing values
         BLUR   = 9;
         KERNEL = 5;
-        
+
         # process plate mask for whole plate detection
         plate_mask = cv2.GaussianBlur(plate_mask, (BLUR, BLUR), 0)
         #plate_mask = cv2.bilateralFilter(plate_mask,9,75,75)
         kernel     = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (KERNEL,KERNEL))
         plate_mask = cv2.morphologyEx(plate_mask, cv2.MORPH_CLOSE, kernel)
-        plate_mask = cv2.morphologyEx(plate_mask, cv2.MORPH_OPEN, kernel)   
+        plate_mask = cv2.morphologyEx(plate_mask, cv2.MORPH_OPEN, kernel)
 
         # get contours from the mask
         _, contours, _ = cv2.findContours(plate_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -127,10 +127,10 @@ class MyTracker(object):
             contour_frame = np.zeros((480, 640, 3), np.uint8)
             cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
             contour_frame = cv2.bitwise_and(image, contour_frame)
-            
-            if show_window:    
+
+            if show_window:
                 test_mask     = cv2.bitwise_or(test_mask, contour_frame)
-            
+
             contour_frame = cv2.cvtColor(contour_frame, cv2.COLOR_BGR2HSV)
 
             # count blue coloured pixels
@@ -192,7 +192,7 @@ class MyTracker(object):
             (cx, cy) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
 
             if pink_green_ration < 0.5:
-                group = 'green'
+                group = 'bright_green'
             else:
                 group = 'pink'
 
@@ -217,7 +217,7 @@ class MyTracker(object):
                 cv2.drawContours(image,[box],0,(0,0,255),2)
                 #cv2.putText(self.frame, "PLATE: b-y ratio %lf p-g ratio %lf" % (byr, pgr), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, None, 1)
                 #cv2.putText(image, "PLATE: team %s group %s" % (team, group), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.7, None, 1)
-            
+
             cnt_index += 1
 
         if show_window:
@@ -227,7 +227,7 @@ class MyTracker(object):
         _, contour_mask = cv2.threshold(contour_mask,0,255,cv2.THRESH_BINARY)
 
         # print(robot_data)
-        return robot_data, image, contour_mask 
+        return robot_data, image, contour_mask
 
     def get_masks(self, image):
 
@@ -326,7 +326,7 @@ class MyTracker(object):
             data['robots'].append(robot)
 
         ball_reck = self.recognize_ball(image=image, robot_mask=robot_mask, ball_mask=ball_mask)
-        
+
         if len(ball_reck) == 4:
             ball_radius, ball_center, ball_direction, ball_image = ball_reck
 
@@ -363,7 +363,7 @@ if __name__ == '__main__':
         data, modified_frame = tracker.get_world_state(frame)
 
         cv2.imshow('Tracker', modified_frame)
-      
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
