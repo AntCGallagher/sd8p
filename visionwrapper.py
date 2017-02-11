@@ -88,7 +88,7 @@ class VisionWrapper(object):
                                 org=(int(x1-10), int(y1+10)),
                                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1,
-                                color=(255,0,0))
+                                color=(255,255,255))
 
                     for i2 in range(4):
                         col = BGR_COMMON[ World.our_primary if i3  % 2 == 0 else World.other_primary]
