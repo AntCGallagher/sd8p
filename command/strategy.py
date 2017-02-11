@@ -52,17 +52,31 @@ class Strategy(object):
     def stop():
         Coms.start_comunications()
         Coms.stop()
-        Coms.stop()
+        curr_world = World.get_world()
+        ball = curr_world.ball
+        robots = curr_world.robots
+        robot0 = curr_world.robots[0]
         inp = ""
         while inp != "done":
-            inp = raw_input("value: ")
-            if inp != "done":
-                Coms.turn(int(inp))
-            time.sleep(5)
+            inp = raw_input("action please: ")
+            if inp == "go":
+                C = namedtuple("C" , "x y")
+                time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                print "robot: ", robot0.x, " ", robot0.y
+                print "ball: ", ball.x, " ", ball.y
+                print "time: ", time_to_object, " angle: ", angle_to_obj
+                Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                time.sleep(5)
+                Coms.reverse(200)
+                time.sleep(time_to_object)
+                Coms.stop()
+            if inp == "stop":
+                Coms.stop()
 
     @staticmethod
     def start():
-
+        #Coms.turn(get_angle_to_send(int(value))) TODO: Turn like this
         Coms.start_comunications()
 
         # Get world model and some values

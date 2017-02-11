@@ -34,6 +34,16 @@ def midpoint(x1, y1, x2, y2):
 def ball_close(robot,ball):
     return math.sqrt(math.pow(robot.x -ball.x,2) + math.pow(robot.y - ball.y,2)) < 10
 
+def get_angle_to_send(angle):
+	if angle < 40:
+		return int(round((((360+angle)+22.7916)/0.909408)));
+	else:
+		return int(round(((angle+22.7916)/0.909408)));
+
+def get_time_to_travel(x_curr, x_dest, y_curr, y_dest):
+	distance = math.sqrt(math.pow(x_curr - x_dest,2) + math.pow(y_curr - y_dest,2))
+	return (distance+5.40322)/28.2258
+
 # returns which zone a xcoor point is in
 def point_zone(xcoor, left):
 	if left :
