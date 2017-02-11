@@ -31,9 +31,16 @@ if __name__ == "__main__" :
 	t.start()
 
 	inp = ""
-	while inp != "done":
-		inp = raw_input("calibrate and type done: ")
-		time.sleep(0.5)
-	while inp != "end":
-		time.sleep(0.9)
-		Strategy.tests()
+	while inp != "s" or inp != "c":
+		inp = raw_input("stop or calibrate (s/c)? : ")
+		if inp == "s":
+			Strategy.stop()
+		if inp == "c":
+			while inp != "done":
+				inp = raw_input("calibrate and type done: ")
+			while inp != "s" or inp != "t":
+				inp = raw_input("tests/start? (t/s): ")
+				if inp == "s":
+					Strategy.start()
+				if inp == "t":
+					Strategy.tests()
