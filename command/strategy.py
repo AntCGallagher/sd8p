@@ -3,7 +3,7 @@ from communications.originalcomms import Coms
 from helpers import *
 import math
 import time
-import numpy
+import numpy as np
 """
 This script will be used to test a simple strategy.
 """
@@ -29,7 +29,7 @@ class Strategy(object):
     def tests():
         inp = ""
         while inp != "done":
-            inp = raw_input("ping/goxy/go_robot_ball/turn ? (p/gxy/grb/t)")
+            inp = raw_input("ping/goxy/go_robot_ball/turn/median?: (p/gxy/grb/t/m)")
             if inp == "p":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -98,33 +98,26 @@ class Strategy(object):
                 Coms.start_comunications()
                 Coms.turn(get_angle_to_send(value))
                 time.sleep(1.5)
-
+            if inp == "m":
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                list = []
+                calculated_time = time.time() + 1
+                while(calculated_time > time.time()):
+                    temp_world = World.get_world()
+                    list.append(temp_world.robots[0].rot)
+                list.sort()
+                print "Curr rot: robot0.rot"
+                print np.median(list)
+                print len(list)
+                print robot0.rot
 
     @staticmethod
     def stop():
         Coms.start_comunications()
         Coms.stop()
-        curr_world = World.get_world()
-        ball = curr_world.ball
-        robots = curr_world.robots
-        robot0 = curr_world.robots[0]
-        inp = ""
-        while inp != "done":
-            inp = raw_input("action please: ")
-            if inp == "go":
-                C = namedtuple("C" , "x y")
-                time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
-                angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                print "robot: ", robot0.x, " ", robot0.y
-                print "ball: ", ball.x, " ", ball.y
-                print "time: ", time_to_object, " angle: ", angle_to_obj
-                Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                time.sleep(1.5)
-                Coms.reverse(200)
-                time.sleep(time_to_object)
-                Coms.stop()
-            if inp == "stop":
-                Coms.stop()
+        Coms.stop()
 
     @staticmethod
     def start():
