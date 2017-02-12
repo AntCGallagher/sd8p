@@ -30,7 +30,7 @@ class Strategy(object):
         inp = ""
         while inp != "done":
             inp = raw_input("ping/goxy/go_robot_ball/turn ? (p/gxy/grb/t)")
-            if inp == "p"
+            if inp == "p":
                 curr_world = World.get_world()
                 ball = curr_world.ball
                 robots = curr_world.robots
@@ -87,7 +87,7 @@ class Strategy(object):
                     Coms.reverse(200)
                     time.sleep(time_to_object)
                     Coms.stop()
-                elif robot0 == None && ball != None:
+                elif robot0 == None and ball != None:
                     print "Robot and ball not detected"
                 elif robot0 == None:
                     print "Robot not detected"
