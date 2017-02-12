@@ -130,6 +130,8 @@ class Strategy(object):
     def start(corner,start_x,start_y):
         Coms.start_comunications()
         starting_strategy = True
+        guess_x = start_x
+        guess_y = start_y
         while True:
             if starting_strategy:
                 starting_strategy = False
@@ -183,8 +185,16 @@ class Strategy(object):
                 curr_world = World.get_world()
 
                 ball = curr_world.ball
-                robots = curr_world.robots
-                robot0 = curr_world.robots[0]
-                robot1 = curr_world.robots[1]
-                robot2 = curr_world.robots[2]
-                robot3 = curr_world.robots[3]
+                robots_array = curr_world.robots
+                robot0 = robots_array[0]
+                robot1 = robots_array[1]
+                robot2 = robots_array[2]
+                robot3 = robots_array[3]
+
+                defense_mode = False
+                # Add conditions to change defense here
+
+                if defense_mode:
+                    # Defense
+                else:
+                    # Offense
