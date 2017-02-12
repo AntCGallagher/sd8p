@@ -27,26 +27,78 @@ class Strategy(object):
 
     @staticmethod
     def tests():
-        while True:
-            curr_world = World.get_world()
-            ball = curr_world.ball
-            robots = curr_world.robots
-            robot0 = curr_world.robots[0]
-            robot1 = curr_world.robots[1]
-            robot2 = curr_world.robots[2]
-            robot3 = curr_world.robots[3]
-            if robot0 != None:
-                print "Robot0: ", robot0.x , "  " , robot0.y
-            if robot1 != None:
-                print "Robot1: ", robot1.x , "  " , robot1.y
-            if robot2 != None:
-                print "Robot2: ", robot2.x , "  " , robot2.y
-            if robot3 != None:
-                print "Robot3: ", robot3.x , "  " , robot3.y
-            if ball != None:
-                print "Ball: " , ball.x , "  " , ball.y
-            print "\n"
-            time.sleep(4)
+        inp = ""
+        while inp != "done":
+            inp = raw_input("ping/goxy/go_robot_ball/turn ? (p/gxy/grb/t)")
+            if inp == "p"
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                robot1 = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                if robot0 != None:
+                    print "Robot0: ", robot0.x , "  " , robot0.y
+                if robot1 != None:
+                    print "Robot1: ", robot1.x , "  " , robot1.y
+                if robot2 != None:
+                    print "Robot2: ", robot2.x , "  " , robot2.y
+                if robot3 != None:
+                    print "Robot3: ", robot3.x , "  " , robot3.y
+                if ball != None:
+                    print "Ball: " , ball.x , "  " , ball.y
+                print "\n"
+            if inp == "gxy":
+                dest_x = float(raw_input("dest_x: "))
+                dest_y = float(raw_input("dest_y: "))
+                Coms.start_comunications()
+                Coms.stop()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None:
+                    C = namedtuple("C" , "x y")
+                    time_to_object = get_time_to_travel(robot0.x,dest_x,robot0.y,dest_y)
+                    angle_to_obj = us_to_obj_angle(robot0,C(dest_x,dest_y))
+                    print "robot: ", robot0.x, " ", robot0.y
+                    print "target: ", dest_x, " ", dest_y
+                    print "time: ", time_to_object, " angle: ", angle_to_obj
+                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    time.sleep(1.5)
+                    Coms.reverse(200)
+                    time.sleep(time_to_object)
+                    Coms.stop()
+                else:
+                    print "Robot not detected"
+            if inp == "grb":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    print "robot: ", robot0.x, " ", robot0.y
+                    print "ball: ", ball.x, " ", ball.y
+                    print "time: ", time_to_object, " angle: ", angle_to_obj
+                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    time.sleep(1.5)
+                    Coms.reverse(200)
+                    time.sleep(time_to_object)
+                    Coms.stop()
+                elif robot0 == None && ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
+            if inp == "t":
+                value = int(raw_input("angle to turn: "))
+                Coms.start_comunications()
+                Coms.turn(get_angle_to_send(value))
+                time.sleep(1.5)
+
 
     @staticmethod
     def stop():
@@ -67,7 +119,7 @@ class Strategy(object):
                 print "ball: ", ball.x, " ", ball.y
                 print "time: ", time_to_object, " angle: ", angle_to_obj
                 Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                time.sleep(5)
+                time.sleep(1.5)
                 Coms.reverse(200)
                 time.sleep(time_to_object)
                 Coms.stop()
@@ -184,89 +236,3 @@ class Strategy(object):
             Coms.reverse(1)
             time.sleep(1)
             Coms.stop()
-
-    @staticmethod
-    def ping_location():
-        curr_world = waitForWorld(False , requireBall = True , no_oponents = 0)
-        robot1 = curr_world.robots[0]
-        time.sleep(2)
-        print "Robot position: ", robot1.x , "  " , robot1.y
-
-    @staticmethod
-    def test_corner():
-        Coms.start_comunications()
-        curr_world = World.get_world()
-        robot1 = curr_world.robots[0]
-        C = namedtuple("C" , "x y")
-        angle_to_corner = us_to_obj_angle(robot1,C(TOPRIGX,TOPRIGY))
-        print "Angle: ", angle_to_corner
-        Coms.stop()
-        time.sleep(1)
-        Coms.stop()
-        time.sleep(1)
-        Coms.stop()
-        time.sleep(1)
-        Coms.turn(-angle_to_corner)
-        time.sleep(1)
-        Coms.stop()
-        time.sleep(1)
-        Coms.go()
-        time.sleep(3.3)
-        Coms.stop()
-        time.sleep(0.5)
-        Coms.reverse(1)
-        time.sleep(0.7)
-        Coms.stop()
-        time.sleep(1)
-
-
-    #Gets the right goal centers, tested
-    @staticmethod
-    def test_goal_center():
-        curr_world = World.get_world()
-        print curr_world.get_goal_center()
-
-    """
-            #Change strategy depending on the zone
-            if side == "left":
-                if ball_zone == 0 or ball_zone == 1:
-                    #Coms.turn(95)
-                    print "left zone 0 1"
-                else:
-                    #Coms.turn(190)
-                    print "left zone 2 3"
-            else:
-                if ball_zone == 0 or ball_zone == 1:
-                    #Coms.go()
-                    #time.sleep(1)
-                    #Coms.stop()
-                    print "right zone 0 1"
-                else:
-                    #Coms.kick(10)
-                    #Coms.stop()
-                    print "right zone 2 3"
-
-        #print angle
-    """
-
-
-
-"""
-        # Set up fields
-        owner = ball.owner
-        print ball
-        our_robot = curr_world.robots[1]
-        print our_robot
-        print owner
-        print "Angle"
-        print helpers.us_to_obj_angle(our_robot,ball)
-"""
-"""
-        # Pick your strategy depending on who has the ball
-        if self.owner == 0:
-            #implement get ball
-        elif self.owner == 1:
-            #implement shoot or pass
-        else:
-            #implement intercept
-"""

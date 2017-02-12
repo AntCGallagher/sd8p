@@ -397,7 +397,6 @@ def isBallStill():
 def waitForWorld(requireTeammate = False , requireBall = True , no_oponents = 0):
 	"""
 	Waits for a world model that fullfills the required conditions and returns that
-	CHANGED TO ROBOT1 FROM ROBOT0 LOOK LATER
 	"""
 	world = pp.world.World.get_world()
 	no_oponents = no_oponents if no_oponents <= 2 else 2
