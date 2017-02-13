@@ -1,8 +1,9 @@
 #include "hardware.h"
 #include "global.h"
 
+#include "SDPArduino.h"
+
 #include <Wire.h>
-#include <SDPArduino.h>
 
 void hardwareSetup() {
 
@@ -26,9 +27,13 @@ void hardwareSetup() {
  digitalWrite(8,HIGH); //Pin 8 must be high to turn the radio on!
  Serial.begin(115200); // Serial rate the radio is configured to.
  Wire.begin(); //Makes arduino master of the I2C line.
-
+ Serial.println(F("Wire"));
+ // CRASHES HERE
  greenMotorAllStop();
+ Serial.println(F("mStop"));
+ // ALSO CRASHES HERE
  resetMotorPositions();
+ Serial.println(F("mRes"));
 }
 
 /* MOTORS */
@@ -64,7 +69,13 @@ void printMotorPositions() {
 }
 
 void greenMotorAllStop() {
-  motorAllStop();
+  Serial.println(F("gas1"));
+  //motorAllStop();
+  for (int i=0; i < 5; i++) {
+   Serial.println(i);
+   motorStop(i);
+  }
+  Serial.println(F("gas2"));
 }
 
 // motorNo in range [1,8]

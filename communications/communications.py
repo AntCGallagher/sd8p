@@ -66,7 +66,7 @@ class Comms(object):
 
 	def send_messages(self):
 		# Open a new terminal
-		sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
+		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
 		while True:
 			if self.arduino_initialised:
@@ -110,7 +110,7 @@ class Comms(object):
 				joined = "".join(response)
 				print "@receive_messages", joined
 
-				if ("READY" in joined):
+				if ("$ARDRESET;" in joined):
 					print "Arduino ready!"
 					self.arduino_initialised = True
 
@@ -142,6 +142,8 @@ class Comms(object):
 		packed = msg.pack_message()
 		msg.set_transmit_time(time.time())
 		hashed = msg.hash(msg)
+
+		self.arduino_initalised = False
 
 		print "@send_messages", msg
 

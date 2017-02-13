@@ -55,12 +55,11 @@ void Comms::readSerial() {
    At each byte, check if it completes an instruction
    If so, interprets it and resets buffer
   */
-
   while (Serial.available() > 0) {
-
+    
     // read byte and add it to buffer
     byte inByte = Serial.read();
-
+    
     // software buffer overflow
     if (this->bufferPos >= BUFFER_SIZE) {
       Serial.println(F("Error: Comms software buffer overflow."));
@@ -111,6 +110,8 @@ void Comms::clearSerialBuffer() {
 void Comms::checkForCompleteCommand() {
   Command cmd;
   parseResult result = cmd.commandFromBytes(this->buffer, this->bufferPos);
+
+  //Serial.println(buffer[bufferPos]);
 
   if (result == TOO_SHORT)
     return;

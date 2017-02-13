@@ -1,9 +1,0 @@
-1_RESET
-$SUC&1;
-$ARDRESET;
-1_STOP
-ERRid
-1
-1
-$ERR&1;
-

@@ -1,9 +1,8 @@
-#include <SDPArduino.h>
-
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include <stdlib.h>
 
+#include "SDPArduino.h"
 #include "Comms.h"
 #include "Instruction.h"
 #include "MemoryFree.h"
@@ -14,6 +13,7 @@ unsigned long memPrintTimer;
 void setup() {
   hardwareSetup();
   
+  Serial.println(F("Boop"));
   // set instructions array to NULL pointers
   deleteAllInstructions();
 

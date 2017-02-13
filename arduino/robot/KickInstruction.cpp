@@ -1,4 +1,4 @@
-#include <SDPArduino.h>
+#include "SDPArduino.h"
 
 #include "KickInstruction.h"
 #include "PauseInstruction.h"
