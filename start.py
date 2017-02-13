@@ -30,7 +30,7 @@ if __name__ == "__main__" :
 
 
 	# If 1v1:
-	if (args.onevsone):
+	if (args.onevsone == 1):
 		object_count_pink = 0
 		object_count_green = 0
 		enemy_colour = raw_input("opponents primary colour : ")
@@ -83,7 +83,7 @@ if __name__ == "__main__" :
 		json_content["default"]["PITCH1"]["pink"]["object_count"] = 8
 		json_content["default"]["PITCH1"]["green"]["object_count"] = 8
 		tools.write_json(PATH+'/vision/calibrations/calibrations.json', json_content)
-		
+
 	# setup World model
 	World.set_colours(args.team , args.our)
 	pitch_number = int(args.pitch)
@@ -106,6 +106,12 @@ if __name__ == "__main__" :
 			while inp != "s" or inp != "t":
 				inp = raw_input("tests/start? (t/s): ")
 				if inp == "s":
-					Strategy.start()
+					corner = int(raw_input("Corner to start ((0,0) = 1 clockwise): "))
+					curr_x = int(raw_input("Current x: "))
+					curr_y = int(raw_input("Current y: "))
+					while inp != "y":
+				 		inp = raw_input("start? (y/n)")
+						if inp == "y":
+							Strategy.start(corner,curr_x,curr_y)					
 				if inp == "t":
 					Strategy.tests()
