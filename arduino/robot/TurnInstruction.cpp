@@ -97,6 +97,7 @@ bool TurnInstruction::progress() {
     greenMotorMove(LH_IDX, -80, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
     greenMotorMove(RH_IDX, 100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
     greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
+    Serial.print(F(" turning "));
   }
   
   
@@ -104,8 +105,8 @@ bool TurnInstruction::progress() {
   float totalClicksRequired = degToClicks(this->deg);
   float travelled = positions[REAR_IDX] + projectedAdditionalClicksFromSum(positions[REAR_IDX]);
   
-  //Serial.println(F("Travelled:"));
-  //Serial.print(travelled);
+  Serial.println(F("Travelled:"));
+  Serial.print(travelled);
   
   // keep effective timer of when a click occurs
   if (positions[REAR_IDX] != this->lastClicks) {
@@ -199,8 +200,8 @@ bool TurnInstruction::progress() {
     Serial.print(F("Estimating "));
     Serial.print(projectedAdditionalClicksFromSum(positions[REAR_IDX]));
     Serial.println(F(" extra clicks"));
-    if (smallTurnTimeElapsed)
-      Serial.println(F("Stopped based on time for small turn"));
+    //if (smallTurnTimeElapsed)
+      //Serial.println(F(StoppedSerial.print(F(" turning ")); based on time for small turn));
 #endif
   }
   

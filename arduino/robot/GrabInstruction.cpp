@@ -10,7 +10,7 @@
 // with params from a Command, and adds instruction to queue
 void GrabInstruction::initFromCommand(Command cmd) {
   GrabInstruction *grab = new GrabInstruction();
-  //grab->ungrab = (byteArrToUnsignedShort(cmd.params, 0) == 1);
+  grab->ungrab = (byteArrToUnsignedShort(cmd.params, 0) == 1);
   grab->cmdID = cmd.id;
   appendInstruction(grab);
 }
@@ -38,15 +38,20 @@ bool GrabInstruction::progress() {
     this->startTime = millis();
     // power the grabber motor forward or backward, depending on if this instruction
     // if a "grab" or "ungrab" instruction
-    //greenMotorMove(GREEN_GRABBER_IDX, (this->ungrab) ? 100 : -100, MOTOR_FWD);
+    //greenMotorMove(GRABBER_IDX, (this->ungrab) ? 100 : -100, MOTOR_FWD);
+   
+    Serial.print(this->ungrab);
+    
     if (this->ungrab) {
-      motorForward(GRABBER_IDX, 40);
-      //Serial.println("Ungrab true");
+      Serial.println("Ungrab");
+      motorForward(GRABBER_IDX, 60);
     }
     else {
-      motorBackward(GRABBER_IDX, 40);
+      Serial.println("Grab");
+      motorBackward(GRABBER_IDX, 60);
     }
-    delay(1000);
+
+    delay(300);
     motorStop(GRABBER_IDX);
   }
 

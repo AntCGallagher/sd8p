@@ -9,10 +9,12 @@
 #define GUARANTEED_TO_KICK (24/3)
 
 void KickInstruction::initFromCommand(Command cmd) {
+  updateMotorPositions();
   // kick
   KickInstruction *kick = new KickInstruction();
   //kick->strength = byteArrToUnsignedShort(cmd.params, 0);
   appendInstruction(kick);
+  positions[KICKER_IDX] = 0;
 }
 
 void KickInstruction::halt(void) {
@@ -25,8 +27,11 @@ void KickInstruction::halt(void) {
 
 bool KickInstruction::progress(void) {
   Serial.println("kicking");
-  greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
-  delay(2180);
+  //while(positions[KICKER_IDX] < 120){
+    greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
+    //Serial.println(F(positions[KICKER_IDX]));
+  //}
+  delay(1825);
   Serial.println("stopping");
   greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
   //motorBackward(GRABBER_IDX, 20);

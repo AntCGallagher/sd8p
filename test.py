@@ -35,12 +35,16 @@ if __name__ == "__main__" :
 	   		comms.stop()
 			deg = raw_input('Degrees: ')
 			comms.turn(deg)
+	   		comms.stop()
+			#deg = raw_input('Degrees: ')
+			comms.turn(90)
 		elif cmd == 'kick':
 			comms.stop()
 			comms.kick(10)
 		elif cmd == 'hasball':
 			pass
 		elif cmd == 'reverse':
+			comms.stop()
 			dist = raw_input('Distance???: ')
 			comms.reverse(dist)
 		elif cmd == 'abort':
@@ -52,6 +56,8 @@ if __name__ == "__main__" :
 			    comms.grab(ungrab=False)
 			else:
 			    comms.grab(ungrab=True)
+			comms.stop()
+			comms.grab(int(raw_input('1 to ungrab, 0 otherwise: ')))
 		elif cmd == 'prepkick':
 			pass
 		elif cmd == 'receive':

@@ -6,19 +6,7 @@
 #define REAR_IDX 2
 #define KICKER_IDX 3
 #define GRABBER_IDX 4
-//#define ROT_GRABBER_IDX 4
 
-// // "green" refers to lego-style motor board
-// // 1-4 are on board at address GREEN_ADDRESS_1_4
-// #define GREEN_ADDRESS_1_4 0x5A
-// #define GREEN_LH_IDX 1
-// #define GREEN_RH_IDX 2
-// #define GREEN_REAR_IDX 3
-// #define GREEN_FINGER_IDX 4
-// // 5-8 are on board at address GREEN_ADDRESS_5_8
-// #define GREEN_ADDRESS_5_8 0x50
-// #define GREEN_GRABBER_IDX 5
-//
 // // Arduino direct I/O
 // #define SONAR_GRABBER_TRIG 3
 // #define SONAR_GRABBER_ECHO A3
