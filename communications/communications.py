@@ -24,6 +24,9 @@ class Comms(object):
 			if (self.port != None):
 				break
 
+		if (self.port == None):
+			print "Serial not found!!"
+
 		# Create log directory if it doesn't already exist
 		if (not os.path.exists("communications/logs")):
 			os.mkdir("communications/logs")
@@ -40,6 +43,7 @@ class Comms(object):
 			return
 		except Exception:
 			return
+
 	def start(self):
 		if (not self.active):
 			self.active = True
@@ -54,7 +58,7 @@ class Comms(object):
 			receiver.daemon = True
 			receiver.start()
 
-			# Reset arduino communications. TO BE IMPLEMENTED
+			# Reset arduino communications
 			self.reset()
 		else:
 			print "Cannot start again as Comms already active!"
@@ -62,30 +66,34 @@ class Comms(object):
 
 	def send_messages(self):
 		# Open a new terminal
-		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
+		sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
 		while True:
-			try:
-				# Get message at the front of the queue
-				msg = self.messages.get(0)
-				print "@send_messages", msg
+			if self.arduino_initialised:
+				try:
+					# Get message at the front of the queue
+					msg = self.messages.get(0)
+					print "@send_messages", msg
 
-				# Write to file
-				with self.outputLock:
-					with open(self.outputFilename , "a" , False) as file:
-						file.write("@send_messages " + str(msg) + "\n")
+					# Write to file
+					with self.outputLock:
+						with open(self.outputFilename , "a" , False) as file:
+							file.write("@send_messages " + str(msg) + "\n")
 
-				# Pack and send message to arduino
-				packed = msg.pack_message()
-				msg.set_transmit_time(time.time())
+					# Pack and send message to arduino
+					packed = msg.pack_message()
+					msg.set_transmit_time(time.time())
+					hashed = msg.hash()
 
-				self.port.write(packed)
-				time.sleep(0.01)
+					self.port.write(packed)
+					self.port.write(hashed)
+					time.sleep(0.01)
 
-			except Exception, ex:
-				# In case of error, print exception details
-				pass
-
+				except Exception, ex:
+					# In case of error, print exception details
+					pass
+			else:
+				time.sleep(0.1)
 		else:
 			# Recheck every 100ms
 			time.sleep(0.1)
@@ -102,6 +110,10 @@ class Comms(object):
 				joined = "".join(response)
 				print "@receive_messages", joined
 
+				if ("READY" in joined):
+					print "Arduino ready!"
+					self.arduino_initialised = True
+
 				# Print response to log
 				with self.outputLock:
 					with open(self.outputFilename, "a", False) as file:
@@ -116,8 +128,8 @@ class Comms(object):
 			# Try again every 10ms
 			time.sleep(0.01)
 
-	# name : string, params : int[]
-	def add_message(self, name, params):
+	# name : string, params : int[], params is optional, has default [] (no parameters)
+	def add_message(self, name, params=[]):
 		# Iterate current message_id
 		self.message_id = self.message_id + 1
 		msg = Message(self.message_id, name, params)
@@ -125,20 +137,81 @@ class Comms(object):
 
 	def reset(self):
 		self.messages = Queue()
-		self.add_message("RESET", [])
+		# Create a reset message
+		msg = Message(1, "RESET", [])
+		packed = msg.pack_message()
+		msg.set_transmit_time(time.time())
+		hashed = msg.hash(msg)
+
+		print "@send_messages", msg
+
+		# Write to file
+		with self.outputLock:
+			with open(self.outputFilename , "a" , False) as file:
+				file.write("@send_messages " + str(msg) + "\n")
+
+		self.port.write(packed)
+		self.port.write(hashed)
 		self.message_id=0
 
-# Create and start a Comms object
-comms = Comms()
-comms.start()
+	def stop(self):
+		self.add_message("STOP")
 
-time.sleep(2)
-# Queue a stop message
-# comms.add_message("GO", [])
-# comms.add_message("STOP", [])
-comms.add_message("GO", [])
-# time.sleep(2)
-# comms.add_message("STOP", [])
+	# timestamp : int, robot_x : int, robot_y : int, robot_h : int
+	def updatewm(self, timestamp, robot_x, robot_y, robot_h):
+		params = [timestamp, robot_x, robot_y, robot_h]
+		self.add_message("UPDATEWM", params)
 
-while True:
-	pass
+	def go(self):
+		self.add_message("GO")
+
+	# x_from : int, y_from : int, h_from : int, x_to : int, y_to : int
+	def goxy(self, x_from , y_from, h_from , x_to , y_to):
+		params = [x_from, y_from, h_from, x_to, y_to]
+		self.add_message("GOXY", params)
+
+	# x_from : int, y_from : int, h_from : int, x_to : int, y_to : int
+	def getball(self, x_from , y_from , h_from, x_to , y_to):
+		params = [x_from, y_from, h_from, x_to, y_to]
+		self.add_message("GETBALL", params)
+
+	# orig_id : int, new_x : int, new_y : int
+	def retarg(self, orig_id, new_x, new_y):
+		params = [orig_id, new_x, new_y]
+		self.add_message("RETARG", params)
+
+	# deg : int, corrections : int
+	def turn(self, deg, corrections = 0):
+		params = [deg, corrections]
+		self.add_message("TURN", params)
+
+	# ungrab : bool
+	def grab(self, ungrab):
+		params = [1 if ungrab else 0]
+		self.add_message("GRAB", params)
+
+	# timeout : int
+	def receive(self, timeout):
+		params = [timeout]
+		self.add_message("RECEIVE", params)
+
+	# strength : int
+	def prepkick(self, strength=1):
+		params = [strength]
+		self.add_message("PREPKICK", params)
+
+	# strength : int
+	def kick(self, strength=1):
+		params = [strength]
+		self.add_message("KICK", params)
+
+	def abort(self):
+		self.add_message("ABORT")
+
+	# dist : int
+	def reverse(self, dist):
+		params = [dist]
+		self.add_message("REVERSE", params)
+
+	def hasball(self):
+		self.add_message("HASBALL")

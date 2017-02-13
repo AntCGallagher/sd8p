@@ -1,17 +1,17 @@
-import struct
+from struct import pack
 
 # [ID - 2 bytes][opcode - 1 byte][params - variable length][hash - 2 bytes]
 opcodes = {
-	"RESET":1,
-	"STOP":2,
+	"RESET": 1,
+	"STOP": 2,
 	"UPDATEWM": 3,
 	"GO": 4,
-	"GOXY":5,
-	"GETBALL" : 6,
-	"TURN":7,
-	"GRAB":8,
-	"RECEIVE": 9,
-	"PREPKICK":10,
+	"GOXY": 5,
+	"GETBALL": 6,
+	"TURN": 7,
+	"GRAB": 8,
+	"RECEIVE" : 9,
+	"PREPKICK": 10,
 	"KICK": 11,
 	"REVERSE": 12,
 	"ABORT": 13,
@@ -37,9 +37,22 @@ class Message(object):
 	# pack() : byte[]
 	def pack_message(self):
 		# Details of the formatting can be found at https://docs.python.org/2/library/struct.html
-		if (self.op in [1,2,4]):
-			# Op codes 1,2,4 take None as args
-			packed = struct.pack(">HB", self.id, self.op)
+		if (self.op in [1,2,4,13,14]):
+			packed = pack(">HB", self.id, self.op)
+		elif (self.op in [3]):
+			packed = pack(">HBIhhh", self.id, self.op, self.params[0], self.params[1], self.params[2], self.params[3])
+		elif (self.op in [5,6]):
+			packed = pack(">HBhhhhh", self.id, self.op, self.params[0], self.params[1], self.params[2], self.params[3], self.params[4])
+		elif (self.op in [7]):
+			packed = pack(">HBHhh", self.id, self.op, self.params[0], self.params[1], self.params[2])
+		elif (self.op in [8,10,11]):
+			packed = pack(">HBB", self.id, self.op, self.params[0])
+		elif (self.op in [9]):
+			packed = pack(">HBI", self.id, self.op, self.params[0])
+		elif (self.op in [12]):
+			packed = pack(">HBH", self.id, self.op, self.params[0])
+		elif (self.op in [15]):
+			packed = pack(">HBHhh", self.id, self.op, self.params[0], self.params[1], self.params[2])
 
 		return packed
 
@@ -47,13 +60,13 @@ class Message(object):
 	def set_transmit_time(self, transmit_time):
 		self.trans = transmit_time
 	
-	# hash(packed_msg : string) : string
+	# hash(packed_msg : string) : byte[]
 	def hash(self, packed_msg):
-		b = bytes(msg)
+		b = bytes(packed_msg)
 		val = 0
 		for by in list(b):
 			val = val + ord(by)
-		return struct.pack(">H", val)
+		return pack(">H", val)
 
 	# __str__() : string
 	def __str__(self):
