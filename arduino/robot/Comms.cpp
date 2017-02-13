@@ -326,6 +326,7 @@ void Command::instantiateInstruction() {
       GetBallInstruction::initFromCommand(*this);
       break;
     case TURN:
+      Serial.println(F(" init turn "));
       TurnInstruction::initFromCommand(*this);
       break;
     case KICK:
@@ -342,4 +343,3 @@ void Command::instantiateInstruction() {
       break;
   }
 }
-

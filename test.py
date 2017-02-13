@@ -32,25 +32,22 @@ if __name__ == "__main__" :
 			Coms.goxy(fX, fY, h, tX, tY)
 		elif cmd == 'turn':
 	   		Coms.stop()
-			deg = raw_input('Degrees: ')
-			Coms.turn(deg)
+			#deg = raw_input('Degrees: ')
+			Coms.turn(90)
 		elif cmd == 'kick':
 			Coms.stop()
 			Coms.kick(10)
 		elif cmd == 'hasball':
 			pass
 		elif cmd == 'reverse':
+			Coms.stop()
 			dist = raw_input('Distance???: ')
 			Coms.reverse(dist)
 		elif cmd == 'abort':
 			Coms.abort()
 		elif cmd == 'grab':
-			grab = raw_input('0 to grab 1 otherwise: ')
-			# Coms.grab(grab)
-			if grab == 0:
-			    Coms.grab(ungrab=False)
-			else:
-			    Coms.grab(ungrab=True)
+			Coms.stop()
+			Coms.grab(int(raw_input('1 to ungrab, 0 otherwise: ')))
 		elif cmd == 'prepkick':
 			pass
 		elif cmd == 'receive':

@@ -84,8 +84,8 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
    motorPower = 100;
 
  //adapting the code base to work with the motor board we are using
- if(dir == MOTOR_FWD) motorBackward(motorNum, motorPower);
- else if (dir == MOTOR_BWD) motorForward(motorNum, motorPower);
+ if(dir == MOTOR_FWD) motorForward(motorNum, motorPower);
+ else if (dir == MOTOR_BWD) motorBackward(motorNum, motorPower);
  //float break and normal break are treated the same way
  else if (dir == MOTOR_FLOAT)
    motorStop(motorNum);

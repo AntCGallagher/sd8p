@@ -26,16 +26,16 @@ void setup() {
   
   motorAllStop();
 }
-/*
-void loop() {
-  //Serial.println("Left motor") ;
-  motorForward(GRABBER_IDX, 20);
+
+/*void loop() {
+  Serial.println("Rear motor") ;
+  motorForward(REAR_IDX, 100);
   delay(200);
-  motorStop(GRABBER_IDX);
+  motorStop(REAR_IDX);
   delay(1000);
-  motorBackward(GRABBER_IDX, 20);
+  motorBackward(REAR_IDX, 100);
   delay(150);
-  motorStop(GRABBER_IDX);
+  motorStop(REAR_IDX);
   delay(1000);
   //greenMotorMove(GRABBER_IDX, 100, MOTOR_FWD);
 //  delay(500);
