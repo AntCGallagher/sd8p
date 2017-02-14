@@ -109,9 +109,10 @@ if __name__ == "__main__" :
 					corner = int(raw_input("Corner to start ((0,0) = 1 clockwise): "))
 					curr_x = int(raw_input("Current x: "))
 					curr_y = int(raw_input("Current y: "))
+					start_strat = int(raw_input("Blitz?: "))
 					while inp != "y":
 				 		inp = raw_input("start? (y/n)")
 						if inp == "y":
-							Strategy.start(corner,curr_x,curr_y)					
+							Strategy.start(corner,curr_x,curr_y,start_strat)
 				if inp == "t":
 					Strategy.tests()
