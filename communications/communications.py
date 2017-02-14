@@ -66,14 +66,14 @@ class Comms(object):
 
 	def send_messages(self):
 		# Open a new terminal
-		# sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
+		sp.Popen("cd " + os.getcwd() + """ && gnome-terminal --tab -e "tailf """ + self.outputFilename + """ "   """ , shell=True)
 		# Loop indefinitely
 		while True:
 			if self.arduino_initialised:
 				try:
 					# Get message at the front of the queue
 					msg = self.messages.get(0)
-					print "@send_messages", msg
+					#print "@send_messages", msg
 
 					# Write to file
 					with self.outputLock:
@@ -108,7 +108,7 @@ class Comms(object):
 			if response:
 				# Convert sequence of bytes to string
 				joined = "".join(response)
-				print "@receive_messages", joined
+				#print "@receive_messages", joined
 
 				if ("$ARDRESET;" in joined):
 					print "Arduino ready!"

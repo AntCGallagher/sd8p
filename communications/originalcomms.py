@@ -127,7 +127,7 @@ class Coms(object):
 
 	@staticmethod
 	def reset_dict(self):
-		Coms.com.mess_id = 1
+		Coms.com.mess_id = 2
 		return Coms.com.messages_sent.clear()
 
 	@staticmethod
@@ -360,7 +360,7 @@ class Coms(object):
 			print "Arduino just reset"
 			# empty dictionary and reset ID
 			Coms.com.messages_sent = dict()
-			Coms.com.mess_id = 1
+			Coms.com.mess_id = 2
 		elif cmdName == "COMP":
 			if len(cmdParams) > 1 :
 				print "Arduino completed command id ",cmdParams[0]," with success ",cmdParams[1]

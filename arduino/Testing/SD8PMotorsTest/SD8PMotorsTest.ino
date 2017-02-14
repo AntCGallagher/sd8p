@@ -1,9 +1,15 @@
 #include <Wire.h>
-#include <SDPArduino.h>
+#include "SDPArduino.h"
 
 void setup(){
   SDPsetup();
   helloWorld();
+}
+
+void loop(){
+  runAllMotors();
+  //testKicker(100);
+  //goFw();
 }
 
 void runAllMotors(){
@@ -13,6 +19,7 @@ void runAllMotors(){
   motorForward(2, 50);
   motorForward(3, 50);
   delay(2500);
+  Serial.println("Stopping all motors");
   motorAllStop();
 }
 
@@ -34,8 +41,3 @@ void goFw(){
   delay(2500);
 }
 
-void loop(){
-  //runAllMotors();
-  //testKicker(100);
-  goFw();
-}

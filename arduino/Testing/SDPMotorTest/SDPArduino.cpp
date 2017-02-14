@@ -84,7 +84,7 @@ void motorAllStop() {
   byte allStop = 1;				//Motor Board stops all motors if bit 0 is high.
   uint8_t sender[1] = {allStop};
   Wire.beginTransmission(MotorBoardI2CAddress); //open I2C communation to Motor Board.
-  Wire.write(sender,1);   			// sends a byte
+  Wire.write(sender,1);        			// sends a byte
   byte fred = Wire.endTransmission();		//end I2C commucation.
 }
 

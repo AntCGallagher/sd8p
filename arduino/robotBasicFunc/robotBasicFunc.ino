@@ -1,77 +1,41 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include <stdlib.h>
+#include <math.h>
 
-#include "SDPArduino.h"
+#include "WorldModel.h"
+#include "hardware.h"
 #include "Comms.h"
 #include "Instruction.h"
+//#include "GrabInstruction.h"
+//#include "ReceiveInstruction.h"
 #include "MemoryFree.h"
+#include "SDPArduino.h"
 
-Comms comms;
 unsigned long memPrintTimer;
+Comms comms;
 
 void setup() {
+  
   hardwareSetup();
-
+  
   // set instructions array to NULL pointers
   deleteAllInstructions();
 
   memPrintTimer = millis();
   
+  resetWorldModel();
+  
   // let PC know we've started up and to send commands with ID starting at 1
   comms.sendArdReset();
   
-  Serial.print(F("READY")) ;
+  Serial.println(F("READY")) ;
   
   motorAllStop();
 }
 
-/*
 void loop() {
-  greenMotorMove(RH_IDX, 70, MOTOR_BWD); 
-  greenMotorMove(LH_IDX, 70, MOTOR_BWD);  
-  delay(2000);
-  motorAllStop();
-  updateMotorPositions();
-  printMotorPositions();
-  delay(1000);
-  greenMotorMove(RH_IDX, 70, MOTOR_FWD); 
-  greenMotorMove(LH_IDX, 70, MOTOR_FWD);  
-  delay(2000);
-  motorAllStop();
-  updateMotorPositions();
-  printMotorPositions();
-  delay(1000);
-}
-
-
-void loop() {
-  //int IDX = REAR_IDX;
-  //Serial.println("Rear motor") ;
-  //motorStop(IDX);
-  //Serial.print(positions[LH_IDX]);
-  //Serial.print(" ");
-  //Serial.println(positions[RH_IDX]);
-  //delay(1000);
-  //greenMotorMove(RH_IDX, 50, MOTOR_FWD);  
-  //greenMotorMove(LH_IDX, 50, MOTOR_FWD);  
-  //greenMotorMove(REAR_IDX, 100, MOTOR_FWD);  
-  //delay(2000);
-  //motorForward(1, 100);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 0, MOTOR_BRAKE);
-//  greenMotorMove(RH_IDX, 0, MOTOR_BRAKE);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 100, MOTOR_BWD);
-//  greenMotorMove(RH_IDX, 100, MOTOR_BWD);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 0, MOTOR_BRAKE);
-//  greenMotorMove(RH_IDX, 0, MOTOR_BRAKE);
-//  delay(500);
-}*/
-
-
-void loop() {
+  
   // calls progress method on instruction at index 0
   progressInstruction();
   
@@ -88,6 +52,8 @@ void loop() {
   }
 }
 
+
+/* Helper methods */
 
 // converts single byte to int
 int byteArrToUnsignedShort(byte arr[], int firstByteIdx) {
@@ -187,7 +153,7 @@ int pointToPointDistance(Point a, Point b) {
 }
 
 
-// Printing 
+/* Printing */
 
 #define IGNORE_PRINTS false
 
@@ -298,8 +264,6 @@ void print(bool b) {
     return;
   Serial.print(b);
 }
-
- /* END */
 
 
 

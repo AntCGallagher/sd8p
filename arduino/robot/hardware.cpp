@@ -27,13 +27,8 @@ void hardwareSetup() {
  digitalWrite(8,HIGH); //Pin 8 must be high to turn the radio on!
  Serial.begin(115200); // Serial rate the radio is configured to.
  Wire.begin(); //Makes arduino master of the I2C line.
- Serial.println(F("Wire"));
- // CRASHES HERE
  greenMotorAllStop();
- Serial.println(F("mStop"));
- // ALSO CRASHES HERE
  resetMotorPositions();
- Serial.println(F("mRes"));
 }
 
 /* MOTORS */
@@ -41,41 +36,39 @@ void hardwareSetup() {
 long int positions[ROTARY_COUNT] = {0};
 
 void updateMotorPositions() {
- // Request motor position deltas from rotary slave board
-
- Wire.requestFrom(ROTARY_SLAVE_ADDRESS, ROTARY_COUNT);
-
- // Update the recorded motor positions
- int i ;
-
- for (i = 0; i < ROTARY_COUNT; i++) {
-   positions[i] += (int8_t) Wire.read();  // Must cast to signed 8-bit type
- }
+  // Request motor position deltas from rotary slave board
+  
+  Wire.requestFrom(ROTARY_SLAVE_ADDRESS, ROTARY_COUNT);
+  
+  // Update the recorded motor positions
+  //Serial.print(Wire.available());
+  while (Wire.available()) {
+    //Serial.print((int8_t) Wire.read());
+    //Serial.print(F(", "));
+    //Serial.println();
+    for (int i = 0; i < ROTARY_COUNT; i++) {
+      positions[i] += (int8_t) Wire.read();  // Must cast to signed 8-bit type
+    }
+  }
 }
 
 void resetMotorPositions() {
- updateMotorPositions() ;
- memset(positions , 0 , sizeof(positions)) ;
+  updateMotorPositions() ;
+  memset(positions , 0 , sizeof(positions)) ;
 }
 
 void printMotorPositions() {
- print("Motor positions: ");
- int i ;
- for ( i = 0; i < ROTARY_COUNT; i++) {
-   print(positions[i]);
-   print(" ");
- }
- println("");
+  Serial.print("Motor positions: ");
+  int i ;
+  for ( i = 0; i < ROTARY_COUNT; i++) {
+    Serial.print(positions[i]);
+    Serial.print(" ");
+  }
+  Serial.println("");
 }
 
 void greenMotorAllStop() {
-  Serial.println(F("gas1"));
-  //motorAllStop();
-  for (int i=0; i < 5; i++) {
-   Serial.println(i);
-   motorStop(i);
-  }
-  Serial.println(F("gas2"));
+  motorAllStop();
 }
 
 // motorNo in range [1,8]
@@ -83,7 +76,7 @@ void greenMotorAllStop() {
 // dir: 0 float, 1 fwd, 2 bckw, 3 brake
 void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
 
- if (motorNum > 3 || motorNum < 0)
+ if (motorNum > 6 || motorNum < 0)
    return;
 
  if (motorPower < 0) {
@@ -93,6 +86,15 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  }
  if (motorPower > 100)
    motorPower = 100;
+   
+ if (motorNum == LH_IDX){
+   if (dir == MOTOR_FWD) dir = MOTOR_BWD;
+   else if (dir == MOTOR_BWD) dir = MOTOR_FWD;
+ }
+ 
+ if (motorNum == RH_IDX){
+   motorPower = motorPower*97/100;
+ }
 
  //adapting the code base to work with the motor board we are using
  if(dir == MOTOR_FWD) motorForward(motorNum, motorPower);

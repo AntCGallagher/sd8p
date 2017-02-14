@@ -1,5 +1,7 @@
 #include "TurnInstruction.h"
 #include "global.h"
+#include "hardware.h"
+#include "SDPArduino.h"
 
 // used for SpeedRecorder
 #define CLICKS_TIME_PERIOD 30 // ms
@@ -93,20 +95,18 @@ bool TurnInstruction::progress() {
     Serial.print(this->deg);
     Serial.println(F(" deg)"));
 #endif
+
+    greenMotorMove(LH_IDX, -50, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(RH_IDX, 50, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
     
-    greenMotorMove(LH_IDX, -80, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(RH_IDX, 100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    Serial.print(F(" turning "));
   }
-  
-  
   
   float totalClicksRequired = degToClicks(this->deg);
   float travelled = positions[REAR_IDX] + projectedAdditionalClicksFromSum(positions[REAR_IDX]);
   
-  Serial.println(F("Travelled:"));
-  Serial.print(travelled);
+  //Serial.print(F("Travelled:"));
+  //Serial.println(travelled);
   
   // keep effective timer of when a click occurs
   if (positions[REAR_IDX] != this->lastClicks) {
@@ -136,19 +136,23 @@ bool TurnInstruction::progress() {
       Serial.println(F(" deg)"));
 #endif
       
-      float miss = totalClicksRequired - positions[REAR_IDX];
-      if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
-        TurnInstruction *nextTurn = new TurnInstruction();
-        nextTurn->deg = clicksToDeg(miss);
-        nextTurn->correctionsRemaining = this->correctionsRemaining - 1;
-        insertInstruction(nextTurn, 1);
-      } else {
-        // let PC know we're done
-        if (this->cmdID > -1) {
+//      float miss = totalClicksRequired - positions[REAR_IDX];
+//      if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
+//        TurnInstruction *nextTurn = new TurnInstruction();
+//        nextTurn->deg = clicksToDeg(miss);
+//        nextTurn->correctionsRemaining = this->correctionsRemaining - 1;
+//        insertInstruction(nextTurn, 1);
+//      } else {
+//        // let PC know we're done
+//        if (this->cmdID > -1) {
+//          comms.sendInstructionComplete(this->cmdID);
+//          this->cmdID = -1;
+//        } 
+//      }
+      if (this->cmdID > -1) {
           comms.sendInstructionComplete(this->cmdID);
           this->cmdID = -1;
         } 
-      }
       return true;
     }
     return false;
@@ -181,7 +185,7 @@ bool TurnInstruction::progress() {
   }
   
   // check if complete - either by clicks or by duration (small turns only)
-  if ((/*signsEqual && */abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
+  if ((signsEqual && abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
     
     this->brakeTime = millis();
     this->braking = true;
@@ -197,9 +201,9 @@ bool TurnInstruction::progress() {
     Serial.print(F(" clicks ("));
     Serial.print(clicksToDeg(clicksAtBrake));
     Serial.println(F(" deg)"));
-    Serial.print(F("Estimating "));
-    Serial.print(projectedAdditionalClicksFromSum(positions[REAR_IDX]));
-    Serial.println(F(" extra clicks"));
+    //Serial.print(F("Estimating "));
+    //Serial.print((positions[REAR_IDX]));
+    //Serial.println(F(" extra clicks"));
     //if (smallTurnTimeElapsed)
       //Serial.println(F(StoppedSerial.print(F(" turning ")); based on time for small turn));
 #endif
