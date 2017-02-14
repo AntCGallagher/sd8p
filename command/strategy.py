@@ -135,6 +135,7 @@ class Strategy(object):
         starting_strategy = True
         guess_x = start_x
         guess_y = start_y
+        guess_rot = 0
         while True:
             if starting_strategy:
                 starting_strategy = False
@@ -183,6 +184,9 @@ class Strategy(object):
                         comms.reverse(200)
                         time.sleep(time_to_mid)
                         comms.stop()
+                guess_x = MIDX
+                guess_y = MIDY
+                guess_rot = 0
             else:
                 # Normal strategy here
                 curr_world = World.get_world()
@@ -196,3 +200,58 @@ class Strategy(object):
 
                 defense_mode = False
                 # Add conditions to change defense here
+                if defense_mode:
+                    defense_mode = False
+                else:
+                    if robot0 != None and ball != None:
+                        guess_x = robot0.x
+                        guess_y = robot0.y
+                        guess_rot = robot0.rot
+                        C = namedtuple("C" , "x y")
+                        time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                        angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                        print "robot: ", robot0.x, " ", robot0.y
+                        print "ball: ", ball.x, " ", ball.y
+                        print "time: ", time_to_object, " angle: ", angle_to_obj
+                        print "\n"
+                        comms.turn(get_angle_to_send(int(angle_to_obj)))
+                        time.sleep(1.5)
+                        comms.reverse(200)
+                        time.sleep(time_to_object)
+                        comms.stop()
+                        guess_x = ball.x
+                        guess_y = ball.y
+                        guess_rot = robot0.rot + angle_to_obj
+                    elif robot0 == None:
+                        if World.our_side == "Left":
+                            C = namedtuple("C" , "x y")
+                            robot_temp = World.Robot(guess_x,guess_y,guess_rot,0,0,0)
+                            time_to_object = get_time_to_travel(guess_x,CORNER14X,guess_y,CORNER14Y)
+                            angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER14X,CORNER14Y))
+                            print "robot: ", guess_x, " ", guess_y
+                            print "time: ", time_to_object, " angle: ", angle_to_obj
+                            print "\n"
+                            comms.turn(get_angle_to_send(int(angle_to_obj)))
+                            time.sleep(1.5)
+                            comms.reverse(200)
+                            time.sleep(time_to_object)
+                            comms.stop()
+                            guess_x = CORNER14X
+                            guess_y = CORNER14Y
+                            guess_rot = robot_temp.rot + angle_to_obj
+                        else:
+                            C = namedtuple("C" , "x y")
+                            robot_temp = World.Robot(guess_x,guess_y,guess_rot,0,0,0)
+                            time_to_object = get_time_to_travel(guess_x,CORNER23X,guess_y,CORNER23Y)
+                            angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER23X,CORNER23Y))
+                            print "robot: ", guess_x, " ", guess_y
+                            print "time: ", time_to_object, " angle: ", angle_to_obj
+                            print "\n"
+                            comms.turn(get_angle_to_send(int(angle_to_obj)))
+                            time.sleep(1.5)
+                            comms.reverse(200)
+                            time.sleep(time_to_object)
+                            comms.stop()
+                            guess_x = CORNER23X
+                            guess_y = CORNER23Y
+                            guess_rot = robot_temp.rot + angle_to_obj
