@@ -24,7 +24,7 @@ CORNER14Y = 108
 CORNER23X = 250
 CORNER23Y = 108
 MIDX = 160
-MIDY 108
+MIDY = 108
 
 
 class Strategy(object):
@@ -196,8 +196,3 @@ class Strategy(object):
 
                 defense_mode = False
                 # Add conditions to change defense here
-
-                if defense_mode:
-                    # Defense
-                else:
-                    # Offense
