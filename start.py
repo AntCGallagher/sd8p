@@ -30,7 +30,7 @@ if __name__ == "__main__" :
 
 
 	# If 1v1:
-	if (args.onevsone == 1):
+	if (int(args.onevsone) == 1):
 		object_count_pink = 0
 		object_count_green = 0
 		enemy_colour = raw_input("opponents primary colour : ")

@@ -134,10 +134,12 @@ class Strategy(object):
             if inp == "turntest2":
                 Coms.start_comunications()
                 time.sleep(1)
-                inp = float(raw_input("value to sleep: "))
-                time_to_turn = get_time_to_angle(inp)
-                Coms.turn(100)
-                time.sleep(inp)
+                Coms.grab(1)
+                time.sleep(1)
+                Coms.grab(0)
+                time.sleep(1)
+                Coms.kick(10)
+                time.sleep(1)
                 Coms.stop()
 
     @staticmethod
@@ -151,6 +153,7 @@ class Strategy(object):
         Coms.start_comunications()
         time.sleep(1)
         while True:
+            time.sleep(0.4)
             curr_world = World.get_world()
 
             ball = curr_world.ball
@@ -160,23 +163,60 @@ class Strategy(object):
             robot2 = robots_array[2]
             robot3 = robots_array[3]
 
-            if robot0 != None and ball != None:
-                time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
-                C = namedtuple("C" , "x y")
-                angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                time_to_turn = get_time_to_angle(angle_to_obj)
-                Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                time.sleep(time_to_turn)
-                Coms.stop()
-                time.sleep(0.3)
-                Coms.reverse(200)
-                time.sleep(time_to_object)
-            	Coms.kick(10)
-                Coms.stop()
-            else:
-                Coms.reverse(200)
+            if robot0 == None:
+                print "Going back"
+                Coms.reverse(1000)
                 time.sleep(1)
                 Coms.stop()
+                time.sleep(0.3)
+            if robot0 != None and ball != None:
+                print "Main loop"
+                if robot0.y > 194 or robot0.x > 265 or robot0.y < 30 or robot0.x < 40:
+                    print "Close to wall"
+                    Coms.reverse(1000)
+                    time.sleep(1)
+                    Coms.stop()
+                    Coms.turn(100)
+                    time.sleep(1.2)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.go()
+                    time.sleep(3)
+                    Coms.stop()
+                else:
+                    print "Normal strat"
+                    time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    time_to_turn = get_time_to_angle(angle_to_obj)
+                    print "angle to obj: ", angle_to_obj, "time to turn: ", time_to_turn
+                    Coms.grab(0)
+                    time.sleep(0.5)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.turn(100)
+                    time.sleep(time_to_turn)
+                    Coms.stop()
+                    time.sleep(0.3)
+                    Coms.go()
+                    time.sleep(time_to_object-0.05)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(0)
+                    time.sleep(1)
+                    Coms.kick(10)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+
 """
         Coms.start_comunications()
         time.sleep(1)
