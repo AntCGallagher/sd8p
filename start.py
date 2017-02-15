@@ -30,7 +30,7 @@ if __name__ == "__main__" :
 
 
 	# If 1v1:
-	if (args.onevsone == 1):
+	if (int(args.onevsone) == 1):
 		object_count_pink = 0
 		object_count_green = 0
 		enemy_colour = raw_input("opponents primary colour : ")
@@ -109,7 +109,7 @@ if __name__ == "__main__" :
 					corner = int(raw_input("Corner to start ((0,0) = 1 clockwise): "))
 					curr_x = int(raw_input("Current x: "))
 					curr_y = int(raw_input("Current y: "))
-					start_strat = int(raw_input("Blitz?: "))
+					start_strat = raw_input("Blitz?: ")
 					while inp != "y":
 				 		inp = raw_input("start? (y/n)")
 						if inp == "y":

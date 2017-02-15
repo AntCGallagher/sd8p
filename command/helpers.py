@@ -36,9 +36,15 @@ def ball_close(robot,ball):
 
 def get_angle_to_send(angle):
 	if angle < 40:
-		return int(round((((360+angle)+22.7916)/0.909408)));
+		return int(round((((360+angle)+22.7916)/0.909408)))
 	else:
-		return int(round(((angle+22.7916)/0.909408)));
+		return int(round(((angle+22.7916)/0.909408)))
+
+def get_time_to_angle(angle):
+	if angle < 40:
+		return (((angle+42.6+360)/159.6))
+	else:
+		return (((angle+42.6)/159.6))
 
 def get_time_to_travel(x_curr, x_dest, y_curr, y_dest):
 	distance = math.sqrt(math.pow(x_curr - x_dest,2) + math.pow(y_curr - y_dest,2))
