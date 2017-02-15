@@ -41,14 +41,8 @@ void updateMotorPositions() {
   Wire.requestFrom(ROTARY_SLAVE_ADDRESS, ROTARY_COUNT);
   
   // Update the recorded motor positions
-  //Serial.print(Wire.available());
-  while (Wire.available()) {
-    //Serial.print((int8_t) Wire.read());
-    //Serial.print(F(", "));
-    //Serial.println();
-    for (int i = 0; i < ROTARY_COUNT; i++) {
-      positions[i] += (int8_t) Wire.read();  // Must cast to signed 8-bit type
-    }
+  for (int i = 0; i < ROTARY_COUNT; i++) {
+    positions[i] += (int8_t) Wire.read();  // Must cast to signed 8-bit type
   }
 }
 
@@ -87,10 +81,10 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  if (motorPower > 100)
    motorPower = 100;
    
- if (motorNum == LH_IDX){
-   if (dir == MOTOR_FWD) dir = MOTOR_BWD;
-   else if (dir == MOTOR_BWD) dir = MOTOR_FWD;
- }
+ //if (motorNum == LH_IDX){
+   //if (dir == MOTOR_FWD) dir = MOTOR_BWD;
+   //else if (dir == MOTOR_BWD) dir = MOTOR_FWD;
+ //}
  
  if (motorNum == RH_IDX){
    motorPower = motorPower*97/100;

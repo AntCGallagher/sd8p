@@ -28,46 +28,20 @@ void setup() {
 
 /*
 void loop() {
-  greenMotorMove(RH_IDX, 70, MOTOR_BWD); 
-  greenMotorMove(LH_IDX, 70, MOTOR_BWD);  
+  ///greenMotorMove(RH_IDX, 70, MOTOR_BWD);
+  //greenMotorMove(LH_IDX, 70, MOTOR_BWD);
   delay(2000);
   motorAllStop();
   updateMotorPositions();
   printMotorPositions();
   delay(1000);
-  greenMotorMove(RH_IDX, 70, MOTOR_FWD); 
-  greenMotorMove(LH_IDX, 70, MOTOR_FWD);  
+  //greenMotorMove(RH_IDX, 70, MOTOR_FWD);
+  //greenMotorMove(LH_IDX, 70, MOTOR_FWD);
   delay(2000);
   motorAllStop();
   updateMotorPositions();
   printMotorPositions();
   delay(1000);
-}
-
-
-void loop() {
-  //int IDX = REAR_IDX;
-  //Serial.println("Rear motor") ;
-  //motorStop(IDX);
-  //Serial.print(positions[LH_IDX]);
-  //Serial.print(" ");
-  //Serial.println(positions[RH_IDX]);
-  //delay(1000);
-  //greenMotorMove(RH_IDX, 50, MOTOR_FWD);  
-  //greenMotorMove(LH_IDX, 50, MOTOR_FWD);  
-  //greenMotorMove(REAR_IDX, 100, MOTOR_FWD);  
-  //delay(2000);
-  //motorForward(1, 100);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 0, MOTOR_BRAKE);
-//  greenMotorMove(RH_IDX, 0, MOTOR_BRAKE);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 100, MOTOR_BWD);
-//  greenMotorMove(RH_IDX, 100, MOTOR_BWD);
-//  delay(500);
-//  greenMotorMove(LH_IDX, 0, MOTOR_BRAKE);
-//  greenMotorMove(RH_IDX, 0, MOTOR_BRAKE);
-//  delay(500);
 }*/
 
 
@@ -86,6 +60,7 @@ void loop() {
     } 
    memPrintTimer = millis();
   }
+  
 }
 
 
