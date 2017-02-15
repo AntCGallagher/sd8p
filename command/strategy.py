@@ -382,12 +382,12 @@ class Strategy(object):
                     else:
                         print "Stuck"
                         if i % 2 == 0:
-                            Coms.reverse(1000)
+                            Coms.reverse(800)
                             time.sleep(1)
                             Coms.turn(180)
                             Coms.stop()
                         else:
                             Coms.go()
-                            time.sleep(1)
+                            time.sleep(1.8)
                             Coms.stop()
                         i = i + 1
