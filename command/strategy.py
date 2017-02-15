@@ -350,4 +350,3 @@ class Strategy(object):
                         Coms.reverse(1000)
                         time.sleep(1)
                         Coms.stop()
-"""
