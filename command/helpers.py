@@ -37,8 +37,11 @@ def ball_close(robot,ball):
 def get_angle_to_send(angle):
 	if angle < 40:
 		return int(round((((360+angle)+22.7916)/0.909408)))
+	elif angle > 90:
+		return int(round(((angle)/0.889408)))
 	else:
 		return int(round(((angle+22.7916)/0.909408)))
+
 
 def get_time_to_angle(angle):
 	if angle < 40:

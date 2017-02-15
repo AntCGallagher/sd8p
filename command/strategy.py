@@ -90,7 +90,7 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
-                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    Coms.turn(angle_to_obj)
                     time.sleep(1.5)
                     Coms.reverse(200)
                     time.sleep(time_to_object)
@@ -104,7 +104,7 @@ class Strategy(object):
             if inp == "t":
                 value = int(raw_input("angle to turn: "))
                 Coms.start_comunications()
-                Coms.turn(get_angle_to_send(value))
+                Coms.turn(value)
                 time.sleep(1.5)
             if inp == "m":
                 curr_world = World.get_world()
@@ -125,8 +125,8 @@ class Strategy(object):
                 time.sleep(1)
                 inp = int(raw_input("value to turn: "))
                 angle_to_turn = get_angle_to_send(inp)
-                Coms.turn(angle_to_turn)
-                time.sleep(1.5)
+                Coms.turn(inp)
+                time.sleep(3)
                 Coms.stop()
             if inp == "turntest2":
                 Coms.start_comunications()
@@ -173,8 +173,8 @@ class Strategy(object):
                     Coms.reverse(1000)
                     time.sleep(1)
                     Coms.stop()
-                    Coms.turn(100)
-                    time.sleep(1.2)
+                    Coms.turn(180)
+                    time.sleep(2)
                     Coms.stop()
                     time.sleep(1)
                     Coms.go()
@@ -191,8 +191,8 @@ class Strategy(object):
                     time.sleep(0.5)
                     Coms.stop()
                     time.sleep(1)
-                    Coms.turn(100)
-                    time.sleep(time_to_turn)
+                    Coms.turn(angle_to_obj)
+                    time.sleep(3)
                     Coms.stop()
                     time.sleep(0.3)
                     Coms.go()
@@ -231,46 +231,66 @@ class Strategy(object):
                     robot_temp = C2(start_x,start_y,0)
                     time_to_object = get_time_to_travel(robot_temp.x,CORNER14X,robot_temp.y,CORNER14Y)
                     angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER14X,CORNER14Y))
-                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    Coms.turn(angle_to_obj)
                     time.sleep(1.5)
                     Coms.go()
                     time.sleep(time_to_object)
                     Coms.stop()
                     time_to_mid = get_time_to_travel(CORNER14X,MIDX,CORNER14Y,MIDY)
                     if corner == 1:
-                        Coms.turn(get_angle_to_send(int(270)))
-                        time.sleep(1.5)
+                        Coms.turn(270)
+                        time.sleep(2.5)
                         Coms.go()
                         time.sleep(time_to_mid)
                         Coms.stop()
                     else:
-                        Coms.turn(get_angle_to_send(int(90)))
+                        Coms.turn(90)
                         time.sleep(1.5)
                         Coms.go()
                         time.sleep(time_to_mid)
                         Coms.stop()
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(0)
+                    time.sleep(1)
+                    Coms.kick(10)
+                    time.sleep(1)
+                    Coms.stop()
                 else:
                     C = namedtuple("C" , "x y")
+                    C2 = namedtuple("C" , "x y rot")
+                    robot_temp = C2(start_x,start_y,180)
                     time_to_object = get_time_to_travel(robot_temp.x,CORNER23X,robot_temp.y,CORNER23Y)
                     angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER23X,CORNER23Y))
-                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    Coms.turn(angle_to_obj)
                     time.sleep(1.5)
                     Coms.go()
                     time.sleep(time_to_object)
                     Coms.stop()
                     time_to_mid = get_time_to_travel(CORNER23X,MIDX,CORNER23Y,MIDY)
                     if corner == 2:
-                        Coms.turn(get_angle_to_send(int(90)))
+                        Coms.turn(90)
                         time.sleep(1.5)
                         Coms.go()
                         time.sleep(time_to_mid)
                         Coms.stop()
                     else:
-                        Coms.turn(get_angle_to_send(int(270)))
-                        time.sleep(1.5)
+                        Coms.turn(270)
+                        time.sleep(2.5)
                         Coms.go()
                         time.sleep(time_to_mid)
                         Coms.stop()
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(0)
+                    time.sleep(1)
+                    Coms.kick(10)
+                    time.sleep(1)
+                    Coms.stop()
                 guess_x = MIDX
                 guess_y = MIDY
                 guess_rot = 0
@@ -303,8 +323,8 @@ class Strategy(object):
                         print "\n"
                         Coms.grab(0)
                         time.sleep(0.5)
-                        Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                        time.sleep(1.5)
+                        Coms.turn(angle_to_obj)
+                        time.sleep(2.5)
                         Coms.go()
                         time.sleep(time_to_object)
                         Coms.stop()
@@ -330,8 +350,8 @@ class Strategy(object):
                             print "robot: ", guess_x, " ", guess_y
                             print "time: ", time_to_object, " angle: ", angle_to_obj
                             print "\n"
-                            Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                            time.sleep(1.5)
+                            Coms.turn(angle_to_obj)
+                            time.sleep(2.5)
                             Coms.go()
                             time.sleep(time_to_object)
                             Coms.stop()
@@ -347,8 +367,8 @@ class Strategy(object):
                             print "robot: ", guess_x, " ", guess_y
                             print "time: ", time_to_object, " angle: ", angle_to_obj
                             print "\n"
-                            Coms.turn(get_angle_to_send(int(angle_to_obj)))
-                            time.sleep(1.5)
+                            Coms.turn(angle_to_obj)
+                            time.sleep(2.5)
                             Coms.go()
                             time.sleep(time_to_object)
                             Coms.stop()
@@ -360,7 +380,7 @@ class Strategy(object):
                         if i % 2 == 0:
                             Coms.reverse(1000)
                             time.sleep(1)
-                            Coms.turn(get_angle_to_send(180))
+                            Coms.turn(180)
                             Coms.stop()
                         else:
                             Coms.go()
