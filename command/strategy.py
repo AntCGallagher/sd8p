@@ -124,12 +124,9 @@ class Strategy(object):
                 Coms.start_comunications()
                 time.sleep(1)
                 inp = int(raw_input("value to turn: "))
-                time_to_turn = get_time_to_angle(inp)
-                print get_time_to_angle(90)
-                print get_time_to_angle(180)
-                print time_to_turn
-                Coms.turn(100)
-                time.sleep(time_to_turn)
+                angle_to_turn = get_angle_to_send(inp)
+                Coms.turn(angle_to_turn)
+                time.sleep(1.5)
                 Coms.stop()
             if inp == "turntest2":
                 Coms.start_comunications()
@@ -224,6 +221,7 @@ class Strategy(object):
         guess_x = start_x
         guess_y = start_y
         guess_rot = 0
+        i = 0
         while True:
             if starting_strategy == "y":
                 starting_strategy = "n"
@@ -303,10 +301,21 @@ class Strategy(object):
                         print "ball: ", ball.x, " ", ball.y
                         print "time: ", time_to_object, " angle: ", angle_to_obj
                         print "\n"
+                        Coms.grab(0)
+                        time.sleep(0.5)
                         Coms.turn(get_angle_to_send(int(angle_to_obj)))
                         time.sleep(1.5)
                         Coms.go()
                         time.sleep(time_to_object)
+                        Coms.stop()
+                        Coms.grab(1)
+                        time.sleep(1)
+                        Coms.stop()
+                        time.sleep(1)
+                        Coms.grab(0)
+                        time.sleep(1)
+                        Coms.kick(10)
+                        time.sleep(1)
                         Coms.stop()
                         guess_x = ball.x
                         guess_y = ball.y
@@ -347,6 +356,14 @@ class Strategy(object):
                             guess_y = CORNER23Y
                             guess_rot = robot_temp.rot + angle_to_obj
                     else:
-                        Coms.reverse(1000)
-                        time.sleep(1)
-                        Coms.stop()
+                        print "Stuck"
+                        if i % 2 == 0:
+                            Coms.reverse(1000)
+                            time.sleep(1)
+                            Coms.turn(get_angle_to_send(180))
+                            Coms.stop()
+                        else:
+                            Coms.go()
+                            time.sleep(1)
+                            Coms.stop()
+                        i = i + 1

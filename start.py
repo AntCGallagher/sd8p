@@ -111,8 +111,10 @@ if __name__ == "__main__" :
 					curr_y = int(raw_input("Current y: "))
 					start_strat = raw_input("Blitz?: ")
 					while inp != "y":
-				 		inp = raw_input("start? (y/n)")
-						if inp == "y":
+				 		inp = raw_input("start? (1/2)")
+						if inp == "1":
 							Strategy.start(corner,curr_x,curr_y,start_strat)
+						elif inp == "2":
+							Strategy.start2(corner,curr_x,curr_y,start_strat)
 				if inp == "t":
 					Strategy.tests()
