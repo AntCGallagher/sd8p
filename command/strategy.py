@@ -146,6 +146,24 @@ class Strategy(object):
         Coms.stop()
 
     @staticmethod
+    def taunt():
+        Coms.start_comunications()
+        time.sleep(1)
+        while True:
+            Coms.go()
+            time.sleep(2)
+            Coms.stop()
+            time.sleep()
+            Coms.turn(90)
+            time.sleep(3)
+            Coms.stop()
+            time.sleep(1)
+            Coms.go()
+            time.sleep(1)
+            Coms.reverse(1000)
+            time.sleep(1)
+            
+    @staticmethod
     def start(corner,start_x,start_y,starting_strategy):
         Coms.start_comunications()
         time.sleep(1)
