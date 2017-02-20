@@ -23,7 +23,7 @@ def fix_radial_distortion(frame):
 
 
 
-cap = cv2.VideoCapture('output.avi')
+cap = cv2.VideoCapture(0)
 
 og = cv2.imread('1_9x6.jpeg')
 og = fix_radial_distortion(og)
@@ -38,15 +38,17 @@ while(cap.isOpened()):
 
     cv2.absdiff(yuv, og, yuv)
     yuv = cv2.cvtColor(yuv,cv2.COLOR_BGR2GRAY)
-    yuv = cv2.inRange(yuv, 17, 255) #################variable - increase if extra bits, decrease otherwise
+    yuv = cv2.inRange(yuv, 12, 255) #################variable - increase if extra bits, decrease otherwise
     #yuv = cv2.inRange(yuv, (9,11,7), (255,255,255))
-    yuv = cv2.GaussianBlur(yuv,(15,15),5)
+    yuv = cv2.GaussianBlur(yuv,(15,15), 5)
     ret3,th3 = cv2.threshold(yuv,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    th3 = cv2.GaussianBlur(th3,(11,11), 2)
+    th3 = cv2.GaussianBlur(th3,(5,5), 2)
     frame = cv2.bitwise_and(frame, frame, mask=th3)
     _, contours, _ = cv2.findContours(th3, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         rect = cv2.minAreaRect(cnt)
+        area = cv2.contourArea(cnt)
+        print area
         box = cv2.boxPoints(rect)
         box = np.int0(box)
         cv2.drawContours(frame,[box],0,(0,0,255),2)
