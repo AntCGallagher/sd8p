@@ -4,6 +4,7 @@ from helpers import *
 import math
 import time
 import numpy as np
+from gridworld import GridWorld
 """
 This script will be used to test a simple strategy.
 """

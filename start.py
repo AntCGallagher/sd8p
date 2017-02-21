@@ -110,13 +110,16 @@ if __name__ == "__main__" :
 					curr_x = int(raw_input("Current x: "))
 					curr_y = int(raw_input("Current y: "))
 					start_strat = raw_input("Blitz?: ")
+					verbose = raw_input("Verbose debug? (y/n)")
 					while inp != "y":
-				 		inp = raw_input("start? (1/2/3)")
+				 		inp = raw_input("start? (1/2/3/4)")
 						if inp == "1":
 							Strategy.start(corner,curr_x,curr_y,start_strat)
 						elif inp == "2":
 							Strategy.start2(corner,curr_x,curr_y,start_strat)
 						elif inp == "3":
+							Strategy.start3(corner,curr_x,curr_y,start_strat,verbose)
+						elif inp == "4":
 							Strategy.taunt()
 				if inp == "t":
 					Strategy.tests()
