@@ -59,20 +59,30 @@ void Comms::readSerial() {
 
     // read byte and add it to buffer
     byte inByte = Serial.read();
-
-    // software buffer overflow
-    if (this->bufferPos >= BUFFER_SIZE) {
-      Serial.println(F("Error: Comms software buffer overflow."));
-      this->clearSoftwareBuffer();
-      this->clearSerialBuffer();
-      return;
+    
+    if (char(inByte) == 'Y') {
+      updateMotorPositions();
+      printMotorPositions();
     }
-
-    // append byte to buffer
-    this->buffer[this->bufferPos] = inByte;
-    this->bufferPos++;
-    // check to see if a whole command is contained within buffer
-    this->checkForCompleteCommand();
+    else if (char(inByte) == 'Z') {
+      resetMotorPositions();
+      printMotorPositions();
+    }
+    else {
+      // software buffer overflow
+      if (this->bufferPos >= BUFFER_SIZE) {
+        Serial.println(F("Error: Comms software buffer overflow."));
+        this->clearSoftwareBuffer();
+        this->clearSerialBuffer();
+        return;
+      }
+  
+      // append byte to buffer
+      this->buffer[this->bufferPos] = inByte;
+      this->bufferPos++;
+      // check to see if a whole command is contained within buffer
+      this->checkForCompleteCommand();
+    }
   }
 }
 

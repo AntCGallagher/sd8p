@@ -1,11 +1,12 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define LH_IDX 1
-#define RH_IDX 2
-#define KICKER_IDX 3
-#define GRABBER_IDX 4
-#define REAR_IDX 5
+#define LH_IDX 3
+#define RH_IDX 5
+#define KICKER_IDX 2
+#define GRABBER_IDX 1                                                                                                                                                                                                                                                   
+#define REAR_IDX 4
+
 
 // // Arduino direct I/O
 // #define SONAR_GRABBER_TRIG 3

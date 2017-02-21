@@ -24,11 +24,12 @@ void setup() {
   Serial.print(F("READY")) ;
   
   motorAllStop();
+  
 }
 
 /*
 void loop() {
-  ///greenMotorMove(RH_IDX, 70, MOTOR_BWD);
+  //greenMotorMove(RH_IDX, 70, MOTOR_BWD);
   //greenMotorMove(LH_IDX, 70, MOTOR_BWD);
   delay(2000);
   motorAllStop();
@@ -42,8 +43,8 @@ void loop() {
   updateMotorPositions();
   printMotorPositions();
   delay(1000);
-}*/
-
+}
+*/
 
 void loop() {
   // calls progress method on instruction at index 0
