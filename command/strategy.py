@@ -233,7 +233,7 @@ class Strategy(object):
                     time.sleep(1)
 
     @staticmethod
-    def start2(corner,start_x,start_y,starting_strategy="n"):
+    def start2(corner,start_x,start_y,starting_strategy):
         Coms.start_comunications()
         time.sleep(1)
         guess_x = start_x
@@ -489,13 +489,94 @@ class Strategy(object):
 
     #Do we really need static method?
     @staticmethod
-    def start3(corner,start_x,start_y,starting_strategy):
+    def start3(corner,start_x,start_y,starting_strategy = "n",verbose="n"):
         Coms.start_comunications()
         time.sleep(1)
+
+        #Checking Juno
+        missingJunoCounter = 0
+        maxJunoCounter = 3
+
         while True:
             if starting_strategy == "y":
-                #kickoff strategy
+                #TODO kickoff strategy
+                if verbose == "y": print "Strategy: Running kickoff strat"
                 starting_strategy = "n"
+
+                #Copied from start2()
+                if corner == 1 or corner == 4:
+                    C = namedtuple("C" , "x y")
+                    C2 = namedtuple("C" , "x y rot")
+                    robot_temp = C2(start_x,start_y,0)
+                    time_to_object = get_time_to_travel(robot_temp.x,CORNER14X,robot_temp.y,CORNER14Y)
+                    angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER14X,CORNER14Y))
+                    Coms.turn(angle_to_obj)
+                    time.sleep(1.5)
+                    Coms.go()
+                    time.sleep(time_to_object)
+                    Coms.stop()
+                    time_to_mid = get_time_to_travel(CORNER14X,MIDX,CORNER14Y,MIDY)
+                    if corner == 1:
+                        Coms.turn(270)
+                        time.sleep(2.5)
+                        Coms.go()
+                        time.sleep(time_to_mid+0.2)
+                        Coms.stop()
+                    else:
+                        Coms.turn(90)
+                        time.sleep(1.5)
+                        Coms.go()
+                        time.sleep(time_to_mid+0.2)
+                        Coms.stop()
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.go()
+                    time.sleep(0.4)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(0)
+                    time.sleep(1)
+                    Coms.kick(10)
+                    time.sleep(1)
+                    Coms.stop()
+                else:
+                    C = namedtuple("C" , "x y")
+                    C2 = namedtuple("C" , "x y rot")
+                    robot_temp = C2(start_x,start_y,180)
+                    time_to_object = get_time_to_travel(robot_temp.x,CORNER23X,robot_temp.y,CORNER23Y)
+                    angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER23X,CORNER23Y))
+                    Coms.turn(angle_to_obj)
+                    time.sleep(1.5)
+                    Coms.go()
+                    time.sleep(time_to_object)
+                    Coms.stop()
+                    time_to_mid = get_time_to_travel(CORNER23X,MIDX,CORNER23Y,MIDY)
+                    if corner == 2:
+                        Coms.turn(90)
+                        time.sleep(1.5)
+                        Coms.go()
+                        time.sleep(time_to_mid+0.2)
+                        Coms.stop()
+                    else:
+                        Coms.turn(270)
+                        time.sleep(2.5)
+                        Coms.go()
+                        time.sleep(time_to_mid+0.2)
+                        Coms.stop()
+                    Coms.grab(1)
+                    time.sleep(1)
+                    Coms.stop()
+                    time.sleep(1)
+                    Coms.grab(0)
+                    time.sleep(1)
+                    Coms.kick(10)
+                    time.sleep(1)
+                    Coms.stop()
+                guess_x = MIDX
+                guess_y = MIDY
+                guess_rot = 0
 
             else:
                 #normal strategy
@@ -508,6 +589,39 @@ class Strategy(object):
                 robot2 = robots_array[2]
                 robot3 = robots_array[3]
 
-                if ball != None and robot0 != None:
-                    True
+                #for easy reference and change. ps: I'm assuming robot1 is Juno
+                me = robot0
+                juno = robot1
+
+                #Change condition to reflect when to change to solo or duo strategy
+                #Currently, if Juno is missing in 3 world models, will convert to solo strat
+                if juno != None:
+                    missingJunoCounter = 0
+                    solo_strat = False
+                else:
+                    missingJunoCounter += 1
+                    if missingJunoCounter == maxJunoCounter:
+                        if verbose == "y": print "Strategy: Juno not found"
+                        solo_strat = True
+
+                if ball != None and me != None:
+                    if solo_strat:
+                        #TODO Strategy if Juno is not found
+                        if verbose == "y": print "Strategy: Running SOLO strat"
+
+                    else:
+                        #TODO Strategy if Juno is found
+                        if verbose == "y": print "Strategy: Running DUO strat"
+
+                elif ball == None:
+                    #TODO Strategy if ball not found
+                    if verbose == "y": print "Strategy: Ball not found"
+
+                elif me == None:
+                    #TODO Strategy is self not found
+                    if verbose == "y": print "Strategy: Robot not found"
+
+                else:
+                    #You are not supposed to get here
+                    print "Strategy: Unknown error"
 
