@@ -233,7 +233,7 @@ class Strategy(object):
                     time.sleep(1)
 
     @staticmethod
-    def start2(corner,start_x,start_y,starting_strategy):
+    def start2(corner,start_x,start_y,starting_strategy="n"):
         Coms.start_comunications()
         time.sleep(1)
         guess_x = start_x
@@ -331,6 +331,7 @@ class Strategy(object):
                 # Add conditions to change defense here
                 if defense_mode:
                     defense_mode = False
+                    """
                     me = robot0
                     ally = robot1
                     teamSideLeft = World.our_side == "Left"
@@ -406,6 +407,7 @@ class Strategy(object):
                             angle_to_dest = us_to_obj_angle(me,C2(me.x,me.y - 10))
                             Coms.turn(angle_to_dest,1)
                             Coms.sleep(2.5)
+                    """
                 else:
                     if robot0 != None and ball != None:
                         guess_x = robot0.x
@@ -484,3 +486,28 @@ class Strategy(object):
                             time.sleep(1.8)
                             Coms.stop()
                         i = i + 1
+
+    #Do we really need static method?
+    @staticmethod
+    def start3(corner,start_x,start_y,starting_strategy):
+        Coms.start_comunications()
+        time.sleep(1)
+        while True:
+            if starting_strategy == "y":
+                #kickoff strategy
+                starting_strategy = "n"
+
+            else:
+                #normal strategy
+                curr_world = World.get_world()
+
+                ball = curr_world.ball
+                robots_array = curr_world.robots
+                robot0 = robots_array[0]
+                robot1 = robots_array[1]
+                robot2 = robots_array[2]
+                robot3 = robots_array[3]
+
+                if ball != None and robot0 != None:
+                    True
+
