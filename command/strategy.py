@@ -331,6 +331,81 @@ class Strategy(object):
                 # Add conditions to change defense here
                 if defense_mode:
                     defense_mode = False
+                    me = robot0
+                    ally = robot1
+                    teamSideLeft = World.our_side == "Left"
+                    if me != None and ball != None:
+                        if ally != 0:
+                            #Ally dependent defense
+                            if point_zone(ally.x,teamSideLeft) != 1:
+                                if teamSideLeft:
+                                    destX = LEFTGOALX
+                                    destY = LEFTGOALY
+                                else:
+                                    destX = RIGHTGOALX
+                                    destY = RIGHTGOALY
+
+                                #Go to goal
+                                C = namedtuple("C","x y")
+                                time_to_dest = get_time_to_travel(me.x,destX,me.y,destY)
+                                angle_to_dest = us_to_obj_angle(me,C(destX,destY))
+                                Coms.turn(angle_to_dest,1)
+                                Coms.sleep(2.5)
+                                Coms.go()
+                                Coms.sleep(time_to_dest)
+                                Coms.stop()
+
+                                #Point up
+                                C2 = namedtuple("C","x y")
+                                angle_to_dest = us_to_obj_angle(me,C2(me.x,me.y - 10))
+                                Coms.turn(angle_to_dest,1)
+                                Coms.sleep(2.5)
+                            else:
+                                if teamSideLeft:
+                                    goalX = LEFTGOALX
+                                    goalY = LEFTGOALY
+                                else:
+                                    goalX = RIGHTGOALX
+                                    goalY = RIGHTGOALY
+                                ball_array = {ball.x,ball.y}
+                                goal_array = {goalX,goalY}
+                                self_array = {me.x,me.y}
+                                point = calculate_intercept_p(ball_array,goal_array,self_array)
+
+                                C = namedtuple("C","x y")
+                                time_to_dest = get_time_to_travel(me.x,point[0],me.y,point[1])
+                                angle_to_dest = us_to_obj_angle(me,C(point[0],point[1]))
+                                Coms.turn(angle_to_dest,1)
+                                Coms.sleep(2.5)
+                                Coms.go()
+                                Coms.sleep(time_to_dest)
+                                Coms.stop()
+
+                        else:
+                            print "Defense Strategy: Ally not found\n"
+                            #Solo defense
+                            if teamSideLeft:
+                                destX = LEFTGOALX
+                                destY = LEFTGOALY
+                            else:
+                                destX = RIGHTGOALX
+                                destY = RIGHTGOALY
+
+                            #Go to goal
+                            C = namedtuple("C","x y")
+                            time_to_dest = get_time_to_travel(me.x,destX,me.y,destY)
+                            angle_to_dest = us_to_obj_angle(me,C(destX,destY))
+                            Coms.turn(angle_to_dest,1)
+                            Coms.sleep(2.5)
+                            Coms.go()
+                            Coms.sleep(time_to_dest)
+                            Coms.stop()
+
+                            #Point up
+                            C2 = namedtuple("C","x y")
+                            angle_to_dest = us_to_obj_angle(me,C2(me.x,me.y - 10))
+                            Coms.turn(angle_to_dest,1)
+                            Coms.sleep(2.5)
                 else:
                     if robot0 != None and ball != None:
                         guess_x = robot0.x
