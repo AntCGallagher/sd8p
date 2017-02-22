@@ -1,9 +1,11 @@
+import math
+
 #My implementation of the grid world idea. Feel free to test/edit it out
 class GridWorld(object):
-    court_x_cm = 220
-    court_y_cm = 300
-    court_x_grid = 4
-    court_y_grid = 6
+    court_y_cm = 220
+    court_x_cm = 300
+    court_x_grid = 6
+    court_y_grid = 4
 
     def __init__(self,robots,ball):
         self.robots = self.conv_to_gridRobots(robots)

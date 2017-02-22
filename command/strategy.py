@@ -139,6 +139,43 @@ class Strategy(object):
                 Coms.kick(10)
                 time.sleep(1)
                 Coms.stop()
+            if inp == "txy":
+                inpx = int(raw_input("x value: "))
+                inpy = int(raw_input("y value: "))
+                print(get_grid_pos(inpx,inpy))
+            if inp == "g":
+                Coms.start_comunications()
+                time.sleep(1)
+                inp = float(raw_input("Time to sleep: "))
+                Coms.go()
+                time.sleep(inp)
+                Coms.stop()
+            if inp == "pos":
+            	print("Positions:", getPos())
+            if inp == "rpos":
+                resetPos()
+
+    def getPos():
+    	Coms.com.ser.write(bytes('Y'))
+    	time.sleep(1)
+    	with open(Coms.com.outputFilename) as f:
+    		log = f.readlines()
+    		positions = log[len(log)-2]
+    		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
+    	#positions[3] = left wheel;
+    	#positions[5] = right wheel;
+    	#positions[4] = omni wheel;
+    	#positions[2] = kicker;
+    	return positions
+
+    def resetPos():
+    	Coms.com.ser.write(bytes('Z'))
+    	time.sleep(1)
+    	with open(Coms.com.outputFilename) as f:
+    		log = f.readlines()
+    		positions = log[len(log)-2]
+    		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
+    	return positions
 
     @staticmethod
     def stop():
@@ -163,7 +200,7 @@ class Strategy(object):
             time.sleep(1)
             Coms.reverse(1000)
             time.sleep(1)
-            
+
     @staticmethod
     def start(corner,start_x,start_y,starting_strategy):
         Coms.start_comunications()
@@ -625,4 +662,3 @@ class Strategy(object):
                 else:
                     #You are not supposed to get here
                     print "Strategy: Unknown error"
-
