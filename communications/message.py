@@ -59,15 +59,7 @@ class Message(object):
 	# set_transmit_time(transmit_time : double) : void
 	def set_transmit_time(self, transmit_time):
 		self.trans = transmit_time
-	
-	# hash(packed_msg : string) : byte[]
-	def hash(self, packed_msg):
-		b = bytes(packed_msg)
-		val = 0
-		for by in list(b):
-			val = val + ord(by)
-		return pack(">H", val)
-
+		
 	# __str__() : string
 	def __str__(self):
 		# Convert all params to strings

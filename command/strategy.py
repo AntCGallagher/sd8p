@@ -1,5 +1,5 @@
 from postprocessing.world import World
-from communications.originalcomms import Coms
+from communications.communications import Comms
 from helpers import *
 import math
 import time
@@ -32,6 +32,7 @@ class Strategy(object):
     def __init__(self):
         self.owner = 0
         self.teammate_on = 0
+        self.comms = Comms()
 
     @staticmethod
     def tests():
@@ -60,8 +61,8 @@ class Strategy(object):
             if inp == "gxy":
                 dest_x = float(raw_input("dest_x: "))
                 dest_y = float(raw_input("dest_y: "))
-                Coms.start_comunications()
-                Coms.stop()
+                self.comms.start()
+                self.comms.stop()
                 robots = curr_world.robots
                 robot0 = curr_world.robots[0]
                 if robot0 != None:
@@ -71,15 +72,15 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "target: ", dest_x, " ", dest_y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
-                    Coms.turn(get_angle_to_send(int(angle_to_obj)))
+                    self.comms.turn(get_angle_to_send(int(angle_to_obj)))
                     time.sleep(1.5)
-                    Coms.reverse(200)
+                    self.comms.reverse(200)
                     time.sleep(time_to_object)
-                    Coms.stop()
+                    self.comms.stop()
                 else:
                     print "Robot not detected"
             if inp == "grb":
-                Coms.start_comunications()
+                self.comms.start_comunications()
                 curr_world = World.get_world()
                 ball = curr_world.ball
                 robots = curr_world.robots
@@ -91,11 +92,11 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
-                    Coms.turn(angle_to_obj)
+                    self.comms.turn(angle_to_obj)
                     time.sleep(1.5)
-                    Coms.reverse(200)
+                    self.comms.reverse(200)
                     time.sleep(time_to_object)
-                    Coms.stop()
+                    self.comms.stop()
                 elif robot0 == None and ball != None:
                     print "Robot and ball not detected"
                 elif robot0 == None:
@@ -104,8 +105,8 @@ class Strategy(object):
                     print "Ball not detected"
             if inp == "t":
                 value = int(raw_input("angle to turn: "))
-                Coms.start_comunications()
-                Coms.turn(value)
+                self.comms.start_comunications()
+                self.comms.turn(value)
                 time.sleep(1.5)
             if inp == "m":
                 curr_world = World.get_world()
@@ -122,34 +123,34 @@ class Strategy(object):
                 print len(list)
                 print robot0.rot
             if inp == "turntest":
-                Coms.start_comunications()
+                self.comms.start_comunications()
                 time.sleep(1)
                 inp = int(raw_input("value to turn: "))
                 angle_to_turn = get_angle_to_send(inp)
-                Coms.turn(inp)
+                self.comms.turn(inp)
                 time.sleep(3)
-                Coms.stop()
+                self.comms.stop()
             if inp == "turntest2":
-                Coms.start_comunications()
+                self.comms.start_comunications()
                 time.sleep(1)
-                Coms.grab(1)
+                self.comms.grab(1)
                 time.sleep(1)
-                Coms.grab(0)
+                self.comms.grab(0)
                 time.sleep(1)
-                Coms.kick(10)
+                self.comms.kick(10)
                 time.sleep(1)
-                Coms.stop()
+                self.comms.stop()
             if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
                 inpy = int(raw_input("y value: "))
                 print(get_grid_pos(inpx,inpy))
             if inp == "g":
-                Coms.start_comunications()
+                self.comms.start_comunications()
                 time.sleep(1)
                 inp = float(raw_input("Time to sleep: "))
-                Coms.go()
+                self.comms.go()
                 time.sleep(inp)
-                Coms.stop()
+                self.comms.stop()
             if inp == "pos":
             	print("Positions:", getPos())
             if inp == "rpos":
@@ -180,9 +181,9 @@ class Strategy(object):
                         print get_grid_pos(robot3.x,robot3.y)
 
     def getPos():
-    	Coms.com.ser.write(bytes('Y'))
+    	self.comms.com.ser.write(bytes('Y'))
     	time.sleep(1)
-    	with open(Coms.com.outputFilename) as f:
+    	with open(self.comms.outputFilename) as f:
     		log = f.readlines()
     		positions = log[len(log)-2]
     		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
@@ -193,9 +194,9 @@ class Strategy(object):
     	return positions
 
     def resetPos():
-    	Coms.com.ser.write(bytes('Z'))
+    	self.comms.ser.write(bytes('Z'))
     	time.sleep(1)
-    	with open(Coms.com.outputFilename) as f:
+    	with open(self.comms.outputFilename) as f:
     		log = f.readlines()
     		positions = log[len(log)-2]
     		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
@@ -203,31 +204,31 @@ class Strategy(object):
 
     @staticmethod
     def stop():
-        Coms.start_comunications()
-        Coms.stop()
-        Coms.stop()
+        self.comms.start()
+        self.comms.stop()
+        self.comms.stop()
 
     @staticmethod
     def taunt():
-        Coms.start_comunications()
+        self.comms.start()
         time.sleep(1)
         while True:
-            Coms.go()
+            self.comms.go()
             time.sleep(2)
-            Coms.stop()
+            self.comms.stop()
             time.sleep()
-            Coms.turn(90)
+            self.comms.turn(90)
             time.sleep(3)
-            Coms.stop()
+            self.comms.stop()
             time.sleep(1)
-            Coms.go()
+            self.comms.go()
             time.sleep(1)
-            Coms.reverse(1000)
+            self.comms.reverse(1000)
             time.sleep(1)
 
     @staticmethod
     def start(corner,start_x,start_y,starting_strategy):
-        Coms.start_comunications()
+        self.comms.start_comunications()
         time.sleep(1)
         while True:
             time.sleep(0.4)
@@ -242,24 +243,24 @@ class Strategy(object):
 
             if robot0 == None:
                 print "Going back"
-                Coms.reverse(1000)
+                self.comms.reverse(1000)
                 time.sleep(1)
-                Coms.stop()
+                self.comms.stop()
                 time.sleep(0.3)
             if robot0 != None and ball != None:
                 print "Main loop"
                 if robot0.y > 194 or robot0.x > 265 or robot0.y < 30 or robot0.x < 40:
                     print "Close to wall"
-                    Coms.reverse(1000)
+                    self.comms.reverse(1000)
                     time.sleep(1)
-                    Coms.stop()
-                    Coms.turn(180)
+                    self.comms.stop()
+                    self.comms.turn(180)
                     time.sleep(2)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.go()
+                    self.comms.go()
                     time.sleep(3)
-                    Coms.stop()
+                    self.comms.stop()
                 else:
                     print "Normal strat"
                     time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
@@ -267,36 +268,36 @@ class Strategy(object):
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
                     time_to_turn = get_time_to_angle(angle_to_obj)
                     print "angle to obj: ", angle_to_obj, "time to turn: ", time_to_turn
-                    Coms.grab(0)
+                    self.comms.grab(0)
                     time.sleep(0.5)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.turn(angle_to_obj)
+                    self.comms.turn(angle_to_obj)
                     time.sleep(3)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(0.3)
-                    Coms.go()
+                    self.comms.go()
                     time.sleep(time_to_object-0.05)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.grab(1)
+                    self.comms.grab(1)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.grab(0)
+                    self.comms.grab(0)
                     time.sleep(1)
-                    Coms.kick(10)
+                    self.comms.kick(10)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.grab(1)
+                    self.comms.grab(1)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
 
     @staticmethod
     def start2(corner,start_x,start_y,starting_strategy):
-        Coms.start_comunications()
+        self.comms.start()
         time.sleep(1)
         guess_x = start_x
         guess_y = start_y
@@ -311,70 +312,70 @@ class Strategy(object):
                     robot_temp = C2(start_x,start_y,0)
                     time_to_object = get_time_to_travel(robot_temp.x,CORNER14X,robot_temp.y,CORNER14Y)
                     angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER14X,CORNER14Y))
-                    Coms.turn(angle_to_obj)
+                    self.comms.turn(angle_to_obj)
                     time.sleep(1.5)
-                    Coms.go()
+                    self.comms.go()
                     time.sleep(time_to_object)
-                    Coms.stop()
+                    self.comms.stop()
                     time_to_mid = get_time_to_travel(CORNER14X,MIDX,CORNER14Y,MIDY)
                     if corner == 1:
-                        Coms.turn(270)
+                        self.comms.turn(270)
                         time.sleep(2.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_mid+0.2)
-                        Coms.stop()
+                        self.comms.stop()
                     else:
-                        Coms.turn(90)
+                        self.comms.turn(90)
                         time.sleep(1.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    Coms.grab(1)
+                        self.comms.stop()
+                    self.comms.grab(1)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.go()
+                    self.comms.go()
                     time.sleep(0.4)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.grab(0)
+                    self.comms.grab(0)
                     time.sleep(1)
-                    Coms.kick(10)
+                    self.comms.kick(10)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                 else:
                     C = namedtuple("C" , "x y")
                     C2 = namedtuple("C" , "x y rot")
                     robot_temp = C2(start_x,start_y,180)
                     time_to_object = get_time_to_travel(robot_temp.x,CORNER23X,robot_temp.y,CORNER23Y)
                     angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER23X,CORNER23Y))
-                    Coms.turn(angle_to_obj)
+                    self.comms.turn(angle_to_obj)
                     time.sleep(1.5)
-                    Coms.go()
+                    self.comms.go()
                     time.sleep(time_to_object)
-                    Coms.stop()
+                    self.comms.stop()
                     time_to_mid = get_time_to_travel(CORNER23X,MIDX,CORNER23Y,MIDY)
                     if corner == 2:
-                        Coms.turn(90)
+                        self.comms.turn(90)
                         time.sleep(1.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_mid+0.2)
-                        Coms.stop()
+                        self.comms.stop()
                     else:
-                        Coms.turn(270)
+                        self.comms.turn(270)
                         time.sleep(2.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    Coms.grab(1)
+                        self.comms.stop()
+                    self.comms.grab(1)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                     time.sleep(1)
-                    Coms.grab(0)
+                    self.comms.grab(0)
                     time.sleep(1)
-                    Coms.kick(10)
+                    self.comms.kick(10)
                     time.sleep(1)
-                    Coms.stop()
+                    self.comms.stop()
                 guess_x = MIDX
                 guess_y = MIDY
                 guess_rot = 0
@@ -482,22 +483,22 @@ class Strategy(object):
                         print "ball: ", ball.x, " ", ball.y
                         print "time: ", time_to_object, " angle: ", angle_to_obj
                         print "\n"
-                        Coms.grab(0)
+                        self.comms.grab(0)
                         time.sleep(0.5)
-                        Coms.turn(angle_to_obj)
+                        self.comms.turn(angle_to_obj)
                         time.sleep(2.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_object)
-                        Coms.stop()
-                        Coms.grab(1)
+                        self.comms.stop()
+                        self.comms.grab(1)
                         time.sleep(1)
-                        Coms.stop()
+                        self.comms.stop()
                         time.sleep(1)
-                        Coms.grab(0)
+                        self.comms.grab(0)
                         time.sleep(1)
-                        Coms.kick(10)
+                        self.comms.kick(10)
                         time.sleep(1)
-                        Coms.stop()
+                        self.comms.stop()
                         guess_x = ball.x
                         guess_y = ball.y
                         guess_rot = robot0.rot + angle_to_obj
@@ -511,11 +512,11 @@ class Strategy(object):
                             print "robot: ", guess_x, " ", guess_y
                             print "time: ", time_to_object, " angle: ", angle_to_obj
                             print "\n"
-                            Coms.turn(angle_to_obj)
+                            self.comms.turn(angle_to_obj)
                             time.sleep(2.5)
-                            Coms.go()
+                            self.comms.go()
                             time.sleep(time_to_object)
-                            Coms.stop()
+                            self.comms.stop()
                             guess_x = CORNER14X
                             guess_y = CORNER14Y
                             guess_rot = robot_temp.rot + angle_to_obj
@@ -528,31 +529,31 @@ class Strategy(object):
                             print "robot: ", guess_x, " ", guess_y
                             print "time: ", time_to_object, " angle: ", angle_to_obj
                             print "\n"
-                            Coms.turn(angle_to_obj)
+                            self.comms.turn(angle_to_obj)
                             time.sleep(2.5)
-                            Coms.go()
+                            self.comms.go()
                             time.sleep(time_to_object)
-                            Coms.stop()
+                            self.comms.stop()
                             guess_x = CORNER23X
                             guess_y = CORNER23Y
                             guess_rot = robot_temp.rot + angle_to_obj
                     else:
                         print "Stuck"
                         if i % 2 == 0:
-                            Coms.reverse(800)
+                            self.comms.reverse(800)
                             time.sleep(1)
-                            Coms.turn(180)
-                            Coms.stop()
+                            self.comms.turn(180)
+                            self.comms.stop()
                         else:
-                            Coms.go()
+                            self.comms.go()
                             time.sleep(1.8)
-                            Coms.stop()
+                            self.comms.stop()
                         i = i + 1
 
     #Do we really need static method?
     @staticmethod
     def start3(verbose="n"):
-        Coms.start_comunications()
+        self.comms.start()
         time.sleep(1)
 
         #Checking Juno
@@ -599,11 +600,11 @@ class Strategy(object):
                         default_grid  = get_pos_grid(3,0)
                         angle_to_obj = us_to_obj_angle(me,default_grid)
                         time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                        Coms.turn(angle_to_obj)
+                        self.comms.turn(angle_to_obj)
                         time.sleep(1.5)
-                        Coms.go()
+                        self.comms.go()
                         time.sleep(time_to_object)
-                        Coms.stop()
+                        self.comms.stop()
                     else:
                         # Check if Juno has the ball
                         juno_grid_pos = get_grid_pos(juno.x,juno.y)
@@ -613,11 +614,11 @@ class Strategy(object):
                             default_grid  = get_pos_grid(3,0)
                             angle_to_obj = us_to_obj_angle(me,default_grid)
                             time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            Coms.turn(angle_to_obj)
+                            self.comms.turn(angle_to_obj)
                             time.sleep(1.5)
-                            Coms.go()
+                            self.comms.go()
                             time.sleep(time_to_object)
-                            Coms.stop()
+                            self.comms.stop()
                         else:
                             # Check if the ball is for us
                             if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):

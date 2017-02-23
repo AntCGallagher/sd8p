@@ -155,7 +155,7 @@ class Comms(object):
 
 		self.port.write(packed)
 		self.port.write(hashed)
-		self.message_id=0
+		self.message_id=1
 
 	def stop(self):
 		self.add_message("STOP")
