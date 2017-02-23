@@ -74,6 +74,11 @@ class VisionWrapper(object):
             World.set_points(self.points)
             w = World.get_world()
 
+            for l1 in range(0,640,128):
+                cv2.line(image, (l1,0), (l1,480), (209,192,142), thickness=1)
+            for l2 in range(0,480,96):
+                cv2.line(image, (0,l2), (640,l2), (209,192,142), thickness=1)
+
             for i3 , robot in enumerate(w.robots):
                 if robot != None:
                     #print "Angle:" + str(robot.rot)
