@@ -37,7 +37,7 @@ class Strategy(object):
     def tests():
         inp = ""
         while inp != "done":
-            inp = raw_input("ping/goxy/go_robot_ball/turn/median?: (p/gxy/grb/t/m/turntest)")
+            inp = raw_input("(p/gxy/grb/t/m/turntest/turntest2/g/pos/rpos/gridxy/xygrid/rgrid)")
             if inp == "p":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -139,7 +139,7 @@ class Strategy(object):
                 Coms.kick(10)
                 time.sleep(1)
                 Coms.stop()
-            if inp == "txy":
+            if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
                 inpy = int(raw_input("y value: "))
                 print(get_grid_pos(inpx,inpy))
@@ -154,6 +154,30 @@ class Strategy(object):
             	print("Positions:", getPos())
             if inp == "rpos":
                 resetPos()
+            if inp == "xygrid":
+                inpx = int(raw_input("x grid value: "))
+                inpy = int(raw_input("y grid value: "))
+                print(get_pos_grid(inpx,inpy))
+            if inp == "rgrid":
+                robot_num = int(raw_input("robot num: "))
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                robot1 = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                if robot_num == 0:
+                    if robot0 != None:
+                        print get_grid_pos(robot0.x,robot0.y)
+                if robot_num == 1:
+                    if robot1 != None:
+                        print get_grid_pos(robot1.x,robot1.y)
+                if robot_num == 2:
+                    if robot2 != None:
+                        print get_grid_pos(robot2.x,robot2.y)
+                if robot_num == 3:
+                    if robot3 != None:
+                        print get_grid_pos(robot3.x,robot3.y)
 
     def getPos():
     	Coms.com.ser.write(bytes('Y'))
@@ -536,129 +560,47 @@ class Strategy(object):
         maxJunoCounter = 3
 
         while True:
-            if starting_strategy == "y":
-                #TODO kickoff strategy
-                if verbose == "y": print "Strategy: Running kickoff strat"
-                starting_strategy = "n"
+            #normal strategy
+            curr_world = World.get_world()
 
-                #Copied from start2()
-                if corner == 1 or corner == 4:
-                    C = namedtuple("C" , "x y")
-                    C2 = namedtuple("C" , "x y rot")
-                    robot_temp = C2(start_x,start_y,0)
-                    time_to_object = get_time_to_travel(robot_temp.x,CORNER14X,robot_temp.y,CORNER14Y)
-                    angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER14X,CORNER14Y))
-                    Coms.turn(angle_to_obj)
-                    time.sleep(1.5)
-                    Coms.go()
-                    time.sleep(time_to_object)
-                    Coms.stop()
-                    time_to_mid = get_time_to_travel(CORNER14X,MIDX,CORNER14Y,MIDY)
-                    if corner == 1:
-                        Coms.turn(270)
-                        time.sleep(2.5)
-                        Coms.go()
-                        time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    else:
-                        Coms.turn(90)
-                        time.sleep(1.5)
-                        Coms.go()
-                        time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    Coms.grab(1)
-                    time.sleep(1)
-                    Coms.stop()
-                    time.sleep(1)
-                    Coms.go()
-                    time.sleep(0.4)
-                    Coms.stop()
-                    time.sleep(1)
-                    Coms.grab(0)
-                    time.sleep(1)
-                    Coms.kick(10)
-                    time.sleep(1)
-                    Coms.stop()
-                else:
-                    C = namedtuple("C" , "x y")
-                    C2 = namedtuple("C" , "x y rot")
-                    robot_temp = C2(start_x,start_y,180)
-                    time_to_object = get_time_to_travel(robot_temp.x,CORNER23X,robot_temp.y,CORNER23Y)
-                    angle_to_obj = us_to_obj_angle(robot_temp,C(CORNER23X,CORNER23Y))
-                    Coms.turn(angle_to_obj)
-                    time.sleep(1.5)
-                    Coms.go()
-                    time.sleep(time_to_object)
-                    Coms.stop()
-                    time_to_mid = get_time_to_travel(CORNER23X,MIDX,CORNER23Y,MIDY)
-                    if corner == 2:
-                        Coms.turn(90)
-                        time.sleep(1.5)
-                        Coms.go()
-                        time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    else:
-                        Coms.turn(270)
-                        time.sleep(2.5)
-                        Coms.go()
-                        time.sleep(time_to_mid+0.2)
-                        Coms.stop()
-                    Coms.grab(1)
-                    time.sleep(1)
-                    Coms.stop()
-                    time.sleep(1)
-                    Coms.grab(0)
-                    time.sleep(1)
-                    Coms.kick(10)
-                    time.sleep(1)
-                    Coms.stop()
-                guess_x = MIDX
-                guess_y = MIDY
-                guess_rot = 0
+            ball = curr_world.ball
+            robots_array = curr_world.robots
+            robot0 = robots_array[0]
+            robot1 = robots_array[1]
+            robot2 = robots_array[2]
+            robot3 = robots_array[3]
 
+            #for easy reference and change. ps: I'm assuming robot1 is Juno
+            me = robot0
+            juno = robot1
+
+            #Change condition to reflect when to change to solo or duo strategy
+            #Currently, if Juno is missing in 3 world models, will convert to solo strat
+            if juno != None:
+                missingJunoCounter = 0
+                solo_strat = False
             else:
-                #normal strategy
-                curr_world = World.get_world()
+                missingJunoCounter += 1
+                if missingJunoCounter == maxJunoCounter:
+                    if verbose == "y": print "Strategy: Juno not found"
+                    solo_strat = True
 
-                ball = curr_world.ball
-                robots_array = curr_world.robots
-                robot0 = robots_array[0]
-                robot1 = robots_array[1]
-                robot2 = robots_array[2]
-                robot3 = robots_array[3]
-
-                #for easy reference and change. ps: I'm assuming robot1 is Juno
-                me = robot0
-                juno = robot1
-
-                #Change condition to reflect when to change to solo or duo strategy
-                #Currently, if Juno is missing in 3 world models, will convert to solo strat
-                if juno != None:
-                    missingJunoCounter = 0
-                    solo_strat = False
+            if ball != None and me != None:
+                if solo_strat:
+                    #TODO Strategy if Juno is not found
+                    if verbose == "y": print "Strategy: Running SOLO strat"
                 else:
-                    missingJunoCounter += 1
-                    if missingJunoCounter == maxJunoCounter:
-                        if verbose == "y": print "Strategy: Juno not found"
-                        solo_strat = True
+                    #TODO Strategy if Juno is found
+                    if verbose == "y": print "Strategy: Running DUO strat"
+                    grid_pos = get_grid_pos(me.x,me.y)
+                    #if grid_pos.grid_x < 3 or grid_pos.grid_y
+            elif ball == None:
+                #TODO Strategy if ball not found
+                if verbose == "y": print "Strategy: Ball not found"
 
-                if ball != None and me != None:
-                    if solo_strat:
-                        #TODO Strategy if Juno is not found
-                        if verbose == "y": print "Strategy: Running SOLO strat"
-
-                    else:
-                        #TODO Strategy if Juno is found
-                        if verbose == "y": print "Strategy: Running DUO strat"
-
-                elif ball == None:
-                    #TODO Strategy if ball not found
-                    if verbose == "y": print "Strategy: Ball not found"
-
-                elif me == None:
-                    #TODO Strategy is self not found
-                    if verbose == "y": print "Strategy: Robot not found"
-
-                else:
-                    #You are not supposed to get here
-                    print "Strategy: Unknown error"
+            elif me == None:
+                #TODO Strategy is self not found
+                if verbose == "y": print "Strategy: Robot not found"
+            else:
+                #You are not supposed to get here
+                print "Strategy: Unknown error"
