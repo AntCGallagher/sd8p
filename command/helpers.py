@@ -53,11 +53,23 @@ def get_time_to_travel(x_curr, x_dest, y_curr, y_dest):
 	distance = math.sqrt(math.pow(x_curr - x_dest,2) + math.pow(y_curr - y_dest,2))
 	return (distance+5.40322)/28.2258
 
+# Given x y get the grid
 def get_grid_pos(x,y):
 	C = namedtuple("C" , "grid_x grid_y")
 	grid_x_size = 50
 	grid_y_size = 55
 	return C(math.floor((x/grid_x_size)),math.floor((y/grid_y_size)))
+
+# Given grid, get x y center
+def get_pos_grid(x,y):
+	C = namedtuple("C" , "x y")
+	grid_x_size = 50
+	grid_y_size = 55
+	grid_corner_x =  x * grid_x_size
+	grid_corner_y = y * grid_y_size
+	grid_center_x = int(grid_corner_x + (grid_x_size/2))
+	grid_center_y = int(grid_corner_y + (grid_y_size/2))
+	return C(grid_center_x,grid_center_y)
 
 # returns which zone a xcoor point is in
 def point_zone(xcoor, left):
