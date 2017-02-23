@@ -269,7 +269,7 @@ class MyTracker(object):
 
 
         # fg = image.copy()
-        # bg = cv2.imread('/afs/inf.ed.ac.uk/user/s14/s1421803/SDP/sd8p/vision/bg0.jpeg')
+        # bg = cv2.imread('/SDP/sd8p/vision/bg0.jpeg')
         # fg = cv2.cvtColor(fg,cv2.COLOR_BGR2YUV)        
         # bf = cv2.cvtColor(bg,cv2.COLOR_BGR2YUV)
 
