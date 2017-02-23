@@ -5,6 +5,7 @@ import tools
 import vision
 import math
 from colors import BGR_COMMON
+import pandas as pd
 #from findHSV import CalibrationGUI
 
 class MyTracker(object):
@@ -123,6 +124,13 @@ class MyTracker(object):
                 cnt_index += 1
                 continue
 
+            # TESTING/IDEAS
+            # Do frame operations to make specific colour identification better.
+            #noramilised_frame = frame.copy()
+            #noramilised_frame = cv2.cvtColor(noramilised_frame, cv2.COLOR_BGR2HSV)
+            #noramilised_frame[:, :, 1] = cv2.equalizeHist(noramilised_frame[:, :, 1])
+            #noramilised_frame = cv2.cvtColor(noramilised_frame, cv2.COLOR_HSV2BGR)
+
             # copy the contour part from the image
             contour_frame = np.zeros((480, 640, 3), np.uint8)
             cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
@@ -133,12 +141,24 @@ class MyTracker(object):
 
             contour_frame = cv2.cvtColor(contour_frame, cv2.COLOR_BGR2HSV)
 
+            # TESTING/IDEAS
+            # Copy the contour part from the normalised image
+            # contour_norm = np.zeros((480, 640, 3), np.uint8)
+            # cv2.drawContours(contour_norm, contours, cnt_index, (255,255,255), cv2.FILLED);
+            # contour_norm = cv2.bitwise_and(noramilised_frame, contour_norm)
+            # contour_norm = cv2.cvtColor(contour_norm, cv2.COLOR_BGR2HSV)
+
             # count blue coloured pixels
             blue_no   = self.count_pixels('blue', contour_frame)
+            #blue_no   = self.count_pixels('blue', contour_norm)
+            
             # count yellow coloured pixels
             yellow_no = self.count_pixels('yellow', contour_frame)
+
             # count green coloured pixels
             green_no  = self.count_pixels('bright_green', contour_frame)
+            #green_no  = self.count_pixels('bright_green', contour_norm)
+
             # count pink coloured pixels
             pink_no   = self.count_pixels('pink', contour_frame)
 
@@ -231,6 +251,7 @@ class MyTracker(object):
 
     def get_masks(self, image):
 
+
         ball_mask  = None
         plate_mask = None
 
@@ -245,6 +266,20 @@ class MyTracker(object):
 
         # combine all colors into one plate mask
         plate_mask      = cv2.bitwise_or(plate_mask, pink_mask)
+
+
+        # fg = image.copy()
+        # bg = cv2.imread('/afs/inf.ed.ac.uk/user/s14/s1421803/SDP/sd8p/vision/bg0.jpeg')
+        # fg = cv2.cvtColor(fg,cv2.COLOR_BGR2YUV)        
+        # bf = cv2.cvtColor(bg,cv2.COLOR_BGR2YUV)
+
+        # cv2.absdiff(fg, bg, fg)
+        # fg = cv2.cvtColor(fg,cv2.COLOR_BGR2GRAY)
+        # fg = cv2.inRange(fg, 12, 255) #################variable - increase if extra bits, decrease otherwise
+        # fg = cv2.GaussianBlur(fg,(15,15), 5)
+        # _, plate_mask = cv2.threshold(fg,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        # plate_mask = cv2.GaussianBlur(plate_mask,(5,5), 2)
+
 
         # pink and violet intercept
         violet_mask     = cv2.subtract(violet_mask, pink_mask)
@@ -316,8 +351,8 @@ class MyTracker(object):
         ball_center = None
 
         ball_mask, robot_mask = self.get_masks(frame);
-        #cv2.imshow("ball_mask ", ball_mask)
-        #cv2.imshow("robot_mask ", robot_mask)
+        cv2.imshow("ball_mask ", ball_mask)
+        cv2.imshow("robot_mask ", robot_mask)
 
         # Robots recognition code goes here.
         # Store things into data dictionary.
