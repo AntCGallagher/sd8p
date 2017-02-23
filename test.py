@@ -1,4 +1,4 @@
-from communications.originalcomms import Coms
+from communications.communications import Comms
 from threading import Thread
 from postprocessing.world import World
 import time
@@ -37,40 +37,41 @@ if __name__ == "__main__" :
 	World.set_globals(0 , 'left')
 
 	# start Coms
-	Coms.start_comunications()
+	comms = Comms()
+	comms.start()
 	time.sleep(2)
 	while True:
 		cmd = raw_input("Please enter a command: ")
 		if cmd == 'go':
-			Coms.stop()
-			Coms.go()
+			comms.stop()
+			comms.go()
 		elif cmd == 'stop':
-			Coms.stop()
+			comms.stop()
 		elif cmd == 'goxy':
-			Coms.stop()
+			comms.stop()
 			fX = raw_input('from X: ')
 			fY = raw_input('from Y: ')
 			h = raw_input('Heading: ')
 			tX = raw_input('to X: ')
 			tY = raw_input('to Y: ')
-			Coms.goxy(fX, fY, h, tX, tY)
+			comms.goxy(fX, fY, h, tX, tY)
 		elif cmd == 'turn':
-	   		Coms.stop()
-			Coms.turn(raw_input('Degrees: '), raw_input('Corrections: '))
+	   		comms.stop()
+			comms.turn(raw_input('Degrees: '), raw_input('Corrections: '))
 		elif cmd == 'kick':
-			Coms.stop()
-			Coms.kick(10)
+			comms.stop()
+			comms.kick(10)
 		elif cmd == 'hasball':
 			pass
 		elif cmd == 'reverse':
-			Coms.stop()
+			comms.stop()
 			dist = raw_input('Distance???: ')
-			Coms.reverse(dist)
+			comms.reverse(dist)
 		elif cmd == 'abort':
-			Coms.abort()
+			comms.abort()
 		elif cmd == 'grab':
-			Coms.stop()
-			Coms.grab(int(raw_input('1 to ungrab, 0 otherwise: ')))
+			comms.stop()
+			comms.grab(int(raw_input('1 to ungrab, 0 otherwise: ')))
 		elif cmd == 'prepkick':
 			pass
 		elif cmd == 'receive':
@@ -78,10 +79,10 @@ if __name__ == "__main__" :
 		elif cmd == 'getball':
 			pass
 		elif cmd == 'reset':
-			Coms.reset()
+			comms.reset()
 		elif cmd == 'crash':
-			Coms.com = None
-			Coms.start_comunications()
+			comms = Comms()
+			comms.start()
 		elif cmd == 'getPos':
 			print("Positions:", getPos())
 		elif cmd == 'resetPos':

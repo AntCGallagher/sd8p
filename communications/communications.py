@@ -6,6 +6,7 @@ import time
 from Queue import Queue
 from threading import Thread, Lock
 from message import Message
+from struct import pack
 
 # Based on code taken from https://bitbucket.org/craigwalton/sdp-g7
 class Comms(object):
@@ -83,7 +84,7 @@ class Comms(object):
 					# Pack and send message to arduino
 					packed = msg.pack_message()
 					msg.set_transmit_time(time.time())
-					hashed = msg.hash()
+					hashed = self.hash(packed)
 
 					self.port.write(packed)
 					self.port.write(hashed)
@@ -141,7 +142,7 @@ class Comms(object):
 		msg = Message(1, "RESET", [])
 		packed = msg.pack_message()
 		msg.set_transmit_time(time.time())
-		hashed = msg.hash(msg)
+		hashed = self.hash(packed)
 
 		self.arduino_initalised = False
 
@@ -154,7 +155,7 @@ class Comms(object):
 
 		self.port.write(packed)
 		self.port.write(hashed)
-		self.message_id=0
+		self.message_id=1
 
 	def stop(self):
 		self.add_message("STOP")
@@ -217,3 +218,11 @@ class Comms(object):
 
 	def hasball(self):
 		self.add_message("HASBALL")
+
+	# hash(packed_msg : string) : byte[]
+	def hash(self, packed_msg):
+		b = bytes(packed_msg)
+		val = 0
+		for by in list(b):
+			val = val + ord(by)
+		return pack(">H", val)
