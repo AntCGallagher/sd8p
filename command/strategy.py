@@ -551,7 +551,7 @@ class Strategy(object):
 
     #Do we really need static method?
     @staticmethod
-    def start3(corner,start_x,start_y,starting_strategy = "n",verbose="n"):
+    def start3(verbose="n"):
         Coms.start_comunications()
         time.sleep(1)
 
@@ -592,8 +592,38 @@ class Strategy(object):
                 else:
                     #TODO Strategy if Juno is found
                     if verbose == "y": print "Strategy: Running DUO strat"
-                    grid_pos = get_grid_pos(me.x,me.y)
-                    #if grid_pos.grid_x < 3 or grid_pos.grid_y
+                    our_grid_pos = get_grid_pos(me.x,me.y)
+
+                    # Check if we are in the right zone
+                    if ((our_grid_pos.grid_x < 3) or (our_grid_pos.grid_y < 3)):
+                        default_grid  = get_pos_grid(3,0)
+                        angle_to_obj = us_to_obj_angle(me,default_grid)
+                        time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                        Coms.turn(angle_to_obj)
+                        time.sleep(1.5)
+                        Coms.go()
+                        time.sleep(time_to_object)
+                        Coms.stop()
+                    else:
+                        # Check if Juno has the ball
+                        juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                        ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                        if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
+                            if ((our_grid_pos.grid_x != 3) and (our_grid_pos.grid_y != 0)):
+                            default_grid  = get_pos_grid(3,0)
+                            angle_to_obj = us_to_obj_angle(me,default_grid)
+                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                            Coms.turn(angle_to_obj)
+                            time.sleep(1.5)
+                            Coms.go()
+                            time.sleep(time_to_object)
+                            Coms.stop()
+                        else:
+                            # Check if the ball is for us
+                            if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):
+                                # Get the ball
+                            else:
+                                # The ball should be left for defense
             elif ball == None:
                 #TODO Strategy if ball not found
                 if verbose == "y": print "Strategy: Ball not found"
