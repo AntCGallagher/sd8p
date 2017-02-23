@@ -263,11 +263,15 @@ class Coms(object):
 				# print message to second terminal window
 				with Coms.com.outputLock:
 					with open(Coms.com.outputFilename , "a" , False) as f:
-						f.write(str(mess) + "\n")
+						f.write("@send_messages " + str(mess) + "\n")
 
 				transmit_time = time.time()
 				message = mess.pack_message()
 				hashed_msg = self.hash(message)
+				with Coms.com.outputLock:
+					with open(Coms.com.outputFilename , "a" , False) as file:
+						file.write("@packed " + str(message) + "\n")
+						file.write("@hashed " + str(hashed_msg) + "\n")
 				mess.set_transmit_time(transmit_time)
 				self.ser.write(message)
 				self.ser.write(hashed_msg)
@@ -616,7 +620,7 @@ class Message():
 		return packed_command
 
 	def __str__(self):
-		msg = str(self.id) + "_" + self.message
+		msg = str(self.id) + " " + self.message
 		return msg
 
 	def init_pack(self):
