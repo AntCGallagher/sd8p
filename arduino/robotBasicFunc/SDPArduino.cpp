@@ -81,11 +81,15 @@ void motorStop(int motorNum) { // stop motor motorNum
 
 void motorAllStop() {
   //I2C command to stop all Motors. 
+  Serial.println("Stopping all motors");
   byte allStop = 1;				//Motor Board stops all motors if bit 0 is high.
   uint8_t sender[1] = {allStop};
+  Serial.println("Begin transmission:");
   Wire.beginTransmission(MotorBoardI2CAddress); //open I2C communation to Motor Board.
-  Wire.write(sender,1);   			// sends a byte
+  Wire.write(sender,1);        			// sends a byte
+  Serial.println("Byte sent");
   byte fred = Wire.endTransmission();		//end I2C commucation.
+  Serial.println("Transmission ended.");
 }
 
 void setPWMpin(int portNum, int power){ //PortNum is the Sensor port used, pwm is the power of the output (between 0-100)

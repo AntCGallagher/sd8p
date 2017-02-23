@@ -27,15 +27,11 @@ void KickInstruction::halt(void) {
 
 bool KickInstruction::progress(void) {
   Serial.println("kicking");
-  //while(positions[KICKER_IDX] < 120){
+  while(positions[KICKER_IDX] > -10){
     greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
-    //Serial.println(F(positions[KICKER_IDX]));
-  //}
-  delay(1825);
-  Serial.println("stopping");
+    updateMotorPositions();
+  }
   greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
-  //motorBackward(GRABBER_IDX, 20);
-  //delay(200);
 
   return true;
 }

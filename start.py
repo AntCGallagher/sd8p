@@ -30,7 +30,7 @@ if __name__ == "__main__" :
 
 
 	# If 1v1:
-	if (args.onevsone == 1):
+	if (int(args.onevsone) == 1):
 		object_count_pink = 0
 		object_count_green = 0
 		enemy_colour = raw_input("opponents primary colour : ")
@@ -109,9 +109,17 @@ if __name__ == "__main__" :
 					corner = int(raw_input("Corner to start ((0,0) = 1 clockwise): "))
 					curr_x = int(raw_input("Current x: "))
 					curr_y = int(raw_input("Current y: "))
+					start_strat = raw_input("Blitz?: ")
+					verbose = raw_input("Verbose debug? (y/n)")
 					while inp != "y":
-				 		inp = raw_input("start? (y/n)")
-						if inp == "y":
-							Strategy.start(corner,curr_x,curr_y)					
+				 		inp = raw_input("start? (1/2/3/4)")
+						if inp == "1":
+							Strategy.start(corner,curr_x,curr_y,start_strat)
+						elif inp == "2":
+							Strategy.start2(corner,curr_x,curr_y,start_strat)
+						elif inp == "3":
+							Strategy.start3(verbose)
+						elif inp == "4":
+							Strategy.taunt()
 				if inp == "t":
 					Strategy.tests()

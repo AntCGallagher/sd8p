@@ -1,13 +1,23 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define LH_IDX 3
-#define RH_IDX 5
-#define KICKER_IDX 2
-#define GRABBER_IDX 1                                                                                                                                                                                                                                                   
-#define REAR_IDX 4
+#define LH_IDX 0
+#define RH_IDX 1
+#define KICKER_IDX 3
+#define GRABBER_IDX 4
+#define REAR_IDX 5
 
-
+// // "green" refers to lego-style motor board
+// // 1-4 are on board at address GREEN_ADDRESS_1_4
+// #define GREEN_ADDRESS_1_4 0x5A
+// #define GREEN_LH_IDX 1
+// #define GREEN_RH_IDX 2
+// #define GREEN_REAR_IDX 3
+// #define GREEN_FINGER_IDX 4
+// // 5-8 are on board at address GREEN_ADDRESS_5_8
+// #define GREEN_ADDRESS_5_8 0x50
+// #define GREEN_GRABBER_IDX 5
+// 
 // // Arduino direct I/O
 // #define SONAR_GRABBER_TRIG 3
 // #define SONAR_GRABBER_ECHO A3
@@ -27,7 +37,6 @@ enum MOTOR_DIR {
 
 #define ROTARY_SLAVE_ADDRESS 5
 #define ROTARY_COUNT 6
-#define PRINT_DELAY 200
 
 extern long int positions[ROTARY_COUNT];// = {0};
 
@@ -39,14 +48,14 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir);
 void greenMotorAllStop(void);
 
 
-// /* SONAR */
-// int sonarDistance(int trigPin, int echoPin, int maxDist);
-// bool ballInReach(int *counter, int countsRequired);
-//
+
+
+/* SONAR */
+int sonarDistance(int trigPin, int echoPin, int maxDist);
+bool ballInReach(int *counter, int countsRequired);
 
 /* GRABBER */
 bool hasBall();
 
 
 #endif
-

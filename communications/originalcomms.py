@@ -33,6 +33,7 @@ class Coms(object):
 	outputLock = Lock()
 	outputFilename = ""
 	errorCounter = 0
+	arduino_init = False
 
 	def __init__(self):
 		try :
@@ -127,7 +128,7 @@ class Coms(object):
 
 	@staticmethod
 	def reset_dict(self):
-		Coms.com.mess_id = 1
+		Coms.com.mess_id = 2
 		return Coms.com.messages_sent.clear()
 
 	@staticmethod
@@ -222,18 +223,19 @@ class Coms(object):
 						return -1
 
 			# if no messages been delivered and there are 5 queued, ignore new messages
-			if len(Coms.com.messages_sent) == Coms.com.mess_id - 1 and Coms.com.mess_id >= 6:
-				if debug_print_ignoring_new_mess:
-					print "No messages delivered. Ignoring new message."
-			# if 10 messages undelivered, accept Comms has issues and reject new commands
-			elif len(Coms.com.messages_sent) >= 10:
-				if debug_print_ignoring_new_mess:
-					print "Queue getting big. Ignoring new message."
+		#	if len(Coms.com.messages_sent) == Coms.com.mess_id - 1 and Coms.com.mess_id >= 6:
+		#		if debug_print_ignoring_new_mess:
+		#			print "No messages delivered. Ignoring new message."
+		#	# if 10 messages undelivered, accept Comms has issues and reject new commands
+		#	elif len(Coms.com.messages_sent) >= 10:
+		#		if debug_print_ignoring_new_mess:
+		#			print "Queue getting big. Ignoring new message."
 			else:
 				id = Coms.com.mess_id
 				msg = Message(id,mess)
 				Coms.com.messages_sent[str(id)] = msg
 				Coms.com.messages.put(msg)
+				print "Creating message with id=", Coms.com.mess_id
 				Coms.com.mess_id += 1
 				return id
 		else :
@@ -364,7 +366,7 @@ class Coms(object):
 			print "Arduino just reset"
 			# empty dictionary and reset ID
 			Coms.com.messages_sent = dict()
-			Coms.com.mess_id = 1
+			Coms.com.mess_id = 2
 		elif cmdName == "COMP":
 			if len(cmdParams) > 1 :
 				print "Arduino completed command id ",cmdParams[0]," with success ",cmdParams[1]

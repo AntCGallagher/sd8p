@@ -25,7 +25,7 @@ class Camera(object):
         calibration             = tools.get_colors(pitch=pitch)
         self.camera_settings    = calibration["camera"]
 
-        self.reset_camera_settings()   
+        self.reset_camera_settings()
 
         # Parameters used to fix radial distortion
         self.radial_data        = tools.get_radial_data()
@@ -51,15 +51,20 @@ class Camera(object):
         #status = True
         #frame = cv2.imread('snap-1.jpeg')
         #frame = cv2.resize(frame, (640, 480))
-        status, frame = self.capture.read() 
+        status, frame = self.capture.read()
 
         frame = self.fix_radial_distortion(frame)
 
         frame = self.fix_perspective(frame)
 
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        #frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
+        frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
+
+
         # fix noise
         #frame = cv2.fastNlMeansDenoisingColored(frame,None,10,10,7,21)
-        
+
         if status:
             return frame
 
@@ -96,7 +101,7 @@ class Camera(object):
         dst = cv2.warpPerspective(frame,M,(cols,rows))
 
         return dst
-    
+
     def reset_camera_settings(self, settings=None):
 
         if settings:
@@ -109,7 +114,7 @@ class Camera(object):
             CONTRAST    = self.camera_settings['contrast']      /100.0
             SATURATION  = self.camera_settings['saturation']    /100.0
             HUE         = self.camera_settings['hue']           /100.0
-       
+
         self.capture.set(cv2.CAP_PROP_BRIGHTNESS,   BRIGHTNESS)
         self.capture.set(cv2.CAP_PROP_CONTRAST,     CONTRAST)
         self.capture.set(cv2.CAP_PROP_SATURATION,   SATURATION)
@@ -120,16 +125,16 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("pitch", help="[0] Main pitch, [1] Secondary pitch")
-    args = parser.parse_args() 
+    args = parser.parse_args()
 
     pitch_number = int(args.pitch)
 
     calibration = tools.get_colors(pitch_number)
 
     tracker = test_tracker.MyTracker(calibration=calibration)
-    
+
     cam = Camera(pitch=pitch_number)
-    
+
     while(True):
 
         time = tools.current_milli_time()

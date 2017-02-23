@@ -50,12 +50,13 @@ float clicksToDeg(float clicks) {
 }
 
 float degToClicks(float deg) {
-  return deg / DEG_PER_CLICK;  
+  return deg / DEG_PER_CLICK;
 }
 
 float projectedAdditionalClicksFromSum(int sum) {
   if (sum == 0)
     return 0;
+  // See which work better than others
   float proj = 1.981*log(abs(sum)) + 3.449;
   //float proj = 1.239*log(abs(sum)) + 2.061;
   //float proj = 1.334*log(abs(sum)) + 1.039;
@@ -67,9 +68,9 @@ float projectedAdditionalClicksFromSum(int sum) {
 long unsigned turnLastP;
 
 bool TurnInstruction::progress() {
-  
+
   updateMotorPositions();
-  
+
   // if this is the first call to progress
   if (this->begun == false) {
     this->begun = true;
@@ -78,14 +79,14 @@ bool TurnInstruction::progress() {
     this->braking = false;
     if (this->deg == 0)
       return true;
-    
+
     this->clicksAtBrake = 0;
     this->lastClicks = 0;
     this->lastClickTime = millis();
-    
+
     // reset motor position counter
     positions[REAR_IDX] = 0;
-    
+
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("Begin turn "));
     Serial.print(degToClicks(this->deg));
@@ -93,37 +94,34 @@ bool TurnInstruction::progress() {
     Serial.print(this->deg);
     Serial.println(F(" deg)"));
 #endif
-    
-    greenMotorMove(LH_IDX, -80, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(RH_IDX, 100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_FWD : MOTOR_BWD);
-    Serial.print(F(" turning "));
+
+    greenMotorMove(LH_IDX, -70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(RH_IDX, 70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
   }
-  
-  
-  
+
   float totalClicksRequired = degToClicks(this->deg);
   float travelled = positions[REAR_IDX] + projectedAdditionalClicksFromSum(positions[REAR_IDX]);
-  
-  Serial.println(F("Travelled:"));
-  Serial.print(travelled);
-  
+
+  //Serial.print(F("Travelled:"));
+  //Serial.println(travelled);
+
   // keep effective timer of when a click occurs
   if (positions[REAR_IDX] != this->lastClicks) {
     this->lastClickTime = millis();
     this->lastClicks = positions[REAR_IDX];
   }
-  
+
   if (this->braking) {
-    
+
     // haven't seen any clicks in over x ms
     if (millis() - max(this->lastClickTime, this->brakeTime) > MAX_CLICK_PERIOD_FOR_STOPPED) {
-      
+
       // return motors to floating
       greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
       greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
       greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
-      
+
 #ifdef DEBUG_PRINT_TURN
       Serial.print(F("Braking covered "));
       Serial.print(positions[REAR_IDX] - clicksAtBrake);
@@ -135,35 +133,35 @@ bool TurnInstruction::progress() {
       Serial.print(clicksToDeg(positions[REAR_IDX]));
       Serial.println(F(" deg)"));
 #endif
-      
-      float miss = totalClicksRequired - positions[REAR_IDX];
-      if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
-        TurnInstruction *nextTurn = new TurnInstruction();
-        nextTurn->deg = clicksToDeg(miss);
-        nextTurn->correctionsRemaining = this->correctionsRemaining - 1;
-        insertInstruction(nextTurn, 1);
-      } else {
-        // let PC know we're done
-        if (this->cmdID > -1) {
-          comms.sendInstructionComplete(this->cmdID);
-          this->cmdID = -1;
-        } 
-      }
+
+     float miss = totalClicksRequired - positions[REAR_IDX];
+     if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
+       TurnInstruction *nextTurn = new TurnInstruction();
+       nextTurn->deg = clicksToDeg(miss);
+       nextTurn->correctionsRemaining = this->correctionsRemaining - 1;
+       insertInstruction(nextTurn, 1);
+     } else {
+       // let PC know we're done
+       if (this->cmdID > -1) {
+         comms.sendInstructionComplete(this->cmdID);
+         this->cmdID = -1;
+       }
+     }
       return true;
     }
     return false;
   }
-  
+
   // signs must be same
   bool travelledPos = (travelled >= 0);
   bool toTravelPos = (totalClicksRequired >= 0);
   bool signsEqual = !(travelledPos ^ toTravelPos);
-  
+
   // for small turns, clicks are not granular enough, so use time
   bool smallTurnTimeElapsed = false;
   if (abs((int)totalClicksRequired) <= SMALL_TURN_LIMIT) {
     unsigned long timeElapsed = millis() - this->startTime;
-    
+
     switch (abs((int)totalClicksRequired)) {
       case 1:
         smallTurnTimeElapsed = (timeElapsed >= TIME_UNTIL_1_CLICK);
@@ -179,43 +177,37 @@ bool TurnInstruction::progress() {
         break;
     }
   }
-  
+
   // check if complete - either by clicks or by duration (small turns only)
-  if ((/*signsEqual && */abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
-    
+  if ((signsEqual && abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
+
     this->brakeTime = millis();
     this->braking = true;
     clicksAtBrake = positions[REAR_IDX];
-    
+
     greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
-    
+
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("BRAKING at"));
     Serial.print(clicksAtBrake);
     Serial.print(F(" clicks ("));
     Serial.print(clicksToDeg(clicksAtBrake));
     Serial.println(F(" deg)"));
-    Serial.print(F("Estimating "));
-    Serial.print(projectedAdditionalClicksFromSum(positions[REAR_IDX]));
-    Serial.println(F(" extra clicks"));
+    //Serial.print(F("Estimating "));
+    //Serial.print((positions[REAR_IDX]));
+    //Serial.println(F(" extra clicks"));
     //if (smallTurnTimeElapsed)
       //Serial.println(F(StoppedSerial.print(F(" turning ")); based on time for small turn));
 #endif
   }
-  
+
   // sensible debug print interval
   if (millis() - turnLastP > 300) {
     turnLastP = millis();
-    
+
   }
-  
+
   return false;
 }
-
-
-
-
-
-
