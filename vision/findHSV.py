@@ -369,6 +369,12 @@ if __name__ == '__main__':
         # capture frame by frame
         frame = cam.get_frame()
 
+        # TESTING/IDEA - For green dots, plates, and blue dots, use a HSV normalised frame.
+        # if (args.color == "blue" or args.color == "green" or args.color == "bright_green" or args.color == "plate"):
+        #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        #     frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
+        #     frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
+
         # Display the resulting frame
         calibration_gui.show(frame)
 
