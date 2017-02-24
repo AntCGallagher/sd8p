@@ -1,7 +1,17 @@
 import cv2
 from vision import Camera
 
-camera = Camera(pitch=0)
-frame = camera.get_frame()
-cv2.imwrite("/SDP/sd8p/vision/currBg.jpeg", frame)
+capture = Camera(pitch=0)
+
+while True:
+
+        frame = capture.get_frame()
+
+        cv2.imwrite("currBg.png", frame)
+
+        cv2.imshow('Tracker', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 print "done"
