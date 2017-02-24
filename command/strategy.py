@@ -611,20 +611,22 @@ class Strategy(object):
                         ball_grid_pos = get_grid_pos(ball.x,ball.y)
                         if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
                             if ((our_grid_pos.grid_x != 3) and (our_grid_pos.grid_y != 0)):
-                            default_grid  = get_pos_grid(3,0)
-                            angle_to_obj = us_to_obj_angle(me,default_grid)
-                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            self.comms.turn(angle_to_obj)
-                            time.sleep(1.5)
-                            self.comms.go()
-                            time.sleep(time_to_object)
-                            self.comms.stop()
+                                default_grid  = get_pos_grid(3,0)
+                                angle_to_obj = us_to_obj_angle(me,default_grid)
+                                time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                                self.comms.turn(angle_to_obj)
+                                time.sleep(1.5)
+                                self.comms.go()
+                                time.sleep(time_to_object)
+                                self.comms.stop()
                         else:
                             # Check if the ball is for us
                             if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):
                                 # Get the ball
+                                Coms.stop()
                             else:
                                 # The ball should be left for defense
+                                Coms.stop()
             elif ball == None:
                 #TODO Strategy if ball not found
                 if verbose == "y": print "Strategy: Ball not found"
