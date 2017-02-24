@@ -7,7 +7,7 @@ while True:
 
         frame = capture.get_frame()
 
-        cv2.imwrite("vision/currBg.jpeg", frame)
+        cv2.imwrite("currBg.png", frame)
 
         cv2.imshow('Tracker', frame)
 
