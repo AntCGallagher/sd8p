@@ -270,10 +270,7 @@ class Coms(object):
 				transmit_time = time.time()
 				message = mess.pack_message()
 				hashed_msg = self.hash(message)
-				with Coms.com.outputLock:
-					with open(Coms.com.outputFilename , "a" , False) as file:
-						file.write("@packed " + str(message) + "\n")
-						file.write("@hashed " + str(hashed_msg) + "\n")
+				
 				mess.set_transmit_time(transmit_time)
 				self.ser.write(message)
 				self.ser.write(hashed_msg)
