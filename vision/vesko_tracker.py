@@ -321,7 +321,7 @@ class MyTracker(object):
 
         # background image used for background subtraction
         #TODO make interface to acquire such image
-        og = cv2.imread('2_9x6.jpeg')
+        og = cv2.imread('currBg.png')
         og = cv2.GaussianBlur(og,(3,3),0)
         og = cv2.cvtColor(og,cv2.COLOR_BGR2YUV)
 
