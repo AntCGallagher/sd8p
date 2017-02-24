@@ -37,6 +37,7 @@ class Strategy(object):
     @staticmethod
     def tests():
         inp = ""
+        comms = Comms()
         while inp != "done":
             inp = raw_input("(p/gxy/grb/t/m/turntest/turntest2/g/pos/rpos/gridxy/xygrid/rgrid)")
             if inp == "p":
@@ -61,8 +62,8 @@ class Strategy(object):
             if inp == "gxy":
                 dest_x = float(raw_input("dest_x: "))
                 dest_y = float(raw_input("dest_y: "))
-                self.comms.start()
-                self.comms.stop()
+                comms.start()
+                comms.stop()
                 robots = curr_world.robots
                 robot0 = curr_world.robots[0]
                 if robot0 != None:
@@ -72,15 +73,15 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "target: ", dest_x, " ", dest_y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
-                    self.comms.turn(get_angle_to_send(int(angle_to_obj)))
+                    comms.turn(get_angle_to_send(int(angle_to_obj)))
                     time.sleep(1.5)
-                    self.comms.reverse(200)
+                    comms.reverse(200)
                     time.sleep(time_to_object)
-                    self.comms.stop()
+                    comms.stop()
                 else:
                     print "Robot not detected"
             if inp == "grb":
-                self.comms.start_comunications()
+                comms.start()
                 curr_world = World.get_world()
                 ball = curr_world.ball
                 robots = curr_world.robots
@@ -92,11 +93,11 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
-                    self.comms.turn(angle_to_obj)
+                    comms.turn(angle_to_obj,3)
                     time.sleep(1.5)
-                    self.comms.reverse(200)
+                    comms.go()
                     time.sleep(time_to_object)
-                    self.comms.stop()
+                    comms.stop()
                 elif robot0 == None and ball != None:
                     print "Robot and ball not detected"
                 elif robot0 == None:
@@ -105,8 +106,8 @@ class Strategy(object):
                     print "Ball not detected"
             if inp == "t":
                 value = int(raw_input("angle to turn: "))
-                self.comms.start_comunications()
-                self.comms.turn(value)
+                comms.start_comunications()
+                comms.turn(value)
                 time.sleep(1.5)
             if inp == "m":
                 curr_world = World.get_world()
@@ -123,34 +124,34 @@ class Strategy(object):
                 print len(list)
                 print robot0.rot
             if inp == "turntest":
-                self.comms.start_comunications()
+                comms.start_comunications()
                 time.sleep(1)
                 inp = int(raw_input("value to turn: "))
                 angle_to_turn = get_angle_to_send(inp)
-                self.comms.turn(inp)
+                comms.turn(inp)
                 time.sleep(3)
-                self.comms.stop()
+                comms.stop()
             if inp == "turntest2":
-                self.comms.start_comunications()
+                comms.start_comunications()
                 time.sleep(1)
-                self.comms.grab(1)
+                comms.grab(1)
                 time.sleep(1)
-                self.comms.grab(0)
+                comms.grab(0)
                 time.sleep(1)
-                self.comms.kick(10)
+                comms.kick(10)
                 time.sleep(1)
-                self.comms.stop()
+                comms.stop()
             if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
                 inpy = int(raw_input("y value: "))
                 print(get_grid_pos(inpx,inpy))
             if inp == "g":
-                self.comms.start_comunications()
+                comms.start()
                 time.sleep(1)
                 inp = float(raw_input("Time to sleep: "))
-                self.comms.go()
+                comms.go()
                 time.sleep(inp)
-                self.comms.stop()
+                comms.stop()
             if inp == "pos":
             	print("Positions:", getPos())
             if inp == "rpos":
