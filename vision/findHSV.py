@@ -12,7 +12,7 @@ CONTROL = ["Lower threshold for hue",
            "Upper threshold for saturation",
            "Lower threshold for value",
            "Upper threshold for value",
-           "Contrast", 
+           "Contrast",
            "Gaussian blur",
            "Open kernel",
            "Close kernel",
@@ -176,7 +176,7 @@ class CalibrationGUI(object):
             GII Gaussian number
 
         params:
-            frame: 
+            frame:
                 description: camera image
                 type: numpy array
 
@@ -189,7 +189,7 @@ class CalibrationGUI(object):
         """
         # plt.imshow(frame)
         # plt.show()
-        
+
         blur = self.calibration[self.color]['blur']
         if blur >= 1:
             if blur % 2 == 0:
@@ -204,7 +204,7 @@ class CalibrationGUI(object):
 
         self.frame = frame
 
-        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
 
         min_color = self.calibration[self.color]['min']
         max_color = self.calibration[self.color]['max']
@@ -275,7 +275,7 @@ class CalibrationGUI(object):
 
 
 
-            frame_hsv = cv2.cvtColor(lap, cv2.COLOR_BGR2HSV)
+            frame_hsv = cv2.cvtColor(lap, cv2.COLOR_BGR2YUV)
 
 
             frame_mask_lap = cv2.inRange(frame_hsv, np.array([0,0,hp]), np.array([360,255,255]))
@@ -295,7 +295,7 @@ class CalibrationGUI(object):
         if event == cv2.EVENT_LBUTTONDOWN:
             consol.log_time('Find HSV', 'mouse click')
 
-            frame_hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+            frame_hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2YUV)
 
 
 
