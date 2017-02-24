@@ -33,6 +33,7 @@ class Message(object):
 		self.cmd_name = op_string
 		self.op = opcodes[op_string]
 		self.params = params
+		self.trans = None
 
 	# pack() : byte[]
 	def pack_message(self):

@@ -2,6 +2,7 @@ import serial
 import subprocess as sp
 import os
 import time
+import re
 
 from Queue import Queue
 from threading import Thread, Lock
@@ -12,7 +13,8 @@ from struct import pack
 class Comms(object):
 	active = False # Whether or not communications is active
 	arduino_initialised = False # Messages will only be sent when the arduino is initialised
-	messages = Queue() # Queue of unconfirmed messages
+	messages = [] # List containing all messages
+	message_buffer = Queue() # Queue of messages to try sending
 	port = None # The port on which to send/listen for messages
 	message_id = 0 # The ID of the last queued command
 	outputLock = Lock() # Create a thread lock to ensure no interference between threads
@@ -73,8 +75,7 @@ class Comms(object):
 			if self.arduino_initialised:
 				try:
 					# Get message at the front of the queue
-					msg = self.messages.get(0)
-					#print "@send_messages", msg
+					msg = self.message_buffer.get(0)
 
 					# Write to file
 					with self.outputLock:
@@ -91,8 +92,17 @@ class Comms(object):
 					time.sleep(0.01)
 
 				except Exception, ex:
-					# In case of error, print exception details
-					pass
+					if not type(ex).__name__ == "Empty":
+						print str(ex)
+
+					for m in self.messages:
+						current_time = time.time()
+						transmit_time = m.trans
+						if transmit_time != None:
+							time_diff = current_time - transmit_time
+							if time_diff > 1:
+								self.message_buffer.put(m)
+					time.sleep(0.1)
 			else:
 				time.sleep(0.1)
 		else:
@@ -109,9 +119,8 @@ class Comms(object):
 			if response:
 				# Convert sequence of bytes to string
 				joined = "".join(response)
-				#print "@receive_messages", joined
 
-				if ("$ARDRESET;" in joined):
+				if ("$ARDRESET" in joined):
 					print "Arduino ready!"
 					self.arduino_initialised = True
 
@@ -120,24 +129,48 @@ class Comms(object):
 					with open(self.outputFilename, "a", False) as file:
 						file.write("@receive_messages " + str(joined) + "\n")
 
-				# self.update_message_status(joined)
-
 				# Otherwise, check for OK or ERR message
+				if ("$SUC" in joined):
+					ids = re.findall('(?<=\$SUC\&)\d+(?=;)', joined)
+					for idx in ids:
+						self.delete_up_to_id(idx)
+
+				if ("$ERR" in joined):
+					ids = re.findall('(?<=\$ERR\&)\d+(?=;)', joined)
+					for idx in ids:
+						self.resend_up_to_id(idx)
 
 			self.port.flush()
 
 			# Try again every 10ms
 			time.sleep(0.01)
 
+	def delete_up_to_id(self, idx):
+		for m in self.messages:
+			if (int(m.id) <= int(idx)):
+				self.messages.remove(m)
+
+	def resend_up_to_id(self, idx):
+		if (int(idx) == 0):
+			self.reset()
+			return
+
+		self.message_buffer = Queue()
+		for m in self.messages:
+			if (int(m.id) <= int(idx)):
+				self.message_buffer.put(m)
+
 	# name : string, params : int[], params is optional, has default [] (no parameters)
 	def add_message(self, name, params=[]):
 		# Iterate current message_id
 		self.message_id = self.message_id + 1
 		msg = Message(self.message_id, name, params)
-		self.messages.put(msg)
+		self.messages.append(msg)
+		self.message_buffer.put(msg)
 
 	def reset(self):
-		self.messages = Queue()
+		self.messages = []
+		self.message_buffer = Queue()
 		# Create a reset message
 		msg = Message(1, "RESET", [])
 		packed = msg.pack_message()
