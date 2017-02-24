@@ -60,11 +60,11 @@ void Comms::readSerial() {
     // read byte and add it to buffer
     byte inByte = Serial.read();
     
-    if (char(inByte) == 'Y') {
+    if (char(inByte) == '*') {
       updateMotorPositions();
       printMotorPositions();
     }
-    else if (char(inByte) == 'Z') {
+    else if (char(inByte) == '**') {
       resetMotorPositions();
       printMotorPositions();
     }

@@ -26,8 +26,8 @@ void KickInstruction::halt(void) {
 }
 
 bool KickInstruction::progress(void) {
-  Serial.println("kicking");
-  while(positions[KICKER_IDX] > -10){
+  //Serial.println("kicking");
+  while(positions[KICKER_IDX] > -24){
     greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
     updateMotorPositions();
   }

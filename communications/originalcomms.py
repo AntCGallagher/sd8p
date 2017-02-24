@@ -275,6 +275,7 @@ class Coms(object):
 				self.ser.write(message)
 				self.ser.write(hashed_msg)
 				time.sleep(0.1)
+
 			except Exception, ex:
 
 				if not type(ex).__name__ == "Empty":

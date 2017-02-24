@@ -32,7 +32,7 @@ class Message(object):
 		self.attempts = 0
 		self.cmd_name = op_string
 		self.op = opcodes[op_string]
-		self.params = params
+		self.params = map(int,params)
 		self.trans = None
 
 	# pack() : byte[]
@@ -45,7 +45,7 @@ class Message(object):
 		elif (self.op in [5,6]):
 			packed = pack(">HBhhhhh", self.id, self.op, self.params[0], self.params[1], self.params[2], self.params[3], self.params[4])
 		elif (self.op in [7]):
-			packed = pack(">HBHhh", self.id, self.op, self.params[0], self.params[1], self.params[2])
+			packed = pack(">HBhB", self.id, self.op, self.params[0], self.params[1])
 		elif (self.op in [8,10,11]):
 			packed = pack(">HBB", self.id, self.op, self.params[0])
 		elif (self.op in [9]):

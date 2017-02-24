@@ -3,27 +3,24 @@ from threading import Thread
 from postprocessing.world import World
 import time
 import serial
-"""
 
-"""
+global comms
 
 def getPos():
-	Coms.com.ser.write(bytes('Y'))
+	global comms
+	comms.ser.write(bytes('*'))
 	time.sleep(1)
-	with open(Coms.com.outputFilename) as f:
+	with open(comms.outputFilename) as f:
 		log = f.readlines()
 		positions = log[len(log)-2]
 		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
-	#positions[3] = left wheel;
-	#positions[5] = right wheel;
-	#positions[4] = omni wheel;
-	#positions[2] = kicker;
 	return positions
 
 def resetPos():
-	Coms.com.ser.write(bytes('Z'))
+	global comms
+	comms.ser.write(bytes('**'))
 	time.sleep(1)
-	with open(Coms.com.outputFilename) as f:
+	with open(comms.outputFilename) as f:
 		log = f.readlines()
 		positions = log[len(log)-2]
 		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]

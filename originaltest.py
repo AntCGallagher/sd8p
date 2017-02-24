@@ -8,7 +8,7 @@ import serial
 """
 
 def getPos():
-	Coms.com.ser.write(bytes('Q'))
+	Coms.com.ser.write(bytes('*'))
 	time.sleep(1)
 	with open(Coms.com.outputFilename) as f:
 		log = f.readlines()
@@ -21,7 +21,7 @@ def getPos():
 	return positions
 
 def resetPos():
-	Coms.com.ser.write(bytes('Z'))
+	Coms.com.ser.write(bytes('**'))
 	time.sleep(1)
 	with open(Coms.com.outputFilename) as f:
 		log = f.readlines()
