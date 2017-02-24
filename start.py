@@ -119,7 +119,7 @@ if __name__ == "__main__" :
 						elif inp == "2":
 							strategy.start2(corner,curr_x,curr_y,start_strat)
 						elif inp == "3":
-							strategy.start3(verbose)
+							strategy.start3(curr_x,curr_y,verbose)
 						elif inp == "4":
 							strategy.taunt()
 				if inp == "t":
