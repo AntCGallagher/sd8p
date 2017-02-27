@@ -180,6 +180,35 @@ class Strategy(object):
                 if robot_num == 4:
                     if ball != None:
                         print get_grid_pos(ball.x,ball.y)
+            if inp == "ug":
+                comms.grab(1)
+            if inp == "kick":
+                comms.kick(10)
+            if inp == "zone":
+                robot_num = int(raw_input("robot num: "))
+                teamSideLeft = World.our_side == "Left"
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                robot1 = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                ball = curr_world.ball
+                if robot_num == 0:
+                    if robot0 != None:
+                        print get_zone(robot0.x,teamSideLeft)
+                if robot_num == 1:
+                    if robot1 != None:
+                        print get_zone(robot1.x,teamSideLeft)
+                if robot_num == 2:
+                    if robot2 != None:
+                        print get_zone(robot2.x,teamSideLeft)
+                if robot_num == 3:
+                    if robot3 != None:
+                        print get_zone(robot3.x,teamSideLeft)
+                if robot_num == 4:
+                    if ball != None:
+                        print get_zone(ball.x,teamSideLeft)
 
     def getPos():
         comms = Comms()
@@ -261,23 +290,21 @@ class Strategy(object):
 
             #Change condition to reflect when to change to solo or duo strategy
             #Currently, if Juno is missing in 3 world models, will convert to solo strat
+
             if juno != None:
                 if (juno.x == last_juno_x and juno.y == last_juno_y):
                     missingJunoCounter += 1
                     if missingJunoCounter == maxMissCounter:
                         if verbose == "y": print "Strategy: Juno in the same position"
-                        solo_strat = True
                         last_juno_x = juno.x
                         last_juno_y = juno.y
                         juno = None
                 else:
                     missingJunoCounter = 0
-                    solo_strat = False
             else:
                 missingJunoCounter += 1
                 if missingJunoCounter == maxMissCounter:
                     if verbose == "y": print "Strategy: Juno not found"
-                    solo_strat = True
                     juno = None
 
             if robot2 != None:
@@ -323,122 +350,48 @@ class Strategy(object):
                 me.y = last_me_y
                 me.rot = last_me_rot
 
+            if juno == None:
+                solo_strat = True
+            else:
+                solo_strat = False
+
             if me.x < 40 or me.x > 260 or me.y < 30 or me.y > 190:
                 if verbose == "y": print "Reversing cause it's too close to the wall"
                 comms.reverse(100)
                 time.sleep(0.8)
                 comms.stop()
             else:
-                # Currently set to True to test the solo _start TODO: Change for actual match    
-                solo_strat = True
+                # Currently set to True to test the solo _start TODO: Change for actual match
+                #solo_strat = True
                 if solo_strat:
                     #TODO Strategy if Juno is not found
                     if verbose == "y": print "Strategy: Running SOLO strat"
                     me_grid = get_grid_pos(me.x,me.y)
                     ball_grid = get_grid_pos(ball.x,ball.y)
-                    if robot2 != None:
-                        robot2_grid = get_grid_pos(robot2.x,robot2.y)
-                    if robot3 != None:
-                        robot3_grid = get_grid_pos(robot3.x,robot3.y)
-
-                    #Robot distances to ball
-                    me_ball_grid_dist = get_grid_distance(me_grid.x,me_grid.y,ball_grid.x,ball_grid.y)
-                    if robot2 != None:
-                        robot2_ball_grid_dist = get_grid_distance(robot2_grid.x,robot2_grid.y,ball_grid.x,ball_grid.y)
-                    if robot3 != None:
-                        robot3_ball_grid_dist = get_grid_distance(robot3_grid.x,robot3_grid.y,ball_grid.x,ball_grid.y)
-
-                    if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
-                        if verbose == "y": print "Strategy: Solo: Going for defense"
-
-                        #Selecting goal coordinates
-                        goal = namedtuple("C", "x y")
-                        if teamSideLeft:
-                            goal(LEFTGOALX, LEFTGOALY)
-                        else:
-                            goal(RIGHTGOALX, RIGHTGOALY)
-
-                        # Change this variable to test blocking.
-                        # Apparently calculate_intercept_p is not reliable
-                        blocking_enabled = False
-                        if blocking_enabled and (robot2_ball_grid_dist < 1 or robot3_ball_grid_dist < 1):
-                            # Select shooter
-                            shooter = namedtuple("C","x y")
-                            if robot2_ball_grid_dist < 1:
-                                if verbose == "y": print "Strategy: Solo: Blocking robot2"
-                                shooter(robot2.x,robot2.y)
-                            elif robot3_ball_grid_dist < 1:
-                                if verbose == "y": print "Strategy: Solo: Blocking robot3"
-                                shooter(robot3.x,robot3.y)
-
-                            # Calculate intercept location
-                            point = calculate_intercept_p({shooter.x,shooter.y},{goal.x,goal.y},{me.x,me.y})
-                            pxy = namedtuple("C","x y")
-                            pxy(point[0],point[1])
-                            angle_to_obj = us_to_obj_angle(me,pxy)
-                            if angle_to_obj < 20:
-                                angle_to_obj += 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
-                            if time_to_object > MAX_MOVEMENT_TIME:
-                                time_to_object = MAX_MOVEMENT_TIME
-                            comms.turn(angle_to_obj,3)
-                            comms.sleep(time_to_turn)
-                            comms.go()
-                            comms.sleep(time_to_object)
-                            comms.stop()
-
-                        else:
-                            if verbose == "y": print "Strategy: Solo: Defending goal"
-                            if math.pow(me.x - goal.x,2) + math.pow(me.y - goal.y,2) < math.pow(10):
-                                if verbose == "y": print "Strategy: Solo: Near Goal"
-                                #Turn towards ball
-                                angle_to_obj = us_to_obj_angle(me,ball)
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
-                                time_to_turn = get_time_to_turn(angle_to_obj)
-                                comms.turn(angle_to_obj)
-                                time.sleep(time_to_turn)
-                            else:
-                                if verbose == "y": print "Strategy: Solo: Going to goal"
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
-                                time_to_turn = get_time_to_turn(angle_to_obj)
-                                time_to_object = get_time_to_travel(me.x,goal.x,me.y,goal.y)
-                                if time_to_object > MAX_MOVEMENT_TIME:
-                                    time_to_object = MAX_MOVEMENT_TIME
-                                comms.turn(angle_to_obj,3)
-                                comms.sleep(time_to_turn)
-                                comms.go()
-                                comms.sleep(time_to_object)
-                                comms.stop()
+                    if me_grid.x == ball_grid.x and me_grid.y == ball_grid.y:
+                        if verbose == "y": print "Strategy: Same grid as ball"
+                        angle_to_obj = us_to_obj_angle(me,ball)
+                        if angle_to_obj < 20:
+                            angle_to_obj = angle_to_obj + 360
+                        time_to_turn = get_time_to_turn(angle_to_obj)
+                        comms.turn(angle_to_obj,5)
+                        time.sleep(time_to_turn)
                     else:
-                        if verbose == "y": print "Strategy: Solo: Going for offense"
-                        if me_grid.x == ball_grid.x and me_grid.y == ball_grid.y:
-                            if verbose == "y": print "Strategy: Solo: Same grid as ball"
-                            angle_to_obj = us_to_obj_angle(me,ball)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,5)
-                            time.sleep(time_to_turn)
-                        else:
-                            if verbose == "y": print "Strategy: Solo: Going to ball grid"
-                            grid = get_grid_pos(ball.x,ball.y)
-                            grid_coordinates = get_pos_grid(grid.x,grid.y)
-                            C = namedtuple("C" , "x y")
-                            angle_to_obj = us_to_obj_angle(me,C(grid_coordinates.x,grid_coordinates.y))
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,3)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            time.sleep(0.2)
-                            comms.go()
-                            time.sleep(MAX_MOVEMENT_TIME)
-                            comms.stop()
+                        if verbose == "y": print "Strategy: Going to ball grid"
+                        grid = get_grid_pos(ball.x,ball.y)
+                        grid_coordinates = get_pos_grid(grid.x,grid.y)
+                        C = namedtuple("C" , "x y")
+                        angle_to_obj = us_to_obj_angle(me,C(grid_coordinates.x,grid_coordinates.y))
+                        if angle_to_obj < 20:
+                            angle_to_obj = angle_to_obj + 360
+                        time_to_turn = get_time_to_turn(angle_to_obj)
+                        comms.turn(angle_to_obj,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                        time.sleep(0.2)
+                        comms.go()
+                        time.sleep(MAX_MOVEMENT_TIME)
+                        comms.stop()
                 else:
                     #TODO Strategy if Juno is found
                     if verbose == "y": print "Strategy: Running DUO strat"
@@ -447,7 +400,7 @@ class Strategy(object):
                     # Check if we are in the right zone
                     if teamSideLeft:
                         if (our_grid_pos.x < 3):
-                            if verbose == "y": print "Strategy: In the wrong zone"
+                            if verbose == "y": print "Strategy: Left - In the wrong zone"
                             default_grid  = get_pos_grid(3,1)
                             angle_to_obj = us_to_obj_angle(me,default_grid)
                             if verbose == "y": print default_grid, " coordinates to go to"
@@ -471,14 +424,14 @@ class Strategy(object):
                             #last_me_rot = compass
                         else:
                             # Check if Juno has the ball
-                            if verbose == "y": print "Strategy: In the valid zone"
+                            if verbose == "y": print "Strategy: Left - In the valid zone"
                             juno_grid_pos = get_grid_pos(juno.x,juno.y)
                             ball_grid_pos = get_grid_pos(ball.x,ball.y)
                             if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
-                                if verbose == "y": print "Strategy: Juno and ball in the same zone"
+                                if verbose == "y": print "Strategy: Left - Juno and ball in the same zone"
                                 if ((our_grid_pos.x != 3) and (our_grid_pos.x != 0)):
-                                    if verbose == "y": print "Strategy: Move to default grid to allow shot"
-                                    default_grid  = get_pos_grid(3,1)
+                                    if verbose == "y": print "Strategy: Left - Move to default grid to allow shot"
+                                    default_grid  = get_pos_grid(3,0)
                                     angle_to_obj = us_to_obj_angle(me,default_grid)
                                     time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
                                     if angle_to_obj < 20:
@@ -497,12 +450,74 @@ class Strategy(object):
                                     #last_me_rot = compass
                             else:
                                 # Check if the ball is for us
-                                if verbose == "y": print "Strategy: Ball is not Juno's"
+                                if verbose == "y": print "Strategy: Left - Ball is not Juno's"
                                 if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):
-                                    if verbose == "y": print "Strategy: Ball in attack area"
+                                    if verbose == "y": print "Strategy: Left - Ball in attack area"
                                     # Get the ball
                                     comms.stop()
                                 else:
                                     # The ball should be left for defense
-                                    if verbose == "y": print "Strategy: Ball in defense area"
+                                    if verbose == "y": print "Strategy: Left - Ball in defense area"
+                                    comms.stop()
+                    else:
+                        # We are on the right side
+                        if (our_grid_pos.x >= 3):
+                            if verbose == "y": print "Strategy: Right - In the wrong zone"
+                            default_grid  = get_pos_grid(2,1)
+                            angle_to_obj = us_to_obj_angle(me,default_grid)
+                            if verbose == "y": print default_grid, " coordinates to go to"
+                            if verbose == "y": print me.x, " ", me.y, " current robot pos"
+                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                            if angle_to_obj < 20:
+                                angle_to_obj = angle_to_obj + 360
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            comms.turn(angle_to_obj)
+                            time.sleep(time_to_turn)
+                            comms.stop()
+                            time.sleep(0.3)
+                            comms.go()
+                            if time_to_object > MAX_MOVEMENT_TIME:
+                                time.sleep(MAX_MOVEMENT_TIME)
+                            else:
+                                time.sleep(time_to_object)
+                            comms.stop()
+                            last_me_x = default_grid.x
+                            last_me_y = default_grid.y
+                            #last_me_rot = compass
+                        else:
+                            # Check if Juno has the ball
+                            if verbose == "y": print "Strategy: Right - In the valid zone"
+                            juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                            ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                            if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
+                                if verbose == "y": print "Strategy: Right - Juno and ball in the same zone"
+                                if ((our_grid_pos.x != 2) and (our_grid_pos.x != 0)):
+                                    if verbose == "y": print "Strategy: Right - Move to default grid to allow shot"
+                                    default_grid  = get_pos_grid(2,0)
+                                    angle_to_obj = us_to_obj_angle(me,default_grid)
+                                    time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                                    if angle_to_obj < 20:
+                                        angle_to_obj = angle_to_obj + 360
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    comms.go()
+                                    if time_to_object > MAX_MOVEMENT_TIME:
+                                        time.sleep(MAX_MOVEMENT_TIME)
+                                    else:
+                                        time.sleep(time_to_object)
+                                    comms.stop()
+                                    last_me_x = default_grid.x
+                                    last_me_y = default_grid.y
+                                    #last_me_rot = compass
+                            else:
+                                # Check if the ball is for us
+                                if verbose == "y": print "Strategy: Right - Ball is not Juno's"
+                                if ((ball_grid_pos.x <= 2) and (ball_grid_pos.y <= 2)):
+                                    if verbose == "y": print "Strategy: Right - Ball in attack area"
+                                    # Get the ball
+                                    comms.stop()
+                                else:
+                                    # The ball should be left for defense
+                                    if verbose == "y": print "Strategy: Right - Ball in defense area"
                                     comms.stop()
