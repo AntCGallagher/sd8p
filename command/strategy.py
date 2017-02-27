@@ -291,17 +291,18 @@ class Strategy(object):
             #Change condition to reflect when to change to solo or duo strategy
             #Currently, if Juno is missing in 3 world models, will convert to solo strat
             if juno != None:
+                print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
                 if (juno.x == last_juno_x and juno.y == last_juno_y):
                     missingJunoCounter += 1
-                    if missingJunoCounter == maxMissCounter:
-                        if verbose == "y": print "Strategy: Juno in the same position"
-                        solo_strat = True
-                        last_juno_x = juno.x
-                        last_juno_y = juno.y
-                        juno = None
                 else:
                     missingJunoCounter = 0
                     solo_strat = False
+                last_juno_x = juno.x
+                last_juno_y = juno.y
+                if missingJunoCounter >= maxMissCounter:
+                    if verbose == "y": print "Strategy: Juno in the same position/missing"
+                    solo_strat = True
+                    juno = None
             else:
                 missingJunoCounter += 1
                 if missingJunoCounter == maxMissCounter:
@@ -364,7 +365,7 @@ class Strategy(object):
                 comms.stop()
             else:
                 # Currently set to True to test the solo _start TODO: Change for actual match
-                solo_strat = True
+                #solo_strat = True
                 if solo_strat:
                     #TODO Strategy if Juno is not found
                     if verbose == "y": print "Strategy: Running SOLO strat"
