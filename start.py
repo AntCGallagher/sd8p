@@ -107,20 +107,12 @@ if __name__ == "__main__" :
 			while inp != "s" or inp != "t":
 				inp = raw_input("tests/start? (t/s): ")
 				if inp == "s":
-					corner = int(raw_input("Corner to start ((0,0) = 1 clockwise): "))
 					curr_x = int(raw_input("Current x: "))
 					curr_y = int(raw_input("Current y: "))
-					start_strat = raw_input("Blitz?: ")
 					verbose = raw_input("Verbose debug? (y/n)")
 					while inp != "y":
-				 		inp = raw_input("start? (1/2/3/4)")
-						if inp == "1":
-							strategy.start(corner,curr_x,curr_y,start_strat)
-						elif inp == "2":
-							strategy.start2(corner,curr_x,curr_y,start_strat)
-						elif inp == "3":
+				 		inp = raw_input("start? (y/n))")
+						if inp == "y":
 							strategy.start3(curr_x,curr_y,verbose)
-						elif inp == "4":
-							strategy.taunt()
 				if inp == "t":
 					strategy.tests()
