@@ -31,6 +31,17 @@ def point_dist(x1 , y1 , x2 , y2 ):
 def midpoint(x1, y1, x2, y2):
 	return array(((x1+x2)/2, (y1+y2)/2))
 
+def get_zone(x, side):
+	if side:
+		for i in range(0,4):
+			if x < 300/4 *(i+1) :
+				return i
+	else :
+		for i in range(0,4):
+			if x > 300/4*(3-i):
+				return i
+	return 3
+
 def ball_close(robot,ball):
     return math.sqrt(math.pow(robot.x -ball.x,2) + math.pow(robot.y - ball.y,2)) < 10
 
@@ -53,9 +64,15 @@ def get_time_to_travel(x_curr, x_dest, y_curr, y_dest):
 	distance = math.sqrt(math.pow(x_curr - x_dest,2) + math.pow(y_curr - y_dest,2))
 	return (distance+5.40322)/28.2258
 
+def get_time_to_turn(angle):
+	if angle < 240:
+		return 2
+	else:
+		return 3
+
 # Given x y get the grid
 def get_grid_pos(x,y):
-	C = namedtuple("C" , "grid_x grid_y")
+	C = namedtuple("C" , "x y")
 	grid_x_size = 50
 	grid_y_size = 55
 	return C(math.floor((x/grid_x_size)),math.floor((y/grid_y_size)))
@@ -70,6 +87,13 @@ def get_pos_grid(x,y):
 	grid_center_x = int(grid_corner_x + (grid_x_size/2))
 	grid_center_y = int(grid_corner_y + (grid_y_size/2))
 	return C(grid_center_x,grid_center_y)
+
+# Given 2 grid location, return distance between the 2
+def get_grid_distance(x1,y1,x2,y2,exact=False):
+	if exact:
+		return math.pow(math.pow(x1 - x2,2) + math.pow(y1 - y2,2),0.5)
+	else:
+		return abs(x1-x2) + abs(y1-y2)
 
 # returns which zone a xcoor point is in
 def point_zone(xcoor, left):
