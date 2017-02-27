@@ -363,6 +363,7 @@ class Strategy(object):
                 comms.reverse(100)
                 time.sleep(0.8)
                 comms.stop()
+                time.sleep(0.2)
             else:
                 # Currently set to True to test the solo _start TODO: Change for actual match
                 #solo_strat = True
@@ -422,6 +423,7 @@ class Strategy(object):
                             comms.go()
                             comms.sleep(time_to_object)
                             comms.stop()
+                            time.sleep(0.2)
 
                         else:
                             if verbose == "y": print "Strategy: Solo: Defending goal"
@@ -474,6 +476,7 @@ class Strategy(object):
                             comms.go()
                             time.sleep(MAX_MOVEMENT_TIME)
                             comms.stop()
+                            time.sleep(0.2)
                 else:
                     #TODO Strategy if Juno is found
                     if verbose == "y": print "Strategy: Running DUO strat"
@@ -527,6 +530,7 @@ class Strategy(object):
                                     else:
                                         time.sleep(time_to_object)
                                     comms.stop()
+                                    time.sleep(0.2)
                                     last_me_x = default_grid.x
                                     last_me_y = default_grid.y
                                     #last_me_rot = compass
@@ -537,10 +541,12 @@ class Strategy(object):
                                     if verbose == "y": print "Strategy: Left - Ball in attack area"
                                     # Get the ball
                                     comms.stop()
+                                    time.sleep(0.2)
                                 else:
                                     # The ball should be left for defense
                                     if verbose == "y": print "Strategy: Left - Ball in defense area"
                                     comms.stop()
+                                    time.sleep(0.2)
                     else:
                         # We are on the right side
                         if (our_grid_pos.x >= 3):
@@ -563,6 +569,7 @@ class Strategy(object):
                             else:
                                 time.sleep(time_to_object)
                             comms.stop()
+                            time.sleep(0.2)
                             last_me_x = default_grid.x
                             last_me_y = default_grid.y
                             #last_me_rot = compass
@@ -589,6 +596,7 @@ class Strategy(object):
                                     else:
                                         time.sleep(time_to_object)
                                     comms.stop()
+                                    time.sleep(0.2)
                                     last_me_x = default_grid.x
                                     last_me_y = default_grid.y
                                     #last_me_rot = compass
@@ -599,7 +607,9 @@ class Strategy(object):
                                     if verbose == "y": print "Strategy: Right - Ball in attack area"
                                     # Get the ball
                                     comms.stop()
+                                    time.sleep(0.2)
                                 else:
                                     # The ball should be left for defense
                                     if verbose == "y": print "Strategy: Right - Ball in defense area"
                                     comms.stop()
+                                    time.sleep(0.2)
