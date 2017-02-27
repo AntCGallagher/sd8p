@@ -89,7 +89,7 @@ class Comms(object):
 
 					self.port.write(packed)
 					self.port.write(hashed)
-					time.sleep(0.01)
+					time.sleep(0.1)
 
 				except Exception, ex:
 					if not type(ex).__name__ == "Empty":
