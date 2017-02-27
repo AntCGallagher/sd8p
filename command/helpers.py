@@ -31,6 +31,17 @@ def point_dist(x1 , y1 , x2 , y2 ):
 def midpoint(x1, y1, x2, y2):
 	return array(((x1+x2)/2, (y1+y2)/2))
 
+def get_zone(x, side):
+	if side:
+		for i in range(0,4):
+			if x < 300/4 *(i+1) :
+				return i
+	else :
+		for i in range(0,4):
+			if x > 300/4*(3-i):
+				return i
+	return 3
+
 def ball_close(robot,ball):
     return math.sqrt(math.pow(robot.x -ball.x,2) + math.pow(robot.y - ball.y,2)) < 10
 
