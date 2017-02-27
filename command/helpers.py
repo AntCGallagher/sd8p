@@ -88,6 +88,13 @@ def get_pos_grid(x,y):
 	grid_center_y = int(grid_corner_y + (grid_y_size/2))
 	return C(grid_center_x,grid_center_y)
 
+# Given 2 grid location, return distance between the 2
+def get_grid_distance(x1,y1,x2,y2,exact=False):
+	if exact:
+		return math.pow(math.pow(x1 - x2,2) + math.pow(y1 - y2,2),0.5)
+	else:
+		return abs(x1-x2) + abs(y1-y2)
+
 # returns which zone a xcoor point is in
 def point_zone(xcoor, left):
 	if left :
