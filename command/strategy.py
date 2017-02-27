@@ -378,12 +378,13 @@ class Strategy(object):
                         robot3_grid = get_grid_pos(robot3.x,robot3.y)
 
                     #Robot distances to ball
-                    me_ball_grid_dist = get_grid_distance(me_grid.x,me_grid.y,ball_grid.x,ball_grid.y)
+                    me_ball_grid_dist = 0
+                    robot2_ball_grid_dist = 100
+                    robot3_ball_grid_dist = 100
                     if robot2 != None:
                         robot2_ball_grid_dist = get_grid_distance(robot2_grid.x,robot2_grid.y,ball_grid.x,ball_grid.y)
                     if robot3 != None:
                         robot3_ball_grid_dist = get_grid_distance(robot3_grid.x,robot3_grid.y,ball_grid.x,ball_grid.y)
-
                     if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
                         if verbose == "y": print "Strategy: Solo: Going for defense"
 
