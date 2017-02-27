@@ -64,9 +64,15 @@ void Comms::readSerial() {
       updateMotorPositions();
       printMotorPositions();
     }
-    else if (char(inByte) == '**') {
+    else if (char(inByte) == '/') {
       resetMotorPositions();
       printMotorPositions();
+    }
+    else if (char(inByte) == '#') {
+      getCompass();
+    }
+    else if (char(inByte) == ';') {
+      compassCalibrate();
     }
     else {
       // software buffer overflow

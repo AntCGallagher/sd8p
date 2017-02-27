@@ -27,12 +27,13 @@ void KickInstruction::halt(void) {
 
 bool KickInstruction::progress(void) {
   //Serial.println("kicking");
+  //motorBackward(GRABBER_IDX, 30);
   while(positions[KICKER_IDX] > -24){
     greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
     updateMotorPositions();
   }
   greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
-
+  //greenMotorMove(GRABBER_IDX, 100, MOTOR_BRAKE);
   return true;
 }
 

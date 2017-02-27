@@ -3,12 +3,13 @@ from threading import Thread
 from postprocessing.world import World
 import time
 import serial
+import re
 
 global comms
 
 def getPos():
 	global comms
-	comms.ser.write(bytes('*'))
+	comms.port.write(bytes('*'))
 	time.sleep(1)
 	with open(comms.outputFilename) as f:
 		log = f.readlines()
@@ -18,13 +19,30 @@ def getPos():
 
 def resetPos():
 	global comms
-	comms.ser.write(bytes('**'))
+	comms.port.write(bytes('/'))
 	time.sleep(1)
 	with open(comms.outputFilename) as f:
 		log = f.readlines()
 		positions = log[len(log)-2]
 		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
 	return positions
+
+def getCompass():
+	global comms
+	comms.port.write(bytes('#'))
+	time.sleep(1)
+	with open(comms.outputFilename) as f:
+		log = f.readlines()
+		floatRegex = re.compile(r'(\-?\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?')
+		line1 = floatRegex.findall(log[len(log)-5])
+		line2 = floatRegex.findall(log[len(log)-4])
+		line3 = floatRegex.findall(log[len(log)-3])
+		line4 = floatRegex.findall(log[len(log)-2])
+		Raw = [int(x) for tuple in line1 for x in tuple if x]
+		Scaled = [float(x) for tuple in line2 for x in tuple if x and not x.startswith('.')]
+		Heading = [float(x) for tuple in line3 for x in tuple if x and not x.startswith('.')]
+		ArctanYX = [float(x) for tuple in line4 for x in tuple if x and not x.startswith('.')]
+	return Raw, Scaled, Heading, ArctanYX
 
 if __name__ == "__main__" :
 
@@ -84,3 +102,21 @@ if __name__ == "__main__" :
 			print("Positions:", getPos())
 		elif cmd == 'resetPos':
 			print("Positions:", resetPos())
+		elif cmd == 'getCompass':
+			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]
+			#Radians: Heading[0]; Degrees: Heading[1]
+			Raw, Scaled, Heading, ArctanYX = getCompass()
+			print("Raw: ", Raw)
+			print("Scaled: ", Scaled)
+			print("Heading: ", Heading)
+			print("ArctanYX: ", ArctanYX)
+		elif cmd == 'calibrate':
+			comms.port.write(bytes(';'))
+			time.sleep(1)
+			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]
+			#Radians: Heading[0]; Degrees: Heading[1]
+			Raw, Scaled, Heading, ArctanYX = getCompass()
+			print("Raw: ", Raw)
+			print("Scaled: ", Scaled)
+			print("Heading: ", Heading)
+			print("ArctanYX: ", ArctanYX)

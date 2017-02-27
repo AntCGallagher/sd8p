@@ -93,8 +93,8 @@ class Comms(object):
 
 					# If we send a stop command, we do not want to resend 
 					# any commands before it
-					if (msg.op == 2):
-						message_buffer = Queue()
+					#if (msg.op == 2):
+					#	dele
 
 				except Exception, ex:
 					if not type(ex).__name__ == "Empty":

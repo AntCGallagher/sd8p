@@ -25,26 +25,11 @@ void setup() {
   
   motorAllStop();
   
+  //compassCalibrate();
+  
+  
 }
 
-/*
-void loop() {
-  //greenMotorMove(RH_IDX, 70, MOTOR_BWD);
-  //greenMotorMove(LH_IDX, 70, MOTOR_BWD);
-  delay(2000);
-  motorAllStop();
-  updateMotorPositions();
-  printMotorPositions();
-  delay(1000);
-  //greenMotorMove(RH_IDX, 70, MOTOR_FWD);
-  //greenMotorMove(LH_IDX, 70, MOTOR_FWD);
-  delay(2000);
-  motorAllStop();
-  updateMotorPositions();
-  printMotorPositions();
-  delay(1000);
-}
-*/
 
 void loop() {
   // calls progress method on instruction at index 0
@@ -62,8 +47,9 @@ void loop() {
    memPrintTimer = millis();
   }
   
+  //getCompass();
+  
 }
-
 
 // converts single byte to int
 int byteArrToUnsignedShort(byte arr[], int firstByteIdx) {
