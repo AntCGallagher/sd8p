@@ -352,6 +352,11 @@ class Strategy(object):
                 me.y = last_me_y
                 me.rot = last_me_rot
 
+            if juno == None:
+                solo_strat = True
+            else:
+                solo_strat = False
+
             if me.x < 40 or me.x > 260 or me.y < 30 or me.y > 190:
                 if verbose == "y": print "Reversing cause it's too close to the wall"
                 comms.reverse(100)
@@ -476,7 +481,7 @@ class Strategy(object):
                     # Check if we are in the right zone
                     if teamSideLeft:
                         if (our_grid_pos.x < 3):
-                            if verbose == "y": print "Strategy: In the wrong zone"
+                            if verbose == "y": print "Strategy: Left - In the wrong zone"
                             default_grid  = get_pos_grid(3,1)
                             angle_to_obj = us_to_obj_angle(me,default_grid)
                             if verbose == "y": print default_grid, " coordinates to go to"
@@ -500,13 +505,13 @@ class Strategy(object):
                             #last_me_rot = compass
                         else:
                             # Check if Juno has the ball
-                            if verbose == "y": print "Strategy: In the valid zone"
+                            if verbose == "y": print "Strategy: Left - In the valid zone"
                             juno_grid_pos = get_grid_pos(juno.x,juno.y)
                             ball_grid_pos = get_grid_pos(ball.x,ball.y)
                             if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
-                                if verbose == "y": print "Strategy: Juno and ball in the same zone"
-                                if ((our_grid_pos.x != 3) and (our_grid_pos.x != 0)):
-                                    if verbose == "y": print "Strategy: Move to default grid to allow shot"
+                                if verbose == "y": print "Strategy: Left - Juno and ball in the same zone"
+                                if ((our_grid_pos.x != 3) and (our_grid_pos.x != 1)):
+                                    if verbose == "y": print "Strategy: Left - Move to default grid to allow shot"
                                     default_grid  = get_pos_grid(3,1)
                                     angle_to_obj = us_to_obj_angle(me,default_grid)
                                     time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
@@ -526,12 +531,74 @@ class Strategy(object):
                                     #last_me_rot = compass
                             else:
                                 # Check if the ball is for us
-                                if verbose == "y": print "Strategy: Ball is not Juno's"
+                                if verbose == "y": print "Strategy: Left - Ball is not Juno's"
                                 if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):
-                                    if verbose == "y": print "Strategy: Ball in attack area"
+                                    if verbose == "y": print "Strategy: Left - Ball in attack area"
                                     # Get the ball
                                     comms.stop()
                                 else:
                                     # The ball should be left for defense
-                                    if verbose == "y": print "Strategy: Ball in defense area"
+                                    if verbose == "y": print "Strategy: Left - Ball in defense area"
+                                    comms.stop()
+                    else:
+                        # We are on the right side
+                        if (our_grid_pos.x >= 3):
+                            if verbose == "y": print "Strategy: Right - In the wrong zone"
+                            default_grid  = get_pos_grid(2,1)
+                            angle_to_obj = us_to_obj_angle(me,default_grid)
+                            if verbose == "y": print default_grid, " coordinates to go to"
+                            if verbose == "y": print me.x, " ", me.y, " current robot pos"
+                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                            if angle_to_obj < 20:
+                                angle_to_obj = angle_to_obj + 360
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            comms.turn(angle_to_obj)
+                            time.sleep(time_to_turn)
+                            comms.stop()
+                            time.sleep(0.3)
+                            comms.go()
+                            if time_to_object > MAX_MOVEMENT_TIME:
+                                time.sleep(MAX_MOVEMENT_TIME)
+                            else:
+                                time.sleep(time_to_object)
+                            comms.stop()
+                            last_me_x = default_grid.x
+                            last_me_y = default_grid.y
+                            #last_me_rot = compass
+                        else:
+                            # Check if Juno has the ball
+                            if verbose == "y": print "Strategy: Right - In the valid zone"
+                            juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                            ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                            if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
+                                if verbose == "y": print "Strategy: Right - Juno and ball in the same zone"
+                                if ((our_grid_pos.x != 2) and (our_grid_pos.x != 1)):
+                                    if verbose == "y": print "Strategy: Right - Move to default grid to allow shot"
+                                    default_grid  = get_pos_grid(2,1)
+                                    angle_to_obj = us_to_obj_angle(me,default_grid)
+                                    time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
+                                    if angle_to_obj < 20:
+                                        angle_to_obj = angle_to_obj + 360
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    comms.go()
+                                    if time_to_object > MAX_MOVEMENT_TIME:
+                                        time.sleep(MAX_MOVEMENT_TIME)
+                                    else:
+                                        time.sleep(time_to_object)
+                                    comms.stop()
+                                    last_me_x = default_grid.x
+                                    last_me_y = default_grid.y
+                                    #last_me_rot = compass
+                            else:
+                                # Check if the ball is for us
+                                if verbose == "y": print "Strategy: Right - Ball is not Juno's"
+                                if ((ball_grid_pos.x <= 2) and (ball_grid_pos.y <= 2)):
+                                    if verbose == "y": print "Strategy: Right - Ball in attack area"
+                                    # Get the ball
+                                    comms.stop()
+                                else:
+                                    # The ball should be left for defense
+                                    if verbose == "y": print "Strategy: Right - Ball in defense area"
                                     comms.stop()
