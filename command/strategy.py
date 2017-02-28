@@ -533,8 +533,7 @@ class Strategy(object):
                             pxy = namedtuple("C","x y")
                             pxy(point[0],point[1])
                             angle_to_obj = us_to_obj_angle(me,pxy)
-                            if angle_to_obj < 20:
-                                angle_to_obj += 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
                             if time_to_object > MAX_MOVEMENT_TIME:
@@ -553,8 +552,7 @@ class Strategy(object):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
                                 #Turn towards ball
                                 angle_to_obj = us_to_obj_angle(me,ball)
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
+                                angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
@@ -562,8 +560,7 @@ class Strategy(object):
                                 if verbose == "y": print "Strategy: Solo: Going to goal"
                                 goal = namedtuple("C","x y")
                                 angle_to_obj = us_to_obj_angle(me,goal(goalx,goaly))
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
+                                angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
                                 time_to_object = get_time_to_travel(me.x,goalx,me.y,goaly)
                                 if time_to_object > MAX_MOVEMENT_TIME:
@@ -578,8 +575,7 @@ class Strategy(object):
                         if me_grid.x == ball_grid.x and me_grid.y == ball_grid.y:
                             if verbose == "y": print "Strategy: Solo: Same grid as ball"
                             angle_to_obj = us_to_obj_angle(me,ball)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             comms.turn(angle_to_obj,5)
                             time.sleep(time_to_turn)
@@ -589,8 +585,7 @@ class Strategy(object):
                             grid_coordinates = get_pos_grid(grid.x,grid.y)
                             C = namedtuple("C" , "x y")
                             angle_to_obj = us_to_obj_angle(me,C(grid_coordinates.x,grid_coordinates.y))
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             comms.turn(angle_to_obj,3)
                             time.sleep(time_to_turn)
@@ -614,8 +609,7 @@ class Strategy(object):
                             if verbose == "y": print default_grid, " coordinates to go to"
                             if verbose == "y": print me.x, " ", me.y, " current robot pos"
                             time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
@@ -642,8 +636,7 @@ class Strategy(object):
                                     default_grid  = get_pos_grid(3,1)
                                     angle_to_obj = us_to_obj_angle(me,default_grid)
                                     time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                                    if angle_to_obj < 20:
-                                        angle_to_obj = angle_to_obj + 360
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
                                     time_to_turn = get_time_to_turn(angle_to_obj)
                                     comms.turn(angle_to_obj)
                                     time.sleep(time_to_turn)
@@ -679,8 +672,7 @@ class Strategy(object):
                             if verbose == "y": print default_grid, " coordinates to go to"
                             if verbose == "y": print me.x, " ", me.y, " current robot pos"
                             time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
@@ -708,8 +700,7 @@ class Strategy(object):
                                     default_grid  = get_pos_grid(2,1)
                                     angle_to_obj = us_to_obj_angle(me,default_grid)
                                     time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                                    if angle_to_obj < 20:
-                                        angle_to_obj = angle_to_obj + 360
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
                                     time_to_turn = get_time_to_turn(angle_to_obj)
                                     comms.turn(angle_to_obj)
                                     time.sleep(time_to_turn)
