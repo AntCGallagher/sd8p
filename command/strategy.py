@@ -81,6 +81,29 @@ class Strategy(object):
                     comms.stop()
                 else:
                     print "Robot not detected"
+            if inp == "trb":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    if angle_to_obj < 20 and angle_to_obj > -20:
+                        angle_to_obj = angle_to_obj + 360
+                    time_to_turn = get_time_to_turn(angle_to_obj)
+                    print "robot: ", robot0.x, " ", robot0.y
+                    print "ball: ", ball.x, " ", ball.y
+                    print "angle: ", angle_to_obj
+                    comms.turn(angle_to_obj,3)
+                    time.sleep(time_to_turn)
+                    comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
             if inp == "grb":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -90,11 +113,12 @@ class Strategy(object):
                     C = namedtuple("C" , "x y")
                     time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    time_to_turn = get_time_to_turn(angle_to_obj)
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
                     comms.turn(angle_to_obj,3)
-                    time.sleep(1.5)
+                    time.sleep(time_to_turn)
                     comms.go()
                     time.sleep(time_to_object)
                     comms.stop()
@@ -130,6 +154,95 @@ class Strategy(object):
                 comms.turn(inp,3)
                 time.sleep(2)
                 comms.stop()
+            if inp == "ballgrid":
+                teamSideLeft = World.our_side == "Left"
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    ball_grid = get_grid_pos(ball.x,ball.y)
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    if angle_to_obj < 20 and angle_to_obj > -20:
+                        angle_to_obj = angle_to_obj + 360
+                    time_to_turn = get_time_to_turn(angle_to_obj)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", angle_to_obj
+                        comms.turn(angle_to_obj,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    time.sleep(0.1)
+                    comms.go()
+                    time.sleep(time_to_object-0.8)
+                    comms.stop()
+                    time.sleep(0.1)
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
+            if inp == "turnball":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", angle_to_obj
+                        comms.turn(angle_to_obj,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
+            if inp == "grabgridball":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    comms.grab(1)
+                    time.sleep(0.2)
+                    comms.go()
+                    time.sleep(0.4)
+                    comms.stop()
+                    time.sleep(0.4)
+                    comms.grab(0)
+                    time.sleep(0.2)
+            if inp == "turngoal":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                teamSideLeft = World.our_side == "Left"
+                if robot0 != None:
+                    C = namedtuple("C" , "x y")
+                    goal = C(RIGHTGOALX,RIGHTGOALY)
+                    if teamSideLeft:
+                        goal = C(LEFTGOALX,LEFTGOALY)
+                    time.sleep(0.2)
+                    angle_to_obj = us_to_obj_angle(robot0,goal)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", angle_to_obj
+                        comms.turn(angle_to_obj,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    comms.kick(10)
+                    time.sleep(0.5)
             if inp == "turntest2":
                 curr_world = World.get_world()
                 robots = curr_world.robots
