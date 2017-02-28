@@ -89,8 +89,7 @@ class Strategy(object):
                 if robot0 != None and ball != None:
                     C = namedtuple("C" , "x y")
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                    if angle_to_obj < 20 and angle_to_obj > -20:
-                        angle_to_obj = angle_to_obj + 360
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
                     time_to_turn = get_time_to_turn(angle_to_obj)
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
@@ -187,8 +186,7 @@ class Strategy(object):
                     ball_grid = get_grid_pos(ball.x,ball.y)
                     C = namedtuple("C" , "x y")
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                    if angle_to_obj < 20 and angle_to_obj > -20:
-                        angle_to_obj = angle_to_obj + 360
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
                     time_to_turn = get_time_to_turn(angle_to_obj)
                     turn_angle = get_angle_to_send(angle_to_obj)
                     if turn_angle != 0:
@@ -197,9 +195,10 @@ class Strategy(object):
                         time.sleep(time_to_turn)
                         comms.stop()
                     time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    print "Time to sleep: ", time_to_object
                     time.sleep(0.1)
                     comms.go()
-                    time.sleep(time_to_object-0.8)
+                    time.sleep(time_to_object)
                     comms.stop()
                     time.sleep(0.1)
                 elif robot0 == None and ball != None:
@@ -274,9 +273,7 @@ class Strategy(object):
                 print robot0.rot, " current rotation"
                 angle = us_to_obj_angle(robot0,ball)
                 print angle, "angle to ball"
-                if angle < 15 and angle > -15:
-                    angle = angle + 360
-                    print "Angle too small, plus 360"
+                angle = get_angle_to_send(angle)
                 comms.turn(angle,3)
             if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
