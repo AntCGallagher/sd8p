@@ -89,8 +89,7 @@ class Strategy(object):
                 if robot0 != None and ball != None:
                     C = namedtuple("C" , "x y")
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                    if angle_to_obj < 20 and angle_to_obj > -20:
-                        angle_to_obj = angle_to_obj + 360
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
                     time_to_turn = get_time_to_turn(angle_to_obj)
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
@@ -132,6 +131,29 @@ class Strategy(object):
                 value = int(raw_input("angle to turn: "))
                 comms.turn(value)
                 time.sleep(1.5)
+            if inp == "go":
+                value = float(raw_input("Time to go: "))
+                comms.go()
+                time.sleep(value)
+                comms.stop()
+            if inp == "gox":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    value = float(raw_input("X to go: "))
+                    time_to_travel = get_time_to_travel(robot0.x,robot0.x+value, robot0.y, robot0.y)
+                    comms.go()
+                    time.sleep(time_to_travel)
+                    comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
             if inp == "m":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -164,8 +186,7 @@ class Strategy(object):
                     ball_grid = get_grid_pos(ball.x,ball.y)
                     C = namedtuple("C" , "x y")
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
-                    if angle_to_obj < 20 and angle_to_obj > -20:
-                        angle_to_obj = angle_to_obj + 360
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
                     time_to_turn = get_time_to_turn(angle_to_obj)
                     turn_angle = get_angle_to_send(angle_to_obj)
                     if turn_angle != 0:
@@ -174,9 +195,10 @@ class Strategy(object):
                         time.sleep(time_to_turn)
                         comms.stop()
                     time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    print "Time to sleep: ", time_to_object
                     time.sleep(0.1)
                     comms.go()
-                    time.sleep(time_to_object-0.8)
+                    time.sleep(time_to_object)
                     comms.stop()
                     time.sleep(0.1)
                 elif robot0 == None and ball != None:
@@ -251,9 +273,7 @@ class Strategy(object):
                 print robot0.rot, " current rotation"
                 angle = us_to_obj_angle(robot0,ball)
                 print angle, "angle to ball"
-                if angle < 15 and angle > -15:
-                    angle = angle + 360
-                    print "Angle too small, plus 360"
+                angle = get_angle_to_send(angle)
                 comms.turn(angle,3)
             if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
