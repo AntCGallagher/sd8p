@@ -132,6 +132,29 @@ class Strategy(object):
                 value = int(raw_input("angle to turn: "))
                 comms.turn(value)
                 time.sleep(1.5)
+            if inp == "go":
+                value = float(raw_input("Time to go: "))
+                comms.go()
+                time.sleep(value)
+                comms.stop()
+            if inp == "gox":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    value = float(raw_input("X to go: "))
+                    time_to_travel = get_time_to_travel(robot0.x,robot0.x+value, robot0.y, robot0.y)
+                    comms.go()
+                    time.sleep(time_to_travel)
+                    comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
             if inp == "m":
                 curr_world = World.get_world()
                 robots = curr_world.robots

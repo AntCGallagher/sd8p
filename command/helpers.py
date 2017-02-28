@@ -62,7 +62,7 @@ def get_time_to_angle(angle):
 
 def get_time_to_travel(x_curr, x_dest, y_curr, y_dest):
 	distance = math.sqrt(math.pow(x_curr - x_dest,2) + math.pow(y_curr - y_dest,2))
-	return (distance+5.40322)/28.2258
+	return (distance-0.24169)/0.027503
 
 def get_time_to_turn(angle):
 	if angle < 240:
