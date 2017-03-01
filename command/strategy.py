@@ -458,6 +458,12 @@ class Strategy(object):
             #Currently, if Juno is missing in 3 world models, will convert to solo strat
             if juno != None:
                 print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
+                if ball != None:
+                    ball_grid = get_grid_pos(ball.x,ball.y)
+                    juno_grid = get_grid_pos(juno.x,juno.y)
+                    if(ball_grid.x == juno_grid.x and ball_grid.y == juno_grid.y):
+                        missingJunoCounter = 0
+
                 if (juno.x == last_juno_x and juno.y == last_juno_y):
                     missingJunoCounter += 1
                 else:
@@ -625,29 +631,51 @@ class Strategy(object):
                                 comms.stop()
                     else:
                         if verbose == "y": print "Strategy: Solo: Going for offense"
-                        if me_grid.x == ball_grid.x and me_grid.y == ball_grid.y:
-                            if verbose == "y": print "Strategy: Solo: Same grid as ball"
-                            angle_to_obj = us_to_obj_angle(me,ball)
-                            angle_to_obj = get_angle_to_send(angle_to_obj)
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,5)
-                            time.sleep(time_to_turn)
-                        else:
-                            if verbose == "y": print "Strategy: Solo: Going to ball grid"
-                            grid = get_grid_pos(ball.x,ball.y)
-                            grid_coordinates = get_pos_grid(grid.x,grid.y)
+                        if me != None and ball != None:
+                            ball_grid = get_grid_pos(ball.x,ball.y)
                             C = namedtuple("C" , "x y")
-                            angle_to_obj = us_to_obj_angle(me,C(grid_coordinates.x,grid_coordinates.y))
+                            angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
                             angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,3)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            time.sleep(0.2)
+                            turn_angle = get_angle_to_send(angle_to_obj)
+                            if turn_angle != 0:
+                                print "Turnning to ball angle: ", angle_to_obj
+                                comms.turn(angle_to_obj,3)
+                                time.sleep(time_to_turn)
+                                comms.stop()
+                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                            print "Time to sleep: ", time_to_object
+                            time.sleep(0.1)
+                            comms.grab(1)
+                            time.sleep(0.4)
                             comms.go()
-                            time.sleep(MAX_MOVEMENT_TIME)
+                            time.sleep(time_to_object)
                             comms.stop()
                             time.sleep(0.2)
+                            comms.grab(0)
+                            curr_world = World.get_world()
+                            ball = curr_world.ball
+                            robots = curr_world.robots
+                            robot0 = curr_world.robots[0]
+                            me = robot0
+                            if me != None and ball != None:
+                                time.sleep(1)
+                                C = namedtuple("C" , "x y")
+                                goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                if teamSideLeft:
+                                    goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                time.sleep(0.2)
+                                angle_to_obj = us_to_obj_angle(me,goal)
+                                turn_angle = get_angle_to_send(angle_to_obj)
+                                time_to_turn = get_time_to_turn(turn_angle)
+                                if turn_angle != 0:
+                                    print "Turnning to ball angle: ", turn_angle
+                                    comms.turn(turn_angle,5)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                time.sleep(1)
+                                comms.kick(10)
+                                time.sleep(1)
                 else:
                     #TODO Strategy if Juno is found
                     if verbose == "y": print "Strategy: Running DUO strat"
@@ -730,12 +758,19 @@ class Strategy(object):
                                         comms.stop()
                                         time.sleep(0.2)
                                         comms.grab(0)
+                                        time.sleep(0.5)
                                         curr_world = World.get_world()
                                         ball = curr_world.ball
                                         robots = curr_world.robots
                                         robot0 = curr_world.robots[0]
                                         me = robot0
                                         if me != None and ball != None:
+                                            angle_to_obj2 = us_to_obj_angle(me,C(ball.x,ball.y))
+                                            if math.fabs(angle_to_obj2) > 7:
+                                                angle_to_obj2 = get_angle_to_send(angle_to_obj2)
+                                                time_to_turn2 = get_time_to_turn(angle_to_obj2)
+                                                comms.turn(angle_to_obj2)
+                                                time.sleep(time_to_turn2)
                                             time.sleep(1)
                                             C = namedtuple("C" , "x y")
                                             goal = C(SHOOTLEFTX,SHOOTLEFTY)
