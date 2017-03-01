@@ -98,7 +98,7 @@ if __name__ == "__main__" :
 		elif cmd == 'crash':
 			comms = Comms()
 			comms.start()
-		elif cmd == 'getPos':
+		"""elif cmd == 'getPos':
 			print("Positions:", getPos())
 		elif cmd == 'resetPos':
 			print("Positions:", resetPos())
@@ -119,4 +119,4 @@ if __name__ == "__main__" :
 			print("Raw: ", Raw)
 			print("Scaled: ", Scaled)
 			print("Heading: ", Heading)
-			print("ArctanYX: ", ArctanYX)
+			print("ArctanYX: ", ArctanYX)"""

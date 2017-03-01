@@ -60,7 +60,7 @@ void Comms::readSerial() {
     // read byte and add it to buffer
     byte inByte = Serial.read();
 
-    if (char(inByte) == '**') {
+    /*if (char(inByte) == '**') {
       updateMotorPositions();
       printMotorPositions();
     }
@@ -71,10 +71,10 @@ void Comms::readSerial() {
     else if (char(inByte) == '^') {
       getCompass();
     }
-    /*else if (char(inByte) == ';') {
+    else if (char(inByte) == ';') {
       compassCalibrate();
-    }*/
-    else {
+    }
+    else {*/
       // software buffer overflow
       if (this->bufferPos >= BUFFER_SIZE) {
         Serial.println(F("Error: Comms software buffer overflow."));
@@ -88,7 +88,7 @@ void Comms::readSerial() {
       this->bufferPos++;
       // check to see if a whole command is contained within buffer
       this->checkForCompleteCommand();
-    }
+    //}
   }
 }
 
