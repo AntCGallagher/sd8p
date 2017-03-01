@@ -10,6 +10,7 @@ import json
 import socket
 import os
 import cPickle
+import subprocess
 
 """
 This script will be used to test some of the robot's functionalities.
@@ -17,6 +18,7 @@ This script will be used to test some of the robot's functionalities.
 
 if __name__ == "__main__" :
 	PATH = os.path.dirname(os.path.realpath(__file__))
+	subprocess.call("vision/xawtv.sh")
 
 	# parse arguments
 	import argparse
