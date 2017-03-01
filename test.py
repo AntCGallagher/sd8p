@@ -64,7 +64,7 @@ if __name__ == "__main__" :
 			pass
 		elif cmd == 'reverse':
 			comms.stop()
-			dist = raw_input('Distance???: ')
+			dist = raw_input('Distance: ')
 			comms.reverse(dist)
 		elif cmd == 'abort':
 			comms.abort()
