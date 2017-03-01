@@ -3,14 +3,15 @@
 
 #include "Arduino.h"
 #include "global.h"
+#include "hardware.h"
 
 /*
- Opcodes for each instruciton. 
+ Opcodes for each instruciton.
  Only 1 byte allocated for storage.
  Obviously need to match up to opcodes on python PC-side comms system.
 */
 #define MIN_OPCODE 1
-#define MAX_OPCODE 15
+#define MAX_OPCODE 18
 enum Opcode {
   INVALID_OP = 0,  // do not implement
   RESET = 1,
@@ -27,7 +28,10 @@ enum Opcode {
   REVERSE = 12,
   ABORT = 13,
   HASBALL = 14,
-  RETARG = 15
+  RETARG = 15,
+  GETPOS = 16,
+  RESETPOS = 17,
+  GETCOMPASS = 18
   // remember to change MAX_OPCODE above!
 };
 
@@ -53,17 +57,17 @@ class Comms {
     void sendInstructionCompleteParam(int cmdID, bool success);
     void sendInstructionValueParam(int cmdID, int val);
     void sendInstructionComplete(int cmdID);
-  
+
   private:
     unsigned int maxIDSuccessPCToArd; // stores the maximum ID of command we've received
     byte buffer[BUFFER_SIZE];
     int bufferPos;   // points at empty slot to insert next received byte
-    
+
     void clearSoftwareBuffer();
     void clearSerialBuffer();
     void checkForCompleteCommand();
     bool validateNewCommand(Command c);
-    
+
     void respondError();
     void respondSuccess();
 };
@@ -73,22 +77,17 @@ class Comms {
 class Command {
   public:
    unsigned int id;
-   Opcode opcode; 
+   Opcode opcode;
    byte params[MAX_PARAM_BYTES];
    unsigned int hash;
-   
+
    Command();
    parseResult commandFromBytes(byte buffer[], int bufferPos);
    unsigned int computeHash();
    bool hashAddsUp();
    bool opcodeValid();
    void instantiateInstruction();
-  
+
 };
 
 #endif
-
-
-
-
-
