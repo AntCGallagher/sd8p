@@ -107,12 +107,10 @@ if __name__ == "__main__" :
 			while inp != "s" or inp != "t":
 				inp = raw_input("tests/start? (t/s): ")
 				if inp == "s":
-					curr_x = int(raw_input("Current x: "))
-					curr_y = int(raw_input("Current y: "))
 					verbose = raw_input("Verbose debug? (y/n)")
 					while inp != "y":
 				 		inp = raw_input("start? (y/n))")
 						if inp == "y":
-							strategy.start3(curr_x,curr_y,verbose)
+							strategy.start3(verbose)
 				if inp == "t":
 					strategy.tests()
