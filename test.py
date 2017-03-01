@@ -9,7 +9,7 @@ global comms
 
 def getPos():
 	global comms
-	comms.port.write(bytes('*'))
+	comms.port.write(bytes('**'))
 	time.sleep(1)
 	with open(comms.outputFilename) as f:
 		log = f.readlines()
@@ -29,7 +29,7 @@ def resetPos():
 
 def getCompass():
 	global comms
-	comms.port.write(bytes('#'))
+	comms.port.write(bytes('^'))
 	time.sleep(1)
 	with open(comms.outputFilename) as f:
 		log = f.readlines()

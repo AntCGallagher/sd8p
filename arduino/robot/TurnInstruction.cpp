@@ -17,7 +17,7 @@
 
 #define CORRECTION_TOLERANCE 1 // clicks
 
-#define DEBUG_PRINT_TURN
+//#define DEBUG_PRINT_TURN 
 
 /* increase denominator to make robot turn more
  * it's rare this will have to be changed

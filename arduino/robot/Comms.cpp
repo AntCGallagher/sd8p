@@ -59,8 +59,8 @@ void Comms::readSerial() {
 
     // read byte and add it to buffer
     byte inByte = Serial.read();
-    
-    if (char(inByte) == '*') {
+
+    if (char(inByte) == '**') {
       updateMotorPositions();
       printMotorPositions();
     }
@@ -68,12 +68,12 @@ void Comms::readSerial() {
       resetMotorPositions();
       printMotorPositions();
     }
-    else if (char(inByte) == '#') {
+    else if (char(inByte) == '^') {
       getCompass();
     }
-    else if (char(inByte) == ';') {
+    /*else if (char(inByte) == ';') {
       compassCalibrate();
-    }
+    }*/
     else {
       // software buffer overflow
       if (this->bufferPos >= BUFFER_SIZE) {
@@ -82,7 +82,7 @@ void Comms::readSerial() {
         this->clearSerialBuffer();
         return;
       }
-  
+
       // append byte to buffer
       this->buffer[this->bufferPos] = inByte;
       this->bufferPos++;
@@ -334,7 +334,6 @@ void Command::instantiateInstruction() {
       updateWorldModel(this->params);
       break;
     case GO:
-      Serial.println(F("Goo"));
       GoInstruction::initFromCommand(*this);
       break;
     case GOXY:
@@ -344,7 +343,6 @@ void Command::instantiateInstruction() {
       GetBallInstruction::initFromCommand(*this);
       break;
     case TURN:
-      Serial.println(F(" init turn "));
       TurnInstruction::initFromCommand(*this);
       break;
     case KICK:
