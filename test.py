@@ -7,20 +7,7 @@ import re
 
 global comms
 
-def getPos():
-	global comms
-	comms.port.write(bytes('**'))
-	time.sleep(1)
-	with open(comms.outputFilename) as f:
-		log = f.readlines()
-		positions = log[len(log)-2]
-		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
-	return positions
-
-def resetPos():
-	global comms
-	comms.port.write(bytes('/'))
-	time.sleep(1)
+def pos():
 	with open(comms.outputFilename) as f:
 		log = f.readlines()
 		positions = log[len(log)-2]
@@ -28,9 +15,6 @@ def resetPos():
 	return positions
 
 def getCompass():
-	global comms
-	comms.port.write(bytes('^'))
-	time.sleep(1)
 	with open(comms.outputFilename) as f:
 		log = f.readlines()
 		floatRegex = re.compile(r'(\-?\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?')
@@ -80,7 +64,7 @@ if __name__ == "__main__" :
 			pass
 		elif cmd == 'reverse':
 			comms.stop()
-			dist = raw_input('Distance???: ')
+			dist = raw_input('Distance: ')
 			comms.reverse(dist)
 		elif cmd == 'abort':
 			comms.abort()
@@ -98,11 +82,20 @@ if __name__ == "__main__" :
 		elif cmd == 'crash':
 			comms = Comms()
 			comms.start()
-		"""elif cmd == 'getPos':
-			print("Positions:", getPos())
-		elif cmd == 'resetPos':
-			print("Positions:", resetPos())
-		elif cmd == 'getCompass':
+		elif cmd == 'getpos':
+			comms.stop()
+			comms.getpos()
+			time.sleep(1)
+			print("Positions:", pos())
+		elif cmd == 'resetpos':
+			comms.stop()
+			comms.resetpos()
+			time.sleep(1)
+			print("Positions:", pos())
+		elif cmd == 'getcompass':
+			comms.stop()
+			comms.getcompass()
+			time.sleep(1)
 			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]
 			#Radians: Heading[0]; Degrees: Heading[1]
 			Raw, Scaled, Heading, ArctanYX = getCompass()
@@ -110,7 +103,7 @@ if __name__ == "__main__" :
 			print("Scaled: ", Scaled)
 			print("Heading: ", Heading)
 			print("ArctanYX: ", ArctanYX)
-		elif cmd == 'calibrate':
+		"""elif cmd == 'calibrate':
 			comms.port.write(bytes(';'))
 			time.sleep(1)
 			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]

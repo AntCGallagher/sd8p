@@ -1,6 +1,5 @@
 #include "Comms.h"
 
-#include "Instruction.h"
 #include "GoInstruction.h"
 #include "ReverseInstruction.h"
 #include "GoXYInstruction.h"
@@ -38,6 +37,9 @@ int noParamsBytesForOpcode(Opcode opcode) {
     case ABORT:     return 0;
     case HASBALL:   return 0;
     case RETARG:    return 6;  // [2]unsigned, [2]signed, [2]signed
+    case GETPOS:    return 0;
+    case RESETPOS:  return 0;
+    case GETCOMPASS:return 0;
     default:        return 0;
   }
 }
@@ -59,35 +61,19 @@ void Comms::readSerial() {
 
     // read byte and add it to buffer
     byte inByte = Serial.read();
+    // software buffer overflow
+    if (this->bufferPos >= BUFFER_SIZE) {
+      Serial.println(F("Error: Comms software buffer overflow."));
+      this->clearSoftwareBuffer();
+      this->clearSerialBuffer();
+      return;
+    }
 
-    /*if (char(inByte) == '**') {
-      updateMotorPositions();
-      printMotorPositions();
-    }
-    else if (char(inByte) == '/') {
-      resetMotorPositions();
-      printMotorPositions();
-    }
-    else if (char(inByte) == '^') {
-      getCompass();
-    }
-    else if (char(inByte) == ';') {
-      compassCalibrate();
-    }
-    else {*/
-      // software buffer overflow
-      if (this->bufferPos >= BUFFER_SIZE) {
-        Serial.println(F("Error: Comms software buffer overflow."));
-        this->clearSoftwareBuffer();
-        this->clearSerialBuffer();
-        return;
-      }
-
-      // append byte to buffer
-      this->buffer[this->bufferPos] = inByte;
-      this->bufferPos++;
-      // check to see if a whole command is contained within buffer
-      this->checkForCompleteCommand();
+    // append byte to buffer
+    this->buffer[this->bufferPos] = inByte;
+    this->bufferPos++;
+    // check to see if a whole command is contained within buffer
+    this->checkForCompleteCommand();
     //}
   }
 }
@@ -353,6 +339,17 @@ void Command::instantiateInstruction() {
       break;
     case GRAB:
       GrabInstruction::initFromCommand(*this);
+      break;
+    case GETPOS:
+      updateMotorPositions();
+      printMotorPositions();
+      break;
+    case RESETPOS:
+      resetMotorPositions();
+      printMotorPositions();
+      break;
+    case GETCOMPASS:
+      getCompass();
       break;
     default:
       Serial.println(F("Error: opcode not defined"));
