@@ -1,2 +1,5 @@
 *.pyc
 communications/logs/*
+arduino/.DS_Store
+arduino/robot/.DS_Store
+preprocessing/distortion/samples/.pitch1.tar.gz.icloud
