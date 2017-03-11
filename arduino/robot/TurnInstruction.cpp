@@ -1,5 +1,6 @@
 #include "TurnInstruction.h"
 #include "global.h"
+#include "compass.h"
 
 // used for SpeedRecorder
 #define CLICKS_TIME_PERIOD 30 // ms
@@ -70,6 +71,9 @@ long unsigned turnLastP;
 bool TurnInstruction::progress() {
 
   updateMotorPositions();
+
+  getCompass();
+  float initialCompassReading = bearing;
 
   // if this is the first call to progress
   if (this->begun == false) {
@@ -181,7 +185,9 @@ bool TurnInstruction::progress() {
   }
 
   // check if complete - either by clicks or by duration (small turns only)
-  if ((signsEqual && abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed) {
+  getCompass();
+  float finalCompassReading = bearing;
+  if ((signsEqual && abs(travelled) >= abs(totalClicksRequired)) || smallTurnTimeElapsed && (finalCompassReading - initialCompassReading >= this->deg)) {
 
     this->brakeTime = millis();
     this->braking = true;
