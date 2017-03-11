@@ -51,7 +51,7 @@ bool GrabInstruction::progress() {
       motorBackward(GRABBER_IDX, 60);
     }
 
-    delay(300);
+    delay(500);
     motorStop(GRABBER_IDX);
   }
 

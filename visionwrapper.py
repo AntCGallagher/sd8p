@@ -15,7 +15,7 @@ class VisionWrapper(object):
         self.pitch         = pitch
         self.camera        = Camera(pitch=pitch)
         self.calibration   = tools.get_colors(pitch)
-        self.tracker       = MyTracker(self.calibration)
+        self.tracker       = MyTracker(self.calibration, self.pitch)
         #self.tracker       = MyTracker([ourTeamColor, otherTeamColor, ballColor, 'pink', 'bright_green'], self.calibration)
         self.points        = {} # point dictionary for tracked colors
         self.GUI_name           = "Killer Robot App"
@@ -74,6 +74,7 @@ class VisionWrapper(object):
             World.set_points(self.points)
             w = World.get_world()
 
+            # Separate field in 6x4 for strategy debugging
             for l1 in range(0,640,107):
                 cv2.line(image, (l1,0), (l1,480), (209,192,142), thickness=1)
             for l2 in range(0,480,120):

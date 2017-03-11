@@ -16,7 +16,10 @@ opcodes = {
 	"REVERSE": 12,
 	"ABORT": 13,
 	"HASBALL": 14,
-	"RETARG": 15
+	"RETARG": 15,
+	"GETPOS": 16,
+	"RESETPOS": 17,
+	"GETCOMPASS": 18
 }
 
 class Message(object):
@@ -38,7 +41,7 @@ class Message(object):
 	# pack() : byte[]
 	def pack_message(self):
 		# Details of the formatting can be found at https://docs.python.org/2/library/struct.html
-		if (self.op in [1,2,4,13,14]):
+		if (self.op in [1,2,4,13,14,16,17,18]):
 			packed = pack(">HB", self.id, self.op)
 		elif (self.op in [3]):
 			packed = pack(">HBIhhh", self.id, self.op, self.params[0], self.params[1], self.params[2], self.params[3])
@@ -60,10 +63,10 @@ class Message(object):
 	# set_transmit_time(transmit_time : double) : void
 	def set_transmit_time(self, transmit_time):
 		self.trans = transmit_time
-		
+
 	# __str__() : string
 	def __str__(self):
 		# Convert all params to strings
 		params_string = map(str,self.params)
 		# Returns in the format "<ID> <OP> <PARAM1> ... <PARAM5>"
-		return " ".join([str(self.id), self.cmd_name] + params_string)	
+		return " ".join([str(self.id), self.cmd_name] + params_string)

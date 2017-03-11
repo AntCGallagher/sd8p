@@ -1,10 +1,12 @@
+#include "HMC5883L.h"
+
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
 #define LH_IDX 3
 #define RH_IDX 5
 #define KICKER_IDX 2
-#define GRABBER_IDX 1                                                                                                                                                                                                                                                   
+#define GRABBER_IDX 1
 #define REAR_IDX 4
 
 
@@ -31,6 +33,10 @@ enum MOTOR_DIR {
 
 extern long int positions[ROTARY_COUNT];// = {0};
 
+void compassCalibrate(void);
+void getCompass();
+void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees);
+
 void resetMotorPositions();
 void updateMotorPositions();
 void printMotorPositions();
@@ -49,4 +55,3 @@ bool hasBall();
 
 
 #endif
-

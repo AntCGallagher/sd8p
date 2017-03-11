@@ -91,10 +91,10 @@ class Comms(object):
 					self.port.write(hashed)
 					time.sleep(0.1)
 
-					# If we send a stop command, we do not want to resend 
+					# If we send a stop command, we do not want to resend
 					# any commands before it
-					if (msg.op == 2):
-						message_buffer = Queue()
+					#if (msg.op == 2):
+					#	dele
 
 				except Exception, ex:
 					if not type(ex).__name__ == "Empty":
@@ -256,6 +256,15 @@ class Comms(object):
 
 	def hasball(self):
 		self.add_message("HASBALL")
+
+	def getpos(self):
+		self.add_message("GETPOS")
+
+	def resetpos(self):
+		self.add_message("RESETPOS")
+
+	def getcompass(self):
+		self.add_message("GETCOMPASS")
 
 	# hash(packed_msg : string) : byte[]
 	def hash(self, packed_msg):

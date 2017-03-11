@@ -17,7 +17,7 @@
 
 #define CORRECTION_TOLERANCE 1 // clicks
 
-#define DEBUG_PRINT_TURN
+//#define DEBUG_PRINT_TURN 
 
 /* increase denominator to make robot turn more
  * it's rare this will have to be changed
@@ -98,6 +98,7 @@ bool TurnInstruction::progress() {
     greenMotorMove(LH_IDX, -70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
     greenMotorMove(RH_IDX, 70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
     greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(GRABBER_IDX, 30, MOTOR_BWD);
   }
 
   float totalClicksRequired = degToClicks(this->deg);
@@ -121,6 +122,7 @@ bool TurnInstruction::progress() {
       greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
       greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
       greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
+      greenMotorMove(GRABBER_IDX, 0, MOTOR_FLOAT);
 
 #ifdef DEBUG_PRINT_TURN
       Serial.print(F("Braking covered "));
@@ -188,6 +190,7 @@ bool TurnInstruction::progress() {
     greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(GRABBER_IDX, 40, MOTOR_BRAKE);
 
 #ifdef DEBUG_PRINT_TURN
     Serial.print(F("BRAKING at"));

@@ -18,6 +18,10 @@ TOPRIGX = 255
 TOPRIGY = 36
 LEFTGOALX = 21
 LEFTGOALY = 109
+SHOOTLEFTX = 15
+SHOOTLEFTY = 98
+SHOOTRIGHTX = 286
+SHOOTRIGHTY = 125
 RIGHTGOALX = 286
 RIGHTGOALY = 111
 CORNER14X = 50
@@ -81,6 +85,28 @@ class Strategy(object):
                     comms.stop()
                 else:
                     print "Robot not detected"
+            if inp == "trb":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(angle_to_obj)
+                    print "robot: ", robot0.x, " ", robot0.y
+                    print "ball: ", ball.x, " ", ball.y
+                    print "angle: ", angle_to_obj
+                    comms.turn(angle_to_obj,3)
+                    time.sleep(time_to_turn)
+                    comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
             if inp == "grb":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -90,11 +116,12 @@ class Strategy(object):
                     C = namedtuple("C" , "x y")
                     time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    time_to_turn = get_time_to_turn(angle_to_obj)
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "time: ", time_to_object, " angle: ", angle_to_obj
                     comms.turn(angle_to_obj,3)
-                    time.sleep(1.5)
+                    time.sleep(time_to_turn)
                     comms.go()
                     time.sleep(time_to_object)
                     comms.stop()
@@ -108,6 +135,29 @@ class Strategy(object):
                 value = int(raw_input("angle to turn: "))
                 comms.turn(value)
                 time.sleep(1.5)
+            if inp == "go":
+                value = float(raw_input("Time to go: "))
+                comms.go()
+                time.sleep(value)
+                comms.stop()
+            if inp == "gox":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    value = float(raw_input("X to go: "))
+                    time_to_travel = get_time_to_travel(robot0.x,robot0.x+value, robot0.y, robot0.y)
+                    comms.go()
+                    time.sleep(time_to_travel)
+                    comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
             if inp == "m":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -130,6 +180,124 @@ class Strategy(object):
                 comms.turn(inp,3)
                 time.sleep(2)
                 comms.stop()
+            if inp == "ballgrid":
+                teamSideLeft = World.our_side == "Left"
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    ball_grid = get_grid_pos(ball.x,ball.y)
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    angle_to_obj = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(angle_to_obj)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", angle_to_obj
+                        comms.turn(angle_to_obj,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    time_to_object = get_time_to_travel(robot0.x,ball.x,robot0.y,ball.y)
+                    print "Time to sleep: ", time_to_object
+                    time.sleep(0.1)
+                    comms.grab(1)
+                    time.sleep(0.4)
+                    comms.go()
+                    time.sleep(time_to_object)
+                    comms.stop()
+                    time.sleep(0.2)
+                    comms.grab(0)
+                    curr_world = World.get_world()
+                    ball = curr_world.ball
+                    robots = curr_world.robots
+                    robot0 = curr_world.robots[0]
+                    if robot0 != None and ball != None:
+                        time.sleep(1)
+                        C = namedtuple("C" , "x y")
+                        goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                        if teamSideLeft:
+                            goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                        time.sleep(0.2)
+                        angle_to_obj = us_to_obj_angle(robot0,goal)
+                        turn_angle = get_angle_to_send(angle_to_obj)
+                        time_to_turn = get_time_to_turn(turn_angle)
+                        if turn_angle != 0:
+                            print "Turnning to ball angle: ", turn_angle
+                            comms.turn(turn_angle,5)
+                            time.sleep(time_to_turn)
+                            comms.stop()
+                        time.sleep(1)
+                        comms.kick(10)
+                        time.sleep(1)
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
+            if inp == "turnball":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    print turn_angle, " turning this"
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", angle_to_obj
+                        comms.turn(turn_angle,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                elif robot0 == None and ball != None:
+                    print "Robot and ball not detected"
+                elif robot0 == None:
+                    print "Robot not detected"
+                else:
+                    print "Ball not detected"
+            if inp == "grabgridball":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                if robot0 != None and ball != None:
+                    C = namedtuple("C" , "x y")
+                    comms.grab(1)
+                    time.sleep(1.8)
+                    comms.go()
+                    time.sleep(0.4)
+                    comms.stop()
+                    time.sleep(0.8)
+                    comms.grab(0)
+                    time.sleep(0.2)
+            if inp == "turngoal":
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                teamSideLeft = World.our_side == "Left"
+                if robot0 != None:
+                    comms.grab(0)
+                    time.sleep(0.5)
+                    C = namedtuple("C" , "x y")
+                    goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                    if teamSideLeft:
+                        goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                    time.sleep(0.2)
+                    angle_to_obj = us_to_obj_angle(robot0,goal)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    if turn_angle != 0:
+                        print "Turnning to ball angle: ", turn_angle
+                        comms.turn(turn_angle,3)
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    time.sleep(1)
+                    comms.kick(10)
+                    time.sleep(1)
             if inp == "turntest2":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -138,9 +306,7 @@ class Strategy(object):
                 print robot0.rot, " current rotation"
                 angle = us_to_obj_angle(robot0,ball)
                 print angle, "angle to ball"
-                if angle < 15 and angle > -15:
-                    angle = angle + 360
-                    print "Angle too small, plus 360"
+                angle = get_angle_to_send(angle)
                 comms.turn(angle,3)
             if inp == "gridxy":
                 inpx = int(raw_input("x value: "))
@@ -242,7 +408,7 @@ class Strategy(object):
         comms.stop()
 
     @staticmethod
-    def start3(start_x,start_y,verbose="n"):
+    def start3(verbose="n"):
         #TODO: Change default grid depending on side of pitch
         comms = Comms()
         comms.start()
@@ -257,8 +423,8 @@ class Strategy(object):
         #Last known positions
         last_ball_x = 150
         last_ball_y = 110
-        last_me_x = start_x
-        last_me_y = start_y
+        last_me_x = -1
+        last_me_y = -1
         last_me_rot = 0
         last_juno_x = -1
         last_juno_y = -1
@@ -292,6 +458,12 @@ class Strategy(object):
             #Currently, if Juno is missing in 3 world models, will convert to solo strat
             if juno != None:
                 print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
+                if ball != None:
+                    ball_grid = get_grid_pos(ball.x,ball.y)
+                    juno_grid = get_grid_pos(juno.x,juno.y)
+                    if(ball_grid.x == juno_grid.x and ball_grid.y == juno_grid.y):
+                        missingJunoCounter = 0
+
                 if (juno.x == last_juno_x and juno.y == last_juno_y):
                     missingJunoCounter += 1
                 else:
@@ -358,6 +530,7 @@ class Strategy(object):
             else:
                 solo_strat = False
 
+            #TODO: Change so that you don't kick everytime after offense strat
             if me.x < 40 or me.x > 260 or me.y < 30 or me.y > 190:
                 if verbose == "y": print "Reversing cause it's too close to the wall"
                 comms.reverse(100)
@@ -378,7 +551,11 @@ class Strategy(object):
                         robot3_grid = get_grid_pos(robot3.x,robot3.y)
 
                     #Robot distances to ball
-                    me_ball_grid_dist = get_grid_distance(me_grid.x,me_grid.y,ball_grid.x,ball_grid.y)
+                    me_ball_grid_dist = 100
+                    robot2_ball_grid_dist = 100
+                    robot3_ball_grid_dist = 100
+                    if me != None:
+                        me_ball_grid_dist = get_grid_distance(me_grid.x,me_grid.y,ball_grid.x,ball_grid.y)
                     if robot2 != None:
                         robot2_ball_grid_dist = get_grid_distance(robot2_grid.x,robot2_grid.y,ball_grid.x,ball_grid.y)
                     if robot3 != None:
@@ -388,11 +565,15 @@ class Strategy(object):
                         if verbose == "y": print "Strategy: Solo: Going for defense"
 
                         #Selecting goal coordinates
+                        goalx = 0;
+                        goaly = 0;
                         goal = namedtuple("C", "x y")
                         if teamSideLeft:
-                            goal(LEFTGOALX, LEFTGOALY)
+                            goalx = LEFTGOALX
+                            goaly = LEFTGOALY
                         else:
-                            goal(RIGHTGOALX, RIGHTGOALY)
+                            goalx = RIGHTGOALX
+                            goaly = RIGHTGOALY
 
                         # Change this variable to test blocking.
                         # Apparently calculate_intercept_p is not reliable
@@ -408,17 +589,16 @@ class Strategy(object):
                                 shooter(robot3.x,robot3.y)
 
                             # Calculate intercept location
-                            point = calculate_intercept_p({shooter.x,shooter.y},{goal.x,goal.y},{me.x,me.y})
+                            point = calculate_intercept_p({shooter.x,shooter.y},{goalx,goaly},{me.x,me.y})
                             pxy = namedtuple("C","x y")
                             pxy(point[0],point[1])
                             angle_to_obj = us_to_obj_angle(me,pxy)
-                            if angle_to_obj < 20:
-                                angle_to_obj += 360
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
                             if time_to_object > MAX_MOVEMENT_TIME:
                                 time_to_object = MAX_MOVEMENT_TIME
-                            comms.turn(angle_to_obj,3)
+                            comms.turn(angle_to_obj-10,3)
                             comms.sleep(time_to_turn)
                             comms.go()
                             comms.sleep(time_to_object)
@@ -427,56 +607,76 @@ class Strategy(object):
 
                         else:
                             if verbose == "y": print "Strategy: Solo: Defending goal"
-                            if math.pow(me.x - goal.x,2) + math.pow(me.y - goal.y,2) < math.pow(10):
+                            print goalx, " ", me.x, " ", goaly, " ", me .y
+                            if (math.pow((me.x - goalx),2) + math.pow((me.y - goaly),2)) < math.pow(10,2):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
                                 #Turn towards ball
                                 angle_to_obj = us_to_obj_angle(me,ball)
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
+                                angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                comms.turn(angle_to_obj)
+                                comms.turn(angle_to_obj-10)
                                 time.sleep(time_to_turn)
                             else:
                                 if verbose == "y": print "Strategy: Solo: Going to goal"
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                if angle_to_obj < 20:
-                                    angle_to_obj = angle_to_obj + 360
+                                goal = namedtuple("C","x y")
+                                angle_to_obj = us_to_obj_angle(me,goal(goalx,goaly))
+                                angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                time_to_object = get_time_to_travel(me.x,goal.x,me.y,goal.y)
+                                time_to_object = get_time_to_travel(me.x,goalx,me.y,goaly)
                                 if time_to_object > MAX_MOVEMENT_TIME:
                                     time_to_object = MAX_MOVEMENT_TIME
-                                comms.turn(angle_to_obj,3)
-                                comms.sleep(time_to_turn)
+                                comms.turn(angle_to_obj-10,3)
+                                time.sleep(time_to_turn)
                                 comms.go()
-                                comms.sleep(time_to_object)
+                                time.sleep(time_to_object)
                                 comms.stop()
                     else:
                         if verbose == "y": print "Strategy: Solo: Going for offense"
-                        if me_grid.x == ball_grid.x and me_grid.y == ball_grid.y:
-                            if verbose == "y": print "Strategy: Solo: Same grid as ball"
-                            angle_to_obj = us_to_obj_angle(me,ball)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,5)
-                            time.sleep(time_to_turn)
-                        else:
-                            if verbose == "y": print "Strategy: Solo: Going to ball grid"
-                            grid = get_grid_pos(ball.x,ball.y)
-                            grid_coordinates = get_pos_grid(grid.x,grid.y)
+                        if me != None and ball != None:
+                            ball_grid = get_grid_pos(ball.x,ball.y)
                             C = namedtuple("C" , "x y")
-                            angle_to_obj = us_to_obj_angle(me,C(grid_coordinates.x,grid_coordinates.y))
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
+                            angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj,3)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            time.sleep(0.2)
+                            turn_angle = get_angle_to_send(angle_to_obj)
+                            if turn_angle != 0:
+                                print "Turnning to ball angle: ", angle_to_obj
+                                comms.turn(angle_to_obj-10,3)
+                                time.sleep(time_to_turn)
+                                comms.stop()
+                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                            print "Time to sleep: ", time_to_object
+                            time.sleep(0.1)
+                            comms.grab(1)
+                            time.sleep(0.4)
                             comms.go()
-                            time.sleep(MAX_MOVEMENT_TIME)
+                            time.sleep(time_to_object)
                             comms.stop()
                             time.sleep(0.2)
+                            comms.grab(0)
+                            curr_world = World.get_world()
+                            ball = curr_world.ball
+                            robots = curr_world.robots
+                            robot0 = curr_world.robots[0]
+                            me = robot0
+                            if me != None and ball != None:
+                                time.sleep(1)
+                                C = namedtuple("C" , "x y")
+                                goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                if teamSideLeft:
+                                    goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                time.sleep(0.2)
+                                angle_to_obj = us_to_obj_angle(me,goal)
+                                turn_angle = get_angle_to_send(angle_to_obj)
+                                time_to_turn = get_time_to_turn(turn_angle)
+                                if turn_angle != 0:
+                                    print "Turnning to ball angle: ", turn_angle
+                                    comms.turn(turn_angle-10,5)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                time.sleep(1)
+                                comms.kick(10)
+                                time.sleep(1)
                 else:
                     #TODO Strategy if Juno is found
                     if verbose == "y": print "Strategy: Running DUO strat"
@@ -484,132 +684,230 @@ class Strategy(object):
 
                     # Check if we are in the right zone
                     if teamSideLeft:
-                        if (our_grid_pos.x < 3):
-                            if verbose == "y": print "Strategy: Left - In the wrong zone"
-                            default_grid  = get_pos_grid(3,1)
-                            angle_to_obj = us_to_obj_angle(me,default_grid)
-                            if verbose == "y": print default_grid, " coordinates to go to"
-                            if verbose == "y": print me.x, " ", me.y, " current robot pos"
-                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            time.sleep(0.3)
-                            comms.go()
-                            if time_to_object > MAX_MOVEMENT_TIME:
-                                time.sleep(MAX_MOVEMENT_TIME)
-                            else:
-                                time.sleep(time_to_object)
-                            comms.stop()
-                            last_me_x = default_grid.x
-                            last_me_y = default_grid.y
-                            #last_me_rot = compass
-                        else:
+                        if True:
                             # Check if Juno has the ball
                             if verbose == "y": print "Strategy: Left - In the valid zone"
                             juno_grid_pos = get_grid_pos(juno.x,juno.y)
                             ball_grid_pos = get_grid_pos(ball.x,ball.y)
-                            if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
-                                if verbose == "y": print "Strategy: Left - Juno and ball in the same zone"
-                                if ((our_grid_pos.x != 3) and (our_grid_pos.x != 1)):
-                                    if verbose == "y": print "Strategy: Left - Move to default grid to allow shot"
-                                    default_grid  = get_pos_grid(3,1)
-                                    angle_to_obj = us_to_obj_angle(me,default_grid)
-                                    time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                                    if angle_to_obj < 20:
-                                        angle_to_obj = angle_to_obj + 360
+
+                            # Check if the ball is for us
+                            if verbose == "y": print "Strategy: Left - Ball is not Juno's"
+                            if ((ball_grid_pos.x > 2)):
+                                if verbose == "y": print "Strategy: Left - Ball in attack area ", ball_grid_pos.x, " ", ball_grid_pos.y
+                                if me != None and ball != None:
+                                    ball_grid = get_grid_pos(ball.x,ball.y)
+                                    C = namedtuple("C" , "x y")
+                                    angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
                                     time_to_turn = get_time_to_turn(angle_to_obj)
-                                    comms.turn(angle_to_obj)
-                                    time.sleep(time_to_turn)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", angle_to_obj
+                                        comms.turn(angle_to_obj-10,3)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                    print "Time to sleep: ", time_to_object
+                                    time.sleep(0.1)
+                                    comms.grab(1)
+                                    time.sleep(0.4)
                                     comms.go()
-                                    if time_to_object > MAX_MOVEMENT_TIME:
-                                        time.sleep(MAX_MOVEMENT_TIME)
-                                    else:
-                                        time.sleep(time_to_object)
+                                    time.sleep(time_to_object)
                                     comms.stop()
                                     time.sleep(0.2)
-                                    last_me_x = default_grid.x
-                                    last_me_y = default_grid.y
-                                    #last_me_rot = compass
+                                    comms.grab(0)
+                                    time.sleep(0.5)
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        angle_to_obj2 = us_to_obj_angle(me,C(ball.x,ball.y))
+                                        if math.fabs(angle_to_obj2) > 7:
+                                            angle_to_obj2 = get_angle_to_send(angle_to_obj2)
+                                            time_to_turn2 = get_time_to_turn(angle_to_obj2)
+                                            comms.turn(angle_to_obj2-10)
+                                            time.sleep(time_to_turn2)
+                                        time.sleep(1)
+                                        C = namedtuple("C" , "x y")
+                                        goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle-10,5)
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        time.sleep(1)
+                                comms.stop()
+                                time.sleep(0.2)
                             else:
-                                # Check if the ball is for us
-                                if verbose == "y": print "Strategy: Left - Ball is not Juno's"
-                                if ((ball_grid_pos.x > 2) and (ball_grid_pos.y > 2)):
-                                    if verbose == "y": print "Strategy: Left - Ball in attack area"
-                                    # Get the ball
+                                # The ball should be left for defense
+                                if verbose == "y": print "Strategy: Left - Ball in defense area", ball_grid_pos.x, " ", ball_grid_pos.y
+                                if me != None and ball != None:
+                                    ball_grid = get_grid_pos(ball.x,ball.y)
+                                    C = namedtuple("C" , "x y")
+                                    angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", angle_to_obj
+                                        comms.turn(angle_to_obj-10,3)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                    print "Time to sleep: ", time_to_object
+                                    time.sleep(0.1)
+                                    comms.grab(1)
+                                    time.sleep(0.4)
+                                    comms.go()
+                                    time.sleep(time_to_object)
                                     comms.stop()
                                     time.sleep(0.2)
-                                else:
-                                    # The ball should be left for defense
-                                    if verbose == "y": print "Strategy: Left - Ball in defense area"
-                                    comms.stop()
-                                    time.sleep(0.2)
+                                    comms.grab(0)
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        time.sleep(1)
+                                        C = namedtuple("C" , "x y")
+                                        goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle-10,5)
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        time.sleep(1)
+                                comms.stop()
+                                time.sleep(0.2)
+                                comms.stop()
+                                time.sleep(0.2)
                     else:
                         # We are on the right side
-                        if (our_grid_pos.x >= 3):
-                            if verbose == "y": print "Strategy: Right - In the wrong zone"
-                            default_grid  = get_pos_grid(2,1)
-                            angle_to_obj = us_to_obj_angle(me,default_grid)
-                            if verbose == "y": print default_grid, " coordinates to go to"
-                            if verbose == "y": print me.x, " ", me.y, " current robot pos"
-                            time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                            if angle_to_obj < 20:
-                                angle_to_obj = angle_to_obj + 360
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            time.sleep(0.3)
-                            comms.go()
-                            if time_to_object > MAX_MOVEMENT_TIME:
-                                time.sleep(MAX_MOVEMENT_TIME)
-                            else:
-                                time.sleep(time_to_object)
-                            comms.stop()
-                            time.sleep(0.2)
-                            last_me_x = default_grid.x
-                            last_me_y = default_grid.y
-                            #last_me_rot = compass
-                        else:
+                        if True:
                             # Check if Juno has the ball
                             if verbose == "y": print "Strategy: Right - In the valid zone"
                             juno_grid_pos = get_grid_pos(juno.x,juno.y)
                             ball_grid_pos = get_grid_pos(ball.x,ball.y)
-                            if ((juno_grid_pos.x == ball_grid_pos.x) and (juno_grid_pos.y == ball_grid_pos.y)):
-                                if verbose == "y": print "Strategy: Right - Juno and ball in the same zone"
-                                if ((our_grid_pos.x != 2) and (our_grid_pos.x != 1)):
-                                    if verbose == "y": print "Strategy: Right - Move to default grid to allow shot"
-                                    default_grid  = get_pos_grid(2,1)
-                                    angle_to_obj = us_to_obj_angle(me,default_grid)
-                                    time_to_object = get_time_to_travel(me.x,default_grid.x,me.y,default_grid.y)
-                                    if angle_to_obj < 20:
-                                        angle_to_obj = angle_to_obj + 360
+
+                            # Check if the ball is for us
+                            if verbose == "y": print "Strategy: Right - Ball is not Juno's"
+                            if ((ball_grid_pos.x <= 2)):
+                                if verbose == "y": print "Strategy: Right - Ball in attack area"
+                                if me != None and ball != None:
+                                    ball_grid = get_grid_pos(ball.x,ball.y)
+                                    C = namedtuple("C" , "x y")
+                                    angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
                                     time_to_turn = get_time_to_turn(angle_to_obj)
-                                    comms.turn(angle_to_obj)
-                                    time.sleep(time_to_turn)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", angle_to_obj
+                                        comms.turn(angle_to_obj-10,3)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                    print "Time to sleep: ", time_to_object
+                                    time.sleep(0.1)
+                                    comms.grab(1)
+                                    time.sleep(0.4)
                                     comms.go()
-                                    if time_to_object > MAX_MOVEMENT_TIME:
-                                        time.sleep(MAX_MOVEMENT_TIME)
-                                    else:
-                                        time.sleep(time_to_object)
+                                    time.sleep(time_to_object)
                                     comms.stop()
                                     time.sleep(0.2)
-                                    last_me_x = default_grid.x
-                                    last_me_y = default_grid.y
-                                    #last_me_rot = compass
+                                    comms.grab(0)
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        time.sleep(1)
+                                        C = namedtuple("C" , "x y")
+                                        goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle-10,5)
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        time.sleep(1)
+                                comms.stop()
+                                time.sleep(0.2)
                             else:
-                                # Check if the ball is for us
-                                if verbose == "y": print "Strategy: Right - Ball is not Juno's"
-                                if ((ball_grid_pos.x <= 2) and (ball_grid_pos.y <= 2)):
-                                    if verbose == "y": print "Strategy: Right - Ball in attack area"
-                                    # Get the ball
+                                # The ball should be left for defense
+                                if verbose == "y": print "Strategy: Right - Ball in defense area"
+                                if me != None and ball != None:
+                                    ball_grid = get_grid_pos(ball.x,ball.y)
+                                    C = namedtuple("C" , "x y")
+                                    angle_to_obj = us_to_obj_angle(me,C(ball.x,ball.y))
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", angle_to_obj
+                                        comms.turn(angle_to_obj-10,3)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                    print "Time to sleep: ", time_to_object
+                                    time.sleep(0.1)
+                                    comms.grab(1)
+                                    time.sleep(0.4)
+                                    comms.go()
+                                    time.sleep(time_to_object)
                                     comms.stop()
                                     time.sleep(0.2)
-                                else:
-                                    # The ball should be left for defense
-                                    if verbose == "y": print "Strategy: Right - Ball in defense area"
-                                    comms.stop()
-                                    time.sleep(0.2)
+                                    comms.grab(0)
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        time.sleep(1)
+                                        C = namedtuple("C" , "x y")
+                                        goal = C(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = C(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle-10,5)
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        time.sleep(1)
+                                comms.stop()
+                                time.sleep(0.2)
+                                comms.stop()
+                                time.sleep(0.2)

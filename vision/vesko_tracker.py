@@ -9,10 +9,12 @@ from colors import BGR_COMMON
 
 class MyTracker(object):
 
-    def __init__(self, calibration):
+    def __init__(self, calibration, pitch_number):
         self.calibration    = calibration
         self.time           = tools.current_milli_time()
+        self.pitch_number = pitch_number
         self.ball_queue     = []
+
 
     def processed_mask(self, image, color):
         BLUR_VALUE      = self.calibration[color]['blur']
@@ -242,13 +244,13 @@ class MyTracker(object):
         # Robot mask
         #plate_mask      = self.processed_mask(image, 'plate')
         pink_mask       = self.processed_mask(image, 'pink')
-        plate_mask       = self.processed_mask(image, 'pink')
+        plate_mask       = self.processed_mask(image, 'plate')
         green_mask       = self.processed_mask(image, 'bright_green')
         yellow_mask       = self.processed_mask(image, 'yellow')
         blue_mask       = self.processed_mask(image, 'blue')
 
         # combine all colors into one plate mask
-        plate_mask      = cv2.bitwise_or(plate_mask, pink_mask)
+        plate_mask      = cv2.bitwise_or(pink_mask, pink_mask)
         plate_mask      = cv2.bitwise_or(plate_mask, green_mask)
         plate_mask      = cv2.bitwise_or(plate_mask, yellow_mask)
         plate_mask      = cv2.bitwise_or(plate_mask, blue_mask)
@@ -321,7 +323,7 @@ class MyTracker(object):
 
         # background image used for background subtraction
         #TODO make interface to acquire such image
-        og = cv2.imread('currBg.png')
+        og = cv2.imread('currBg_' + str(self.pitch_number) + '.png')
         og = cv2.GaussianBlur(og,(3,3),0)
         og = cv2.cvtColor(og,cv2.COLOR_BGR2YUV)
 
@@ -338,6 +340,7 @@ class MyTracker(object):
         retval,mask = cv2.threshold(mask,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         mask = cv2.GaussianBlur(mask,(19,19), 0) ############## variable
         frame = cv2.bitwise_and(frame,frame, mask=mask)
+        cv2.imshow('bg sub', frame)
 
         ball_mask   = None
         robot_mask  = None
@@ -383,7 +386,7 @@ if __name__ == '__main__':
     #capture = cv2.VideoCapture('output.avi')
     calibration = tools.get_colors(pitch=pitch_number)
     croppings = tools.get_croppings(pitch=pitch_number)
-    tracker = MyTracker(calibration=calibration)
+    tracker = MyTracker(calibration=calibration, pitch_number=pitch_number)
 
     while True:
 
