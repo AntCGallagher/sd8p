@@ -55,7 +55,7 @@ void loop() {
    memPrintTimer = millis();
   }
   
-  getCompass();
+  //getCompass();
   
 }
 

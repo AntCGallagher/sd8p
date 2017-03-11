@@ -99,9 +99,14 @@ bool TurnInstruction::progress() {
     Serial.println(F(" deg)"));
 #endif
 
-    greenMotorMove(LH_IDX, -70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
-    greenMotorMove(RH_IDX, 70, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
-    greenMotorMove(REAR_IDX, -100, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    int power = 100;
+    if (abs(this->deg) > 50){
+      power = 80;
+    }
+
+    greenMotorMove(LH_IDX, -power, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(RH_IDX, power, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
+    greenMotorMove(REAR_IDX, -power, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
     greenMotorMove(GRABBER_IDX, 30, MOTOR_BWD);
   }
 
@@ -143,6 +148,7 @@ bool TurnInstruction::progress() {
      float miss = totalClicksRequired - positions[REAR_IDX];
      if (abs(miss) >= CORRECTION_TOLERANCE && this->correctionsRemaining > 0) {
        TurnInstruction *nextTurn = new TurnInstruction();
+       //getCompass();
        nextTurn->deg = clicksToDeg(miss);
        nextTurn->correctionsRemaining = this->correctionsRemaining - 1;
        insertInstruction(nextTurn, 1);

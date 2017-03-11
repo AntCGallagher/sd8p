@@ -76,23 +76,23 @@ void getCompass(){
   
   compass_scalled_reading();
   
-  Serial.print("x = ");
-  Serial.println(compass_x_scalled);
-  Serial.print("y = ");
-  Serial.println(compass_y_scalled);
-  Serial.print("z = ");
-  Serial.println(compass_z_scalled);
+  //Serial.print("x = ");
+  //Serial.println(compass_x_scalled);
+  //Serial.print("y = ");
+  //Serial.println(compass_y_scalled);
+  //Serial.print("z = ");
+  //Serial.println(compass_z_scalled);
   
   compass_heading();
-  Serial.print ("Heading angle = ");
-  Serial.print (bearing);
-  Serial.println(" Degree");
+  //Serial.print ("Heading angle = ");
+  //Serial.print (bearing);
+  //Serial.println(" Degree");
   
   dt = millis()-t;
   load = dt/(float)(Task_t/100);
-  Serial.print ("Load on processor = ");
-  Serial.print(load);
-  Serial.println("%");
+  //Serial.print ("Load on processor = ");
+  //Serial.print(load);
+  //Serial.println("%");
   
   //delay(3000);
 }
@@ -329,9 +329,9 @@ void compass_init(int gain){
   // Writing the register value 0000 0011 for Idel
   Wire.endTransmission();
   
-  Serial.print("Gain updated to  = ");
-  Serial.print(compass_gain_fact);
-  Serial.println(" mG/bit");
+  //Serial.print("Gain updated to  = ");
+  //Serial.print(compass_gain_fact);
+  //Serial.println(" mG/bit");
     
 }
 

@@ -81,9 +81,9 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
  if (motorPower > 100)
    motorPower = 100;
 
- if (motorNum == LH_IDX){
-   motorPower = motorPower*96/100;
- }
+ //if (motorNum == LH_IDX){
+   //motorPower = motorPower*96/100;
+ //}
 
  //adapting the code base to work with the motor board we are using
  if(dir == MOTOR_FWD) motorForward(motorNum, motorPower);
