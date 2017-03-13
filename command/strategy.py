@@ -68,20 +68,21 @@ class Strategy(object):
             if inp == "gxy":
                 dest_x = float(raw_input("dest_x: "))
                 dest_y = float(raw_input("dest_y: "))
+                time_action = int(raw_input("time to go: "))
                 comms.stop()
                 robots = curr_world.robots
                 robot0 = curr_world.robots[0]
                 if robot0 != None:
-                    C = namedtuple("C" , "x y")
-                    time_to_object = get_time_to_travel(robot0.x,dest_x,robot0.y,dest_y)
-                    angle_to_obj = us_to_obj_angle(robot0,C(dest_x,dest_y))
-                    print "robot: ", robot0.x, " ", robot0.y
-                    print "target: ", dest_x, " ", dest_y
-                    print "time: ", time_to_object, " angle: ", angle_to_obj
-                    comms.turn(get_angle_to_send(int(angle_to_obj)))
-                    time.sleep(1.5)
-                    comms.reverse(200)
-                    time.sleep(time_to_object)
+                    currTime = time.time()
+                    comms.goxy(robot0.x,robot0.x,robot0.rot,dest_x,dest_y)
+                    while(time.time() - currTime < time_action * 1000):
+                        curr_world = World.get_world()
+                        robots = curr_world.robots
+                        robot0 = curr_world.robots[0]
+                        if robot0 != None:
+                            comms.updatewm(time.time(),robot0.x,robot0.y,robot0.rot)
+                        else:
+                            print "Lost robot!"
                     comms.stop()
                 else:
                     print "Robot not detected"
@@ -133,13 +134,18 @@ class Strategy(object):
                     print "Ball not detected"
             if inp == "t":
                 value = int(raw_input("angle to turn: "))
-                comms.turn(value)
+                value2 = int(raw_input("corrections: "))
+                comms.turn(value,value2)
                 time.sleep(1.5)
             if inp == "go":
                 value = float(raw_input("Time to go: "))
                 comms.go()
                 time.sleep(value)
                 comms.stop()
+            if inp == "comp":
+    			comms.stop()
+    			comms.getcompass()
+    			time.sleep(1)
             if inp == "gox":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -180,6 +186,14 @@ class Strategy(object):
                 comms.turn(inp,3)
                 time.sleep(2)
                 comms.stop()
+            if inp == "goxytest":
+    			comms.stop()
+    			fX = raw_input('from X: ')
+    			fY = raw_input('from Y: ')
+    			h = raw_input('Heading: ')
+    			tX = raw_input('to X: ')
+    			tY = raw_input('to Y: ')
+    			comms.goxy(fX, fY, h, tX, tY)
             if inp == "ballgrid":
                 teamSideLeft = World.our_side == "Left"
                 curr_world = World.get_world()
@@ -245,11 +259,12 @@ class Strategy(object):
                     C = namedtuple("C" , "x y")
                     angle_to_obj = us_to_obj_angle(robot0,C(ball.x,ball.y))
                     turn_angle = get_angle_to_send(angle_to_obj)
+                    corrections = get_angle_corrections(turn_angle)
                     time_to_turn = get_time_to_turn(turn_angle)
                     print turn_angle, " turning this"
                     if turn_angle != 0:
-                        print "Turnning to ball angle: ", angle_to_obj
-                        comms.turn(turn_angle,3)
+                        print "Turnning to ball angle: ", angle_to_obj, " turn angle: ", turn_angle, " and correcting: ", corrections
+                        comms.turn(turn_angle,corrections)
                         time.sleep(time_to_turn)
                         comms.stop()
                 elif robot0 == None and ball != None:
