@@ -13,4 +13,41 @@ Otherwise attack the ball. Calculate the angle to the ball and turn a bit and mo
 
 As a last resort, if the robot is in the same position as the beginning it tries to reverse (buggy again for multiple reasons).
 
+13 March 17
+If any robot stays in the same place for 20 world model will be assumed that it is not working thus ignored by strategy system.
+
+If Juno is ignored {
+    Run solo strategy
+    If sd8p closer to the ball {
+        Go to ball and shoot
+    } else {
+        Go to center of goal
+        Always face the ball
+    }
+} else {
+    Run duo strategy
+    If sd8p in zone 0 {
+        Leave zone 0
+    }
+    If ball in zone 0 {
+        Go to a location
+        Always face the ball
+    } else if Juno is near ball {
+        Go to a location
+        Always face the ball
+    } else {
+        If sd8p is closest to ball {
+            Go to ball and shoot
+        } else {
+            Calculate intercept location x
+            If x in zone 0 {
+                Go to a location
+                Always face the ball
+            } else {
+                Go to x
+                Always face the enemy
+            }
+        }
+    }
+}
 
