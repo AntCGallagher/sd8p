@@ -1313,14 +1313,12 @@ class Strategy(object):
                             # Face the ball
                         else:
                             if verbose == "y": print "Strategy: Duo: We are closest to ball"
-<<<<<<< HEAD
                             #Go towards ball
                             #If same grid as ball
                                 #Turn to ball
                                 #Grab ball
                                 #Turn to goal
                                 #Shoot
-=======
 
                             if verbose == "y": print "Strategy: Duo: Going towards the ball"
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
@@ -1368,4 +1366,3 @@ class Strategy(object):
                                 comms.kick(10)
                                 if verbose == "y": print "Strategy: Duo: Shooting"
                                 time.sleep(1)
->>>>>>> 0334bd3e67f31dcd981e4289bebeed1817a0369b
