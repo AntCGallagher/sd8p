@@ -1226,18 +1226,21 @@ class Strategy(object):
                         tgtloc = namedtuple("C","x y");
                         weight = 0;
                         if (robot2_grid_pos.y >= 2):
-                            weight += 1
-                        else:
                             weight -= 1
+                        else:
+                            weight += 1
                         if (robot3_grid_pos.y >= 2):
-                            weight += 1
-                        else:
                             weight -= 1
+                        else:
+                            weight += 1
 
                         if weight >= 0:
                             tgtloc(TARGETLOCTOPX,TARGETLOCTOPY)
+                        else:
+                            tgtloc(TARGETLOCBOTX,TARGETLOCBOTY)
 
                         if math.fabs(me.x - tgtloc.x) + math.fabs(me.y - tgtloc.y) < 10:
+                            if verbose == "y": print "Strategy: Duo: Facing the ball"
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             comms.turn(time_to_turn,get_angle_corrections())
@@ -1257,10 +1260,36 @@ class Strategy(object):
 
                     elif (math.fabs(juno_grid_pos.x - ball_grid_pos.x) <= 1 or math.fabs(juno_grid_pos.y - ball_grid_pos.y) <= 1):
                         if verbose == "y": print "Strategy: Duo: Ball is in near Juno."
-                        # TODO
-                        #Get out of the way
-                        #Go to a location
-                        #If at location, face ball
+                        tgtloc = namedtuple("C","x y");
+                        weight = 0;
+                        if (juno_grid_pos.y >= 2):
+                            weight -= 1
+                        else:
+                            weight += 1
+
+                        if weight >= 0:
+                            tgtloc(TARGETLOCTOPX,TARGETLOCTOPY)
+                        else:
+                            tgtloc(TARGETLOCBOTX,TARGETLOCBOTY)
+
+                        if math.fabs(me.x - tgtloc.x) + math.fabs(me.y - tgtloc.y) < 10:
+                            if verbose == "y": print "Strategy: Duo: Facing the ball"
+                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            comms.turn(time_to_turn,get_angle_corrections())
+                            time.sleep(time_to_turn)
+                            comms.stop()
+                        else:
+                            if verbose == "y": print "Strategy: Duo: Going to target location"
+                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,tgtloc))
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            time_to_object = get_time_to_travel(me.x,tgtloc.x,me.y,tgtloc.y)
+                            comms.turn(time_to_turn,get_angle_corrections())
+                            time.sleep(time_to_turn)
+                            comms.stop()
+                            comms.go()
+                            time.sleep(time_to_object)
+                            comms.stop()
                     else:
                         #Grid distances of robots to ball
                         robot2_ball_grid_dist = 100
