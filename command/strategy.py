@@ -75,17 +75,22 @@ class Strategy(object):
                 if robot0 != None:
                     currTime = time.time()
                     comms.goxy(robot0.x,robot0.x,robot0.rot,dest_x,dest_y)
-                    while(time.time() - currTime < time_action * 1000):
+                    while(time.time() - currTime < time_action):
+                        diff = time.time() - currTime
+                        print "Time difference: ",diff
                         curr_world = World.get_world()
                         robots = curr_world.robots
                         robot0 = curr_world.robots[0]
                         if robot0 != None:
+                            print "Robot: ",robot0.x, " ", robot0.y, " ", robot0.rot
                             comms.updatewm(time.time(),robot0.x,robot0.y,robot0.rot)
                         else:
                             print "Lost robot!"
+                        time.sleep(0.4)
                     comms.stop()
                 else:
                     print "Robot not detected"
+                comms.stop()
             if inp == "trb":
                 curr_world = World.get_world()
                 ball = curr_world.ball
@@ -99,7 +104,7 @@ class Strategy(object):
                     print "robot: ", robot0.x, " ", robot0.y
                     print "ball: ", ball.x, " ", ball.y
                     print "angle: ", angle_to_obj
-                    comms.turn(angle_to_obj,3)
+                    comms.turn(angle_to_obj)
                     time.sleep(time_to_turn)
                     comms.stop()
                 elif robot0 == None and ball != None:
