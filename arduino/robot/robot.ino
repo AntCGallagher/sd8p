@@ -27,12 +27,12 @@ void setup() {
   
   motorAllStop();
 
-  compass_x_gainError = 0.91;
-  compass_y_gainError = 0.95;
-  compass_z_gainError = 0.95;
-  compass_x_offset = -147.30;
-  compass_y_offset = -25.61;
-  compass_z_offset = 598.40;
+  compass_x_gainError = 0.90;
+  compass_y_gainError = 0.93;
+  compass_z_gainError = 0.58;
+  compass_x_offset = 874.14;
+  compass_y_offset = 281.26;
+  compass_z_offset = 1147.46;
   
   compass_init(2);
   //compass_offset_calibration(3);
@@ -54,6 +54,14 @@ void loop() {
     } 
    memPrintTimer = millis();
   }
+
+  //updateMotorPositions();
+  //printMotorPositions();
+  //delay(1000);
+
+  //greenMotorMove(LH_IDX, 50, MOTOR_FWD);
+  //greenMotorMove(RH_IDX, 50, MOTOR_FWD);
+  //greenMotorMove(REAR_IDX, 50, MOTOR_FWD);
   
   //getCompass();
   
