@@ -9,6 +9,7 @@
 #include "KickInstruction.h"
 #include "GrabInstruction.h"
 #include "ReceiveInstruction.h"
+#include "compass.h"
 // #include "PrepKickInstruction.h"
 // #include "PenDefInstruction.h"
 

@@ -7,6 +7,8 @@
 #include "Instruction.h"
 #include "MemoryFree.h"
 
+#include "compass.h"
+
 Comms comms;
 unsigned long memPrintTimer;
 
@@ -24,12 +26,18 @@ void setup() {
   Serial.print(F("READY")) ;
   
   motorAllStop();
+
+  compass_x_gainError = 0.91;
+  compass_y_gainError = 0.95;
+  compass_z_gainError = 0.95;
+  compass_x_offset = -147.30;
+  compass_y_offset = -25.61;
+  compass_z_offset = 598.40;
   
-  //compassCalibrate();
-  
+  compass_init(2);
+  //compass_offset_calibration(3);
   
 }
-
 
 void loop() {
   // calls progress method on instruction at index 0

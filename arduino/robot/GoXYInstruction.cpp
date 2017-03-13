@@ -160,7 +160,7 @@ Position GoXYInstruction::projectedPosition() {
 
 // can be called to alter target point
 // will only be called if the target is still roughly on the same line
-/*
+
 void GoXYInstruction::retarg(byte params[]) {
   
   // if instruction is already in braking phase, do not attempt to retarg
@@ -180,7 +180,7 @@ void GoXYInstruction::retarg(byte params[]) {
     this->lastCompletedCC = millis();
   }
 }
-*/
+
 // debug only
 long last;
 long unsigned lastWM = 0;
@@ -207,7 +207,7 @@ bool GoXYInstruction::progress() {
     Serial.println(F("Starting GoXY"));
 #endif
     // fire motors up
-    greenMotorMove(LH_IDX, 80, MOTOR_FWD);
+    greenMotorMove(LH_IDX, 100, MOTOR_FWD);
     greenMotorMove(RH_IDX, 100, MOTOR_FWD);
     greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
   }
