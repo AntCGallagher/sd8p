@@ -6,11 +6,13 @@
 #include "Comms.h"
 #include "Instruction.h"
 #include "MemoryFree.h"
-
 #include "compass.h"
+#include "DistanceGP2Y0A41SK.h"
+DistanceGP2Y0A41SK Dist;
 
 Comms comms;
 unsigned long memPrintTimer;
+int distance;
 
 void setup() {
   hardwareSetup();
@@ -26,6 +28,8 @@ void setup() {
   Serial.print(F("READY")) ;
   
   motorAllStop();
+
+  Dist.begin(A0);
 
   compass_x_gainError = 0.90;
   compass_y_gainError = 0.93;
@@ -54,6 +58,11 @@ void loop() {
     } 
    memPrintTimer = millis();
   }
+
+  distance = Dist.getDistanceCentimeter();
+  Serial.print("Distance in centimeters: ");
+  Serial.println(distance);
+  delay(1000);
 
   //updateMotorPositions();
   //printMotorPositions();
