@@ -56,6 +56,6 @@ if __name__ == "__main__" :
 					while inp != "y":
 				 		inp = raw_input("start? (y/n))")
 						if inp == "y":
-							strategy.start3(verbose)
+							strategy.start4(verbose)
 				if inp == "t":
 					strategy.tests()

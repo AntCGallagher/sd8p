@@ -152,7 +152,7 @@ def set_magnitude( u , mag):
 
 def simple_intercept(op1,goal,us):
 	if(goal.x < 50):
-        pxy = namedtuple("C","x y")
+		pxy = namedtuple("C","x y")
 		pxy.x = op1.x - 40
 		if(op1.y < 108):
 			pxy.x = op1.x - 40
@@ -160,7 +160,7 @@ def simple_intercept(op1,goal,us):
 			pxy.x = op1.x + 40
 		return pxy
 	else:
-        pxy = namedtuple("C","x y")
+		pxy = namedtuple("C","x y")
 		pxy.x = op1.x + 40
 		if(op1.y < 108):
 			pxy.y = op1.y + 40
