@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "compass.h"
-#include "hardware.h"
+
 
 
 
@@ -30,10 +30,9 @@ float compass_x_offset=0, compass_y_offset=0, compass_z_offset=0,compass_gain_fa
 float compass_x_gainError=1,compass_y_gainError=1,compass_z_gainError=1,bearing=0;
 int compass_x=0,compass_y=0,compass_z=0;
 
-#define Task_t 10          // Task Time in milli seconds
 
-int dt=0;
-unsigned long t;
+
+
 
 
 //***************************************************************************
@@ -68,33 +67,6 @@ void compass_read_XYZdata(){
     
   }
 
-}
-
-void getCompass(){
-  t = millis();
-  float load;
-  
-  compass_scalled_reading();
-  
-  //Serial.print("x = ");
-  //Serial.println(compass_x_scalled);
-  //Serial.print("y = ");
-  //Serial.println(compass_y_scalled);
-  //Serial.print("z = ");
-  //Serial.println(compass_z_scalled);
-  
-  compass_heading();
-  //Serial.print ("Heading angle = ");
-  //Serial.print (bearing);
-  //Serial.println(" Degree");
-  
-  dt = millis()-t;
-  load = dt/(float)(Task_t/100);
-  //Serial.print ("Load on processor = ");
-  //Serial.print(load);
-  //Serial.println("%");
-  
-  //delay(1500);
 }
 
 
@@ -233,9 +205,6 @@ void compass_offset_calibration(int select){
     float x_min=4000,y_min=4000,z_min=4000;  
     unsigned long t = millis();
     while(millis()-t <= 30000){
-
-      greenMotorMove(LH_IDX, -70, MOTOR_FWD);
-      greenMotorMove(RH_IDX, 70, MOTOR_FWD);
       
       compass_read_XYZdata();
       
@@ -251,10 +220,9 @@ void compass_offset_calibration(int select){
       x_min = min(x_min,compass_x_scalled);
       y_min = min(y_min,compass_y_scalled);
       z_min = min(z_min,compass_z_scalled);
+   
   
     }
-
-    greenMotorAllStop();
   
     compass_x_offset = ((x_max-x_min)/2)-x_max;
     compass_y_offset = ((y_max-y_min)/2)-y_max;
@@ -329,9 +297,9 @@ void compass_init(int gain){
   // Writing the register value 0000 0011 for Idel
   Wire.endTransmission();
   
-  //Serial.print("Gain updated to  = ");
-  //Serial.print(compass_gain_fact);
-  //Serial.println(" mG/bit");
+  Serial.print("Gain updated to  = ");
+  Serial.print(compass_gain_fact);
+  Serial.println(" mG/bit");
     
 }
 
