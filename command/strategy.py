@@ -1250,6 +1250,7 @@ class Strategy(object):
                         else:
                             C(TARGETLOCBOTX,TARGETLOCBOTY)
 
+                        """
                         if math.fabs(me.x - int(C.x)) + math.fabs(me.y - int(C.y)) < 10:
                             if verbose == "y": print "Strategy: Duo: Facing the ball"
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
@@ -1268,7 +1269,7 @@ class Strategy(object):
                             comms.go()
                             time.sleep(time_to_object)
                             comms.stop()
-
+                        """
                     elif (math.fabs(juno_grid_pos.x - ball_grid_pos.x) <= 1 or math.fabs(juno_grid_pos.y - ball_grid_pos.y) <= 1):
                         if verbose == "y": print "Strategy: Duo: Ball is in near Juno."
                         C = namedtuple("C","x y")
