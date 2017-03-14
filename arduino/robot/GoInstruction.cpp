@@ -35,67 +35,30 @@ bool GoInstruction::progress() {
   greenMotorMove(LH_IDX, 100, MOTOR_FWD);
   greenMotorMove(RH_IDX, 100, MOTOR_FWD);
 
-  if (offset < 180 && abs(error) > 5) {
+  int power = 60;
+  if (offset < 180 /*&& abs(error) > 5*/) {
     if (heading > offset && heading < offset + 180)
-      greenMotorMove(REAR_IDX, 100, MOTOR_BWD);
+      greenMotorMove(REAR_IDX, power, MOTOR_BWD);
     else
-      greenMotorMove(REAR_IDX, 100, MOTOR_FWD);
+      greenMotorMove(REAR_IDX, power, MOTOR_FWD);
   }
-  else if (offset > 180 && abs(error) > 5) {
+  else if (offset > 180 /*&& abs(error) > 5*/) {
     if (heading < offset && heading > offset - 180)
-      greenMotorMove(REAR_IDX, 80, MOTOR_FWD); //BWD is right (clockwise); FWD is left (cclockwise);
+      greenMotorMove(REAR_IDX, power, MOTOR_FWD); //BWD is right (clockwise); FWD is left (cclockwise);
     else
-      greenMotorMove(REAR_IDX, 80, MOTOR_BWD);
+      greenMotorMove(REAR_IDX, power, MOTOR_BWD);
   }
-  delay(500);
+  delay(275);
   greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
-  delay(1000);
+  delay(500);
 
   heading = getOffset();
   //Serial.println(heading);
   return false;
 }
 
-/*
-bool GoInstruction::progress() {
-  if (this->begun == false) {
-    this->begun = true;
-    this->startTime = millis();
-    resetMotorPositions();
-  }
-  int pow1, pow2, turn;
-  float error;
-  float Kp = 0.8;
-  float offset = getOffset() - 180;
-  Serial.println();
-  Serial.print("Offset:");
-  Serial.println(offset);
-  int tp = 70;
-  while(true){
-    getCompass();
-    error = bearing - offset - 180;
-    Serial.print("Error: ");
-    Serial.println(error);
-    turn = Kp * error;
-    pow1 = tp - turn;
-    pow2 = tp + turn;
-    Serial.print("Turn: ");
-    Serial.println(turn);
-    Serial.print("LH power: ");
-    Serial.println(pow1);
-    Serial.print("RH power: ");
-    Serial.println(pow2);
-    halt();
-    greenMotorMove(LH_IDX, pow1, MOTOR_FWD);
-    greenMotorMove(RH_IDX, pow2, MOTOR_FWD);
-    delay(500);
-    //halt();
-  }
-  return false;
-}*/
-
-
-
+//Helper function - returns 'mode'.
+//Poorly named, as there was a name clash with another function..
 float mod(int a[], int size) {
   for(int i=0; i<(size-1); i++) {
     for(int o=0; o<(size-(i+1)); o++) {
@@ -108,7 +71,7 @@ float mod(int a[], int size) {
   }
   return a[4];
 }
-
+//Should be called getCompassReadings() 
 float GoInstruction::getOffset(){
   int sum[10];
   for (int i = 0; i < 10; i++){

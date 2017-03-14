@@ -5,6 +5,8 @@
 
 #include <Wire.h>
 
+
+
 void hardwareSetup() {
 
  //Initial set up for arduino connected to the power board.
@@ -82,7 +84,7 @@ void greenMotorMove(int motorNum, int motorPower, enum MOTOR_DIR dir) {
    motorPower = 100;
 
  if (motorNum == LH_IDX){
-   motorPower = motorPower*98/100;
+   motorPower = motorPower*97/100;
  }
 
  //adapting the code base to work with the motor board we are using
