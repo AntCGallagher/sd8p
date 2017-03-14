@@ -374,6 +374,12 @@ class Strategy(object):
                 comms.grab(1)
             if inp == "kick":
                 comms.kick(10)
+            if inp == "intercept":
+                our_x = int(raw_input("our x: "))
+                our_y = int(raw_input("our x: "))
+                their_x = int(raw_input("our x: "))
+                their_y = int(raw_input("our x: "))
+                our_x = int(raw_input("our x: "))
             if inp == "zone":
                 robot_num = int(raw_input("robot num: "))
                 teamSideLeft = World.our_side == "Left"
@@ -613,7 +619,7 @@ class Strategy(object):
                                 shooter(robot3.x,robot3.y)
 
                             # Calculate intercept location
-                            point = calculate_intercept_p({shooter.x,shooter.y},{goalx,goaly},{me.x,me.y})
+                            point = simple_intercept({shooter.x,shooter.y},{goalx,goaly},{me.x,me.y})
                             pxy = namedtuple("C","x y")
                             pxy(point[0],point[1])
                             angle_to_obj = us_to_obj_angle(me,pxy)
@@ -947,7 +953,7 @@ class Strategy(object):
         missingJunoCounter = 0
         missingEnemy1Counter = 0
         missingEnemy2Counter = 0
-        maxMissCounter = 3
+        maxMissCounter = 20
 
         #Last known positions
         last_ball_x = 150
@@ -1120,16 +1126,12 @@ class Strategy(object):
                                 shooter(robot3.x,robot3.y)
 
                             # Calculate intercept location
-                            point = calculate_intercept_p({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
-                            pxy = namedtuple("C","x y")
-                            pxy(point[0],point[1])
+                            pxy = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
                             angle_to_obj = us_to_obj_angle(me,pxy)
                             angle_to_obj = get_angle_to_send(angle_to_obj)
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
-                            if time_to_object > MAX_MOVEMENT_TIME:
-                                time_to_object = MAX_MOVEMENT_TIME
-                            comms.turn(angle_to_obj-10,3)
+                            comms.turn(angle_to_obj)
                             comms.sleep(time_to_turn)
                             comms.go()
                             comms.sleep(time_to_object)
@@ -1138,14 +1140,14 @@ class Strategy(object):
 
                         else:
                             if verbose == "y": print "Strategy: Solo: Defending goal"
-                            print ourgoal.x, " ", me.x, " ", ourgoal.y, " ", me .y
+                            print ourgoal.x, " ", me.x, " ", ourgoal.y, " ", me.y
                             if (math.pow((me.x - ourgoal.x),2) + math.pow((me.y - ourgoal.y),2)) < math.pow(10,2):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
                                 #Turn towards ball
                                 angle_to_obj = us_to_obj_angle(me,ball)
                                 angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                comms.turn(angle_to_obj-10)
+                                comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                             else:
                                 if verbose == "y": print "Strategy: Solo: Going to goal"
@@ -1154,9 +1156,7 @@ class Strategy(object):
                                 angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
                                 time_to_object = get_time_to_travel(me.x,ourgoal.x,me.y,ourgoal.y)
-                                if time_to_object > MAX_MOVEMENT_TIME:
-                                    time_to_object = MAX_MOVEMENT_TIME
-                                comms.turn(angle_to_obj-10,3)
+                                comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.go()
                                 time.sleep(time_to_object)
@@ -1172,7 +1172,7 @@ class Strategy(object):
                             turn_angle = get_angle_to_send(angle_to_obj)
                             if turn_angle != 0:
                                 print "Turnning to ball angle: ", angle_to_obj
-                                comms.turn(angle_to_obj-10,3)
+                                comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.stop()
                             time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
@@ -1202,7 +1202,7 @@ class Strategy(object):
                                 time_to_turn = get_time_to_turn(turn_angle)
                                 if turn_angle != 0:
                                     print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle-10,5)
+                                    comms.turn(turn_angle)
                                     time.sleep(time_to_turn)
                                     comms.stop()
                                 time.sleep(1)
@@ -1248,7 +1248,7 @@ class Strategy(object):
                             if verbose == "y": print "Strategy: Duo: Facing the ball"
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                             time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(time_to_turn,get_angle_corrections())
+                            comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
                             comms.stop()
                         else:
@@ -1256,7 +1256,7 @@ class Strategy(object):
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,tgtloc))
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,tgtloc.x,me.y,tgtloc.y)
-                            comms.turn(time_to_turn,get_angle_corrections())
+                            comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
                             comms.stop()
                             comms.go()
@@ -1281,7 +1281,7 @@ class Strategy(object):
                             if verbose == "y": print "Strategy: Duo: Facing the ball"
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                             time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(time_to_turn,get_angle_corrections())
+                            comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
                             comms.stop()
                         else:
@@ -1289,7 +1289,7 @@ class Strategy(object):
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,tgtloc))
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,tgtloc.x,me.y,tgtloc.y)
-                            comms.turn(time_to_turn,get_angle_corrections())
+                            comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
                             comms.stop()
                             comms.go()
@@ -1311,6 +1311,18 @@ class Strategy(object):
                             # Find in between location x
                             # If x is in zone 0, go to a location
                             # Face the ball
+                            if(robot2_ball_grid_dist > robot3_ball_grid_dist):
+                                point = simple_intercept({robot3.x,robot3.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                            else:
+                                point = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                            if verbose == "y": print "Strategy: Duo: Trying to intercept"
+                            time.sleep(time_to_turn)
+                            comms.go()
+                            time.sleep(time_to_object)
+                            comms.stop()
                         else:
                             if verbose == "y": print "Strategy: Duo: We are closest to ball"
                             #Go towards ball
@@ -1325,7 +1337,7 @@ class Strategy(object):
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
 
-                            comms.turn(time_to_turn,get_angle_corrections())
+                            comms.turn(angle_to_obj)
                             if verbose == "y": print "Strategy: Duo: Facing ball"
                             time.sleep(time_to_turn)
                             comms.stop()
@@ -1358,7 +1370,7 @@ class Strategy(object):
                                 time_to_turn = get_time_to_turn(turn_angle)
                                 if turn_angle != 0:
                                     print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle-10,5)
+                                    comms.turn(turn_angle)
                                     if verbose == "y": print "Strategy: Duo: Aiming"
                                     time.sleep(time_to_turn)
                                     comms.stop()
