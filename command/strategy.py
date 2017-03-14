@@ -1215,7 +1215,7 @@ class Strategy(object):
 
                         if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
                         if me != None and oppgoal != None:
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
+                            """    angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
                             time_to_turn = get_time_to_turn(angle_to_obj)
 
                             comms.turn(time_to_turn)
@@ -1226,7 +1226,8 @@ class Strategy(object):
                             comms.go()
                             if verbose == "y": print "Strategy: Duo: Leaving zone"
                             time.sleep(1)
-                            comms.stop()
+                            """
+                        comms.stop()
 
                     if point_zone(ball.x,teamSideLeft <= 0):
                         if verbose == "y": print "Strategy: Duo: Ball is in zone 0"
