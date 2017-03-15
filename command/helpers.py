@@ -545,13 +545,9 @@ def getPenaltyTakerPos(left, op1, op2):
 	else:
 		return None
 
+"""
 # TODO May need some callibration and change of algorithm
 def noSensorHasBall(me,ball):
-	"""
-	:param me: me robot with x, y and rot properties
-	:param ball: ball with x and y coordinated
-	:return:
-	"""
 	# Acceptable distance and angle for hasBall assumption
 	dist = 10
 	angle = 30
@@ -561,3 +557,6 @@ def noSensorHasBall(me,ball):
 	angle_a = me.rot - math.acos(dist_a/dist_b)
 
 	return angle_a < angle and dist_a < dist
+
+	return True
+"""
