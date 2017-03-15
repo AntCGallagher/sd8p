@@ -1108,6 +1108,9 @@ class Strategy(object):
             else :
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
+                    """
+                    Solo strategy starts here
+                    """
 
                     #Robot distances to ball
                     me_ball_grid_dist = 100
@@ -1179,7 +1182,7 @@ class Strategy(object):
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             turn_angle = get_angle_to_send(angle_to_obj)
                             if turn_angle != 0:
-                                print "Turnning to ball angle: ", angle_to_obj
+                                print "Turning to ball angle: ", angle_to_obj
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.stop()
@@ -1199,24 +1202,28 @@ class Strategy(object):
                             robot0 = curr_world.robots[0]
                             me = robot0
                             if me != None and ball != None:
-                                time.sleep(1)
-                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                if teamSideLeft:
-                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                time.sleep(0.2)
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                turn_angle = get_angle_to_send(angle_to_obj)
-                                time_to_turn = get_time_to_turn(turn_angle)
-                                if turn_angle != 0:
-                                    print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle)
-                                    time.sleep(time_to_turn)
-                                    comms.stop()
-                                time.sleep(1)
-                                comms.kick(10)
-                                time.sleep(1)
+                                if noSensorHasBall(me,ball):
+                                    time.sleep(1)
+                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                    if teamSideLeft:
+                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                    time.sleep(0.2)
+                                    angle_to_obj = us_to_obj_angle(me,goal)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(turn_angle)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", turn_angle
+                                        comms.turn(turn_angle)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time.sleep(1)
+                                    comms.kick(10)
+                                    time.sleep(1)
                 else:
                     if verbose == "y": print "Strategy: Running DUO strat"
+                    """
+                    Duo strategy starts here
+                    """
                     if (point_zone(me.x,teamSideLeft) <= 0):
 
                         if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
@@ -1365,21 +1372,22 @@ class Strategy(object):
                             robot0 = curr_world.robots[0]
                             me = robot0
                             if me != None and ball != None:
-                                time.sleep(1)
-                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                if teamSideLeft:
-                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                time.sleep(0.2)
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                turn_angle = get_angle_to_send(angle_to_obj)
-                                time_to_turn = get_time_to_turn(turn_angle)
-                                if turn_angle != 0:
-                                    print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle)
-                                    if verbose == "y": print "Strategy: Duo: Aiming"
-                                    time.sleep(time_to_turn)
-                                    comms.stop()
-                                time.sleep(1)
-                                comms.kick(10)
-                                if verbose == "y": print "Strategy: Duo: Shooting"
-                                time.sleep(1)
+                                if noSensorHasBall(me,ball):
+                                    time.sleep(1)
+                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                    if teamSideLeft:
+                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                    time.sleep(0.2)
+                                    angle_to_obj = us_to_obj_angle(me,goal)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(turn_angle)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", turn_angle
+                                        comms.turn(turn_angle)
+                                        if verbose == "y": print "Strategy: Duo: Aiming"
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time.sleep(1)
+                                    comms.kick(10)
+                                    if verbose == "y": print "Strategy: Duo: Shooting"
+                                    time.sleep(1)
