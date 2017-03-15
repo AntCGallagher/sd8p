@@ -712,7 +712,7 @@ class Strategy(object):
                     if verbose == "y": print "Strategy: Running DUO strat"
                     our_grid_pos = get_grid_pos(me.x,me.y)
 
-                    # Check if we are in the right zone
+                    # Check if we are in the right zone``
                     if teamSideLeft:
                         if True:
                             # Check if Juno has the ball
@@ -989,22 +989,30 @@ class Strategy(object):
             oppgoal = loctuple(LEFTGOALX,LEFTGOALY)
 
         while True:
-
             #Delays
             time.sleep(0.8)
-            #normal strategy
-            curr_world = World.get_world()
 
+            # Extract world model
+            curr_world = World.get_world()
             ball = curr_world.ball
             robots_array = curr_world.robots
             robot0 = robots_array[0]
             robot1 = robots_array[1]
             robot2 = robots_array[2]
             robot3 = robots_array[3]
-
-            #for easy reference and change. ps: I'm assuming robot1 is Juno
+            # for easy reference and change. ps: I'm assuming robot1 is Juno
             me = robot0
             juno = robot1
+
+            # Objects grid locations
+            our_grid_pos = get_grid_pos(me.x,me.y)
+            ball_grid_pos = get_grid_pos(ball.x,ball.y)
+            if juno != None:
+                juno_grid_pos = get_grid_pos(juno.x,juno.y)
+            if robot2 != None:
+                robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
+            if robot3 != None:
+                robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
 
             #Change condition to reflect when to change to solo or duo strategy
             #Currently, if Juno is missing in 20 world models, will convert to solo strat
@@ -1016,7 +1024,6 @@ class Strategy(object):
                     juno_grid = get_grid_pos(juno.x,juno.y)
                     if(ball_grid.x == juno_grid.x and ball_grid.y == juno_grid.y):
                         missingJunoCounter = 0
-
                 if (juno.x == last_juno_x and juno.y == last_juno_y):
                     missingJunoCounter += 1
                 else:
@@ -1081,24 +1088,24 @@ class Strategy(object):
             else:
                 solo_strat = False
 
-            # Objects grid locations
-            our_grid_pos = get_grid_pos(me.x,me.y)
-            ball_grid_pos = get_grid_pos(ball.x,ball.y)
-            if juno != None:
-                juno_grid_pos = get_grid_pos(juno.x,juno.y)
-            if robot2 != None:
-                robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
-            if robot3 != None:
-                robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
+            # Reverse if too close to wall and facing the wall. Else, continue normally
+            reverse = False
+            # TODO test reverse wall mechanic. Change angle values to get it right
+            if me.x < 40 and math.fabs(me.rot - 270) < 90:
+                reverse = True
+            elif me.x > 260 and math.fabs(me.rot - 90) < 90:
+                reverse = True
+            elif me.y < 30 and math.fabs(me.rot - 0) < 90:
+                reverse = True
+            elif me.y > 190 and math.fabs(me.rot - 180) < 90:
+                reverse = True
 
-            if me.x < 40 or me.x > 260 or me.y < 30 or me.y > 190:
-                # TODO Only reverse when FACING the wall
-                if verbose == "y": print "Reversing cause it's too close to the wall"
+            if (reverse):
                 comms.reverse(100)
                 time.sleep(0.8)
                 comms.stop()
                 time.sleep(0.2)
-            else:
+            else :
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
 
