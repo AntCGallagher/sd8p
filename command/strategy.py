@@ -942,8 +942,8 @@ class Strategy(object):
                                 comms.stop()
                                 time.sleep(0.2)
 
-    @staticmethod
-    def start4(verbose="n"):
+
+    def start4(self,verbose="n"):
         comms = Comms()
         comms.start()
         time.sleep(1)
