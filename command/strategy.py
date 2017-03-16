@@ -406,17 +406,42 @@ class Strategy(object):
                     if ball != None:
                         print get_zone(ball.x,teamSideLeft)
             if inp == "pf":
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                me = curr_world.robots[0]
+                juno = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                ball = curr_world.ball
+
+                our_grid_pos = None
+                ball_grid_pos = None
+                juno_grid_pos = None
+                robot2_grid_pos = None
+                robot3_grid_pos = None
+                if ball != None:
+                    ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                if me != None:
+                    our_grid_pos = get_grid_pos(me.x,me.y)
+                if juno != None:
+                    juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                if robot2 != None:
+                    robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
+                if robot3 != None:
+                    robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
+
                 pfobs = namedtuple("pfobs","x y")
                 box = []
-                if robot1 != None:
-                    box.append(pfobs(robot1.x,robot1.y))
+                if juno != None:
+                    box.append(pfobs(int(juno_grid_pos.x),int(juno_grid_pos.y)))
                 if robot2 != None:
-                    box.append(pfobs(robot2.x,robot2.y))
+                    box.append(pfobs(int(robot2_grid_pos.x),int(robot2_grid_pos.y)))
                 if robot3 != None:
-                    box.append(pfobs(robot3.x,robot3.y))
+                    box.append(pfobs(int(robot3_grid_pos.x),int(robot3_grid_pos.y)))
 
-                if robot0 != None and ball != None:
-                    test = self.gridGoXY(robot0,ball.x,ball.y,box)
+                if me != None and ball != None:
+                    me = namedtuple("me","x y")
+                    test = self.gridGoXY(me(int(our_grid_pos.x),int(our_grid_pos.y)),int(ball_grid_pos.x),int(ball_grid_pos.y),box)
                     print test
                 else:
                     print "Me or Ball not found"
@@ -456,9 +481,12 @@ class Strategy(object):
         gridtuple = namedtuple("gridtuple","x y path stat")
         location = gridtuple(me.x,me.y,[],"Start")
         queue = [location]
+        print "hello"
 
         while (len(queue) > 0):
             currentlocation = queue.pop()
+            print "hello"
+            print len(queue)
 
             # Checking up
             newlocation = self.exploreInDirection(currentlocation,"North",grid)
@@ -492,6 +520,7 @@ class Strategy(object):
                 grid[newlocation.x][newlocation.y] = "Visited"
                 queue.append(newlocation)
 
+        print "PATHFINDING: No path to objective found"
         return False
 
     def exploreInDirection(self,location,direction,grid):
