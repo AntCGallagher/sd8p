@@ -430,6 +430,25 @@ class Strategy(object):
     		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
     	return positions
 
+    """
+    def gridGoXY(self,me,destx,desty,obstacles):
+        grid = [["Empty" for x in xrange(7)] for y in xrange(5)]
+        grid[me.x][me.y] = "Start"
+        grid[destx][desty] = "Goal"
+        for i in obstacles:
+            grid[i.x][i.y] = "Obstacle"
+
+        gridtuple = namedtuple("gridtuple","x y path stat")
+        location = gridtuple(me.x,me.y,[],"Start")
+        queue = [location]
+
+        while (len(queue) > 0):
+            currentlocation = queue.pop(0)
+
+            # Checking up
+            newlocation = exploreInDirection(currentlocation,"North",grid)
+    """
+    
     @staticmethod
     def stop():
         comms = Comms()
