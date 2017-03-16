@@ -472,53 +472,54 @@ class Strategy(object):
     	return positions
 
     def gridGoXY(self,me,destx,desty,obstacles):
-        grid = [["Empty" for x in xrange(7)] for y in xrange(5)]
+        grid = [["Empty" for x in xrange(4)] for y in xrange(6)]
         grid[me.x][me.y] = "Start"
         grid[destx][desty] = "Goal"
+        """
         for i in obstacles:
             grid[i.x][i.y] = "Obstacle"
-
+        """
         gridtuple = namedtuple("gridtuple","x y path stat")
         location = gridtuple(me.x,me.y,[],"Start")
         queue = [location]
-        print "hello"
+
+        self.printgrd(grid)
 
         while (len(queue) > 0):
             currentlocation = queue.pop()
-            print "hello"
-            print len(queue)
 
             # Checking up
-            newlocation = self.exploreInDirection(currentlocation,"North",grid)
-            if newlocation.stat =="Goal":
-                return newlocation.path
-            elif newlocation.stat == "Valid":
-                grid[newlocation.x][newlocation.y] = "Visited"
-                queue.append(newlocation)
+            newlocationn = self.exploreInDirection(currentlocation,"North",grid)
+            if newlocationn.stat =="Goal":
+                return newlocationn.path
+            elif newlocationn.stat == "Valid":
+                grid[newlocationn.x][newlocationn.y] = "Visited"
+                queue.append(newlocationn)
 
             # Checking right
-            newlocation = self.exploreInDirection(currentlocation,"East",grid)
-            if newlocation.stat =="Goal":
-                return newlocation.path
-            elif newlocation.stat == "Valid":
-                grid[newlocation.x][newlocation.y] = "Visited"
-                queue.append(newlocation)
+            newlocatione = self.exploreInDirection(currentlocation,"East",grid)
+            if newlocatione.stat =="Goal":
+                return newlocatione.path
+            elif newlocatione.stat == "Valid":
+                grid[newlocatione.x][newlocatione.y] = "Visited"
+                queue.append(newlocatione)
 
             # Checking down
-            newlocation = self.exploreInDirection(currentlocation,"South",grid)
-            if newlocation.stat =="Goal":
-                return newlocation.path
-            elif newlocation.stat == "Valid":
-                grid[newlocation.x][newlocation.y] = "Visited"
-                queue.append(newlocation)
+            newlocations = self.exploreInDirection(currentlocation,"South",grid)
+            if newlocations.stat =="Goal":
+                return newlocations.path
+            elif newlocations.stat == "Valid":
+                grid[newlocations.x][newlocations.y] = "Visited"
+                queue.append(newlocations)
 
             # Checking left
-            newlocation = self.exploreInDirection(currentlocation,"West",grid)
-            if newlocation.stat =="Goal":
-                return newlocation.path
-            elif newlocation.stat == "Valid":
-                grid[newlocation.x][newlocation.y] = "Visited"
-                queue.append(newlocation)
+            newlocationw = self.exploreInDirection(currentlocation,"West",grid)
+            if newlocationw.stat =="Goal":
+                return newlocationw.path
+            elif newlocationw.stat == "Valid":
+                grid[newlocationw.x][newlocationw.y] = "Visited"
+                queue.append(newlocationw)
+
 
         print "PATHFINDING: No path to objective found"
         return False
@@ -556,7 +557,12 @@ class Strategy(object):
         else:
             return "Valid"
 
-
+    def printgrd(self,grid):
+        for x in xrange(4):
+            row = []
+            for y in xrange(6):
+                row.append(grid[y][x])
+            print row
     
     @staticmethod
     def stop():
