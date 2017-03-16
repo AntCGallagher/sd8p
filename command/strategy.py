@@ -43,8 +43,8 @@ class Strategy(object):
         self.teammate_on = 0
         self.comms = Comms()
 
-    @staticmethod
-    def tests():
+
+    def tests(self):
         inp = ""
         comms = Comms()
         comms.start()
@@ -405,6 +405,22 @@ class Strategy(object):
                 if robot_num == 4:
                     if ball != None:
                         print get_zone(ball.x,teamSideLeft)
+            if inp == "pf":
+                pfobs = namedtuple("pfobs","x y")
+                box = []
+                if robot1 != None:
+                    box.append(pfobs(robot1.x,robot1.y))
+                if robot2 != None:
+                    box.append(pfobs(robot2.x,robot2.y))
+                if robot3 != None:
+                    box.append(pfobs(robot3.x,robot3.y))
+
+                if robot0 != None and ball != None:
+                    test = self.gridGoXY(robot0,ball.x,ball.y,box)
+                    print test
+                else:
+                    print "Me or Ball not found"
+
 
     def getPos():
         comms = Comms()
@@ -430,7 +446,6 @@ class Strategy(object):
     		positions = [int(pos) for pos in positions.split() if pos[1:].isdigit() or pos.isdigit()]
     	return positions
 
-    """
     def gridGoXY(self,me,destx,desty,obstacles):
         grid = [["Empty" for x in xrange(7)] for y in xrange(5)]
         grid[me.x][me.y] = "Start"
@@ -443,11 +458,76 @@ class Strategy(object):
         queue = [location]
 
         while (len(queue) > 0):
-            currentlocation = queue.pop(0)
+            currentlocation = queue.pop()
 
             # Checking up
-            newlocation = exploreInDirection(currentlocation,"North",grid)
-    """
+            newlocation = self.exploreInDirection(currentlocation,"North",grid)
+            if newlocation.stat =="Goal":
+                return newlocation.path
+            elif newlocation.stat == "Valid":
+                grid[newlocation.x][newlocation.y] = "Visited"
+                queue.append(newlocation)
+
+            # Checking right
+            newlocation = self.exploreInDirection(currentlocation,"East",grid)
+            if newlocation.stat =="Goal":
+                return newlocation.path
+            elif newlocation.stat == "Valid":
+                grid[newlocation.x][newlocation.y] = "Visited"
+                queue.append(newlocation)
+
+            # Checking down
+            newlocation = self.exploreInDirection(currentlocation,"South",grid)
+            if newlocation.stat =="Goal":
+                return newlocation.path
+            elif newlocation.stat == "Valid":
+                grid[newlocation.x][newlocation.y] = "Visited"
+                queue.append(newlocation)
+
+            # Checking left
+            newlocation = self.exploreInDirection(currentlocation,"West",grid)
+            if newlocation.stat =="Goal":
+                return newlocation.path
+            elif newlocation.stat == "Valid":
+                grid[newlocation.x][newlocation.y] = "Visited"
+                queue.append(newlocation)
+
+        return False
+
+    def exploreInDirection(self,location,direction,grid):
+        gridtuple = namedtuple("gridtuple","x y path stat")
+
+        newPath = location.path
+        newPath.append(direction)
+
+        x = location.x
+        y = location.y
+
+        if direction == "North":
+            y -= 1
+        elif direction == "South":
+            y += 1
+        elif direction == "East":
+            x += 1
+        elif direction == "West":
+            x -= 1
+
+        nextstatus = self.getLocationStatus(x,y,grid)
+        nextlocation = gridtuple(x,y,newPath,nextstatus)
+
+        return nextlocation
+
+    def getLocationStatus(self,x,y,grid):
+        if x < 0 or x > 5 or y < 0 or y > 3:
+            return "Invalid"
+        elif grid[x][y] == "Goal":
+            return "Goal"
+        elif grid[x][y] != "Empty":
+            return "Blocked"
+        else:
+            return "Valid"
+
+
     
     @staticmethod
     def stop():
