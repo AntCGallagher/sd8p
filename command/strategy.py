@@ -1204,23 +1204,22 @@ class Strategy(object):
                             robot0 = curr_world.robots[0]
                             me = robot0
                             if me != None and ball != None:
-                                if noSensorHasBall(me,ball):
-                                    time.sleep(1)
-                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                    if teamSideLeft:
-                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                    time.sleep(0.2)
-                                    angle_to_obj = us_to_obj_angle(me,goal)
-                                    turn_angle = get_angle_to_send(angle_to_obj)
-                                    time_to_turn = get_time_to_turn(turn_angle)
-                                    if turn_angle != 0:
-                                        print "Turnning to ball angle: ", turn_angle
-                                        comms.turn(turn_angle)
-                                        time.sleep(time_to_turn)
-                                        comms.stop()
-                                    time.sleep(1)
-                                    comms.kick(10)
-                                    time.sleep(1)
+                                time.sleep(1)
+                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                if teamSideLeft:
+                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                time.sleep(0.2)
+                                angle_to_obj = us_to_obj_angle(me,goal)
+                                turn_angle = get_angle_to_send(angle_to_obj)
+                                time_to_turn = get_time_to_turn(turn_angle)
+                                if turn_angle != 0:
+                                    print "Turnning to ball angle: ", turn_angle
+                                    comms.turn(turn_angle)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                time.sleep(1)
+                                comms.kick(10)
+                                time.sleep(1)
                 else:
                     if verbose == "y": print "Strategy: Running DUO strat"
                     """
@@ -1378,22 +1377,21 @@ class Strategy(object):
                             robot0 = curr_world.robots[0]
                             me = robot0
                             if me != None and ball != None:
-                                if noSensorHasBall(me,ball):
-                                    time.sleep(1)
-                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                    if teamSideLeft:
-                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                    time.sleep(0.2)
-                                    angle_to_obj = us_to_obj_angle(me,goal)
-                                    turn_angle = get_angle_to_send(angle_to_obj)
-                                    time_to_turn = get_time_to_turn(turn_angle)
-                                    if turn_angle != 0:
-                                        print "Turnning to ball angle: ", turn_angle
-                                        comms.turn(turn_angle)
-                                        if verbose == "y": print "Strategy: Duo: Aiming"
-                                        time.sleep(time_to_turn)
-                                        comms.stop()
-                                    time.sleep(1)
-                                    comms.kick(10)
-                                    if verbose == "y": print "Strategy: Duo: Shooting"
-                                    time.sleep(1)
+                                time.sleep(1)
+                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                if teamSideLeft:
+                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                time.sleep(0.2)
+                                angle_to_obj = us_to_obj_angle(me,goal)
+                                turn_angle = get_angle_to_send(angle_to_obj)
+                                time_to_turn = get_time_to_turn(turn_angle)
+                                if turn_angle != 0:
+                                    print "Turnning to ball angle: ", turn_angle
+                                    comms.turn(turn_angle)
+                                    if verbose == "y": print "Strategy: Duo: Aiming"
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                time.sleep(1)
+                                comms.kick(10)
+                                if verbose == "y": print "Strategy: Duo: Shooting"
+                                time.sleep(1)
