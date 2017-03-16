@@ -1,3 +1,5 @@
+#include <SDPArduino.h>
+
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include <stdlib.h>
@@ -59,10 +61,10 @@ void loop() {
    memPrintTimer = millis();
   }
 
-  distance = Dist.getDistanceCentimeter();
-  Serial.print("Distance in centimeters: ");
-  Serial.println(distance);
-  delay(1000);
+//  distance = Dist.getDistanceCentimeter();
+//  Serial.print("Distance in centimeters: ");
+//  Serial.println(distance);
+//  delay(1000);
 
   //updateMotorPositions();
   //printMotorPositions();
