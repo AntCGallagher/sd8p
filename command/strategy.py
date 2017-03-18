@@ -374,6 +374,48 @@ class Strategy(object):
                 comms.grab(1)
             if inp == "kick":
                 comms.kick(10)
+            if inp == "ballnearby":
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                ball = curr_world.ball
+                if robot0 != None and ball != None:
+                    if (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2)) < math.pow(10,2):
+                        print "Ball is close"
+                    else:
+                        print "Ball is far"
+            if inp == "collision":
+                value = float(raw_input("Time to go: "))
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                robot1 = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                # Need to account for rotation
+                comms.go()
+                curr_time = time.time()
+                while(time.time()-curr_time < value):
+                    time.sleep(0.1)
+                    curr_world = World.get_world()
+                    robots = curr_world.robots
+                    robot0 = curr_world.robots[0]
+                    robot1 = curr_world.robots[1]
+                    robot2 = curr_world.robots[2]
+                    robot3 = curr_world.robots[3]
+                    colliding = False
+                    if robot0 != None:
+                        if robot1 != None:
+                            if (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2)) < math.pow(10,2):
+                                colliding = True
+                        if robot2 != None:
+                            if (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2)) < math.pow(10,2):
+                                colliding = True
+                        if robot3 != None:
+                            if (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2)) < math.pow(10,2):
+                                colliding = True
+                    if colliding:
+                        comms.stop()
             if inp == "intercept":
                 our_x = int(raw_input("our x: "))
                 our_y = int(raw_input("our x: "))
@@ -557,7 +599,7 @@ class Strategy(object):
             return "Valid"
 
 
-    
+
     @staticmethod
     def stop():
         comms = Comms()
