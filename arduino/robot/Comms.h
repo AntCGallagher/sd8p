@@ -59,7 +59,8 @@ class Comms {
     void sendInstructionComplete(int cmdID);
 
   private:
-    unsigned int maxIDSuccessPCToArd; // stores the maximum ID of command we've received
+    //unsigned int maxIDSuccessPCToArd; // stores the maximum ID of command we've received
+    unsigned int expectedMessageID; // stores the next ID we expect from the PC
     byte buffer[BUFFER_SIZE];
     int bufferPos;   // points at empty slot to insert next received byte
 

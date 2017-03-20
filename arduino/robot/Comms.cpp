@@ -46,7 +46,7 @@ int noParamsBytesForOpcode(Opcode opcode) {
 }
 
 Comms::Comms() {
-  this->maxIDSuccessPCToArd = 0;
+  this->expectedMessageID = 1;
   this->clearSoftwareBuffer();
   this->clearSerialBuffer();
 }
@@ -82,10 +82,11 @@ void Comms::readSerial() {
 /*
  Resets maxIDSuccessPCToArd to 1
  Necessary when the PC-side system restarts but we haven't
- Set to 1 as opposed to 0 becasue the RESET command had ID 1
+ Set to 1 as opposed to 0 because the RESET command had ID 1
 */
 void Comms::resetMessID() {
-  this->maxIDSuccessPCToArd = 1;
+  this->expectedMessageID = 2;
+  //this->maxIDSuccessPCToArd = 1;
 }
 
 /*
@@ -127,7 +128,9 @@ void Comms::checkForCompleteCommand() {
 
   if (this->validateNewCommand(cmd)) {
     // update maxIDSuccessPCToArd, tell PC success and execute instruction
-    this->maxIDSuccessPCToArd = cmd.id;
+    //this->maxIDSuccessPCToArd = cmd.id;
+    // anticipate next command
+    this->expectedMessageID = cmd.id + 1;
     this->respondSuccess();
     cmd.instantiateInstruction();
   } else {
@@ -142,7 +145,7 @@ void Comms::checkForCompleteCommand() {
 }
 
 /*
- ID must be maxIDSuccessPCToArd  + 1
+ ID must be expectedID
  Hash must add up
  Opcode must be valid
 */
@@ -150,10 +153,10 @@ bool Comms::validateNewCommand(Command c) {
   if (c.id == 1 && c.opcode == RESET)
     return true;
 
-  if (c.id != this->maxIDSuccessPCToArd + 1) {
+  if (c.id != this->expectedMessageID) {
     Serial.println(F("ERRid"));
     Serial.println(c.id);
-    Serial.println(this->maxIDSuccessPCToArd);
+    Serial.println(this->expectedMessageID);
     return false;
   }
 
@@ -186,7 +189,7 @@ void Comms::sendArdReset() {
 */
 void Comms::respondError() {
   Serial.print(F("$ERR&"));
-  Serial.print(this->maxIDSuccessPCToArd);
+  Serial.print((this->expectedMessageID-1));
   Serial.println(F(";"));
 }
 
@@ -195,7 +198,7 @@ void Comms::respondError() {
 */
 void Comms::respondSuccess() {
   Serial.print(F("$SUC&"));
-  Serial.print(this->maxIDSuccessPCToArd);
+  Serial.print((this->expectedMessageID-1));
   Serial.println(F(";"));
 }
 

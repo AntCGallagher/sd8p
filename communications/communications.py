@@ -12,6 +12,7 @@ from struct import pack
 # Based on code taken from https://bitbucket.org/craigwalton/sdp-g7
 class Comms(object):
 	active = False # Whether or not communications is active
+	hasball = False # Whether or not the robot has the ball
 	arduino_initialised = False # Messages will only be sent when the arduino is initialised
 	messages = [] # List containing all messages
 	message_buffer = Queue() # Queue of messages to try sending
@@ -91,11 +92,6 @@ class Comms(object):
 					self.port.write(hashed)
 					time.sleep(0.1)
 
-					# If we send a stop command, we do not want to resend
-					# any commands before it
-					#if (msg.op == 2):
-					#	dele
-
 				except Exception, ex:
 					if not type(ex).__name__ == "Empty":
 						print str(ex)
@@ -134,6 +130,9 @@ class Comms(object):
 					with open(self.outputFilename, "a", False) as file:
 						file.write("@receive_messages " + str(joined) + "\n")
 
+				if ("$BALL" in joined):
+					hasball = True
+
 				# Otherwise, check for OK or ERR message
 				if ("$SUC" in joined):
 					ids = re.findall('(?<=\$SUC\&)\d+(?=;)', joined)
@@ -149,6 +148,13 @@ class Comms(object):
 
 			# Try again every 10ms
 			time.sleep(0.01)
+
+ 	# got_ball returns true if the ball has been received since the method was last checked
+	def got_ball(self):
+		if (hasball == True):
+			hasball = False
+			return True
+		return False
 
 	def delete_up_to_id(self, idx):
 		for m in self.messages:
