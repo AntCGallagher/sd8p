@@ -683,8 +683,9 @@ class Strategy(object):
         comms.go()
         time.sleep(sleeptime)
         comms.stop()
+        time.sleep(0.1)
 
-    def basicRotate(comms,angle):
+    def basicRotate(self,comms,angle):
         comms.turn(angle,get_angle_corrections)
         time.sleep(get_time_to_turn)
         comms.stop()
@@ -984,7 +985,7 @@ class Strategy(object):
                                 comms.stop()
                             time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
                             print "Time to sleep: ", time_to_object
-                            time.sleep(0.1)
+                            time.sleep(0.3)
                             comms.grab(1)
                             time.sleep(0.4)
                             self.basicGo(comms,time_to_object)
