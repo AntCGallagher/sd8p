@@ -14,9 +14,9 @@ while True:
         frame = capture.get_frame()
 
         cv2.imwrite("currBg_" + str(pitch_number) + ".png", frame)
-        cv2.imwrite("../currBg_" + str(pitch_number) + ".png", frame)
+        #cv2.imwrite("../currBg_" + str(pitch_number) + ".png", frame)
 
-        cv2.imshow('Tracker', frame)
+        cv2.imshow('Background view', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

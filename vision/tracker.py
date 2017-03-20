@@ -332,11 +332,11 @@ class MyTracker(object):
         # background image used for background subtraction
         #TODO make interface to acquire such image
         og = cv2.imread('currBg_' + str(self.pitch_number) + '.png')
-        og = cv2.GaussianBlur(og,(3,3),0)
+        og = cv2.GaussianBlur(og,(5,5),0)
         og = cv2.cvtColor(og,cv2.COLOR_BGR2YUV)
 
         #background subtraction
-        fore = cv2.GaussianBlur(fore,(3,3),0)
+        fore = cv2.GaussianBlur(fore,(5,5),0)
         yuv = cv2.cvtColor(fore,cv2.COLOR_BGR2YUV)
         yuv = cv2.absdiff(yuv, og)
         yuv = cv2.cvtColor(yuv,cv2.COLOR_BGR2GRAY )
@@ -344,6 +344,7 @@ class MyTracker(object):
         mask = cv2.inRange(yuv, 14, 255) ################# variable - increase if extra bits, decrease otherwise
         #TODO mask out sides of the pich
         #mask = cv2.bitwise_and(mask, mask, mask=sides)
+        cv2.imshow('!!!!', mask)
         mask = cv2.GaussianBlur(mask,(11,11),0) ############## variable
         retval,mask = cv2.threshold(mask,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         mask = cv2.GaussianBlur(mask,(19,19), 0) ############## variable

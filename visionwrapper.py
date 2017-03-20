@@ -9,7 +9,6 @@ from numpy import array
 from vision.colors import BGR_COMMON
 from vision.findCameraSettings import CameraCalibrationGUI
 import subprocess
-from numpy import asarray, int0
 
 class VisionWrapper(object):
 

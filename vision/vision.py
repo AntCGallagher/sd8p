@@ -117,7 +117,7 @@ class Camera(object):
 
         self.capture.set(cv2.CAP_PROP_BRIGHTNESS,   BRIGHTNESS)
         self.capture.set(cv2.CAP_PROP_CONTRAST,     CONTRAST)
-        self.capture.set(cv2.CAP_PROP_SATURATION,   SATURATION)
+        #self.capture.set(cv2.CAP_PROP_SATURATION,   SATURATION)
         self.capture.set(cv2.CAP_PROP_HUE,          HUE)
 
 if __name__ == '__main__':
