@@ -151,6 +151,9 @@ class Strategy(object):
                 comms.go()
                 time.sleep(value)
                 comms.stop()
+            if inp == "s":
+                comms.stop()
+                time.sleep(1)
             if inp == "comp":
     			comms.stop()
     			comms.getcompass()
@@ -396,6 +399,7 @@ class Strategy(object):
                 comms.go()
                 curr_time = time.time()
                 while(time.time()-curr_time < value):
+                    print "Time difference: ", time.time() - curr_time, " Value: ", value
                     time.sleep(0.1)
                     curr_world = World.get_world()
                     robots = curr_world.robots
@@ -405,17 +409,21 @@ class Strategy(object):
                     robot3 = curr_world.robots[3]
                     colliding = False
                     if robot0 != None:
-                        if robot1 != None:
-                            if (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2)) < math.pow(10,2):
+                        if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
+                            print "Distance 1: ", (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2))
+                            if (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
                                 colliding = True
                         if robot2 != None:
-                            if (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2)) < math.pow(10,2):
+                            print "Distance 2: ", (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2))
+                            if (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
                                 colliding = True
                         if robot3 != None:
-                            if (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2)) < math.pow(10,2):
+                            print "Distance 3: ", (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2))
+                            if (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
                                 colliding = True
                     if colliding:
                         comms.stop()
+                        break
             if inp == "intercept":
                 our_x = int(raw_input("our x: "))
                 our_y = int(raw_input("our x: "))
