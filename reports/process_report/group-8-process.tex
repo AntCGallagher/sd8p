@@ -1,0 +1,88 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[final]{graphicx}
+\graphicspath{{pics/}}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{subfig}
+\usepackage{pdfpages}
+\usepackage{pdflscape}
+
+\begin{document}
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE The University of Edinburgh \par}
+	\vspace{1cm}
+	{\scshape\Large System Design Project\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Process Report\par}
+	\vspace{2cm}
+	{\Large\ Group 8\par}
+	\vfill
+	\begin{tabular}[t]{l}
+	s1409854  - Filipe Wang \\
+	s1436084  - Vesko Stefanov \\
+	s1438974  - Anthony Gallagher \\
+	s1402967  - Andra Zaharia \\
+	s1421803  - Alex Wilson \\
+	s1453013  - Lazar Lazarov \\
+	s1418923  - Danial Khastalani
+	\end{tabular}
+	\vfill
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{sd8plogo}
+    \label{fig:robot}
+\end{figure}
+	\vfill
+
+	{\large February 27, 2017\par}
+\end{titlepage}
+
+\section{Introduction}
+This document is the Process Report for the Group SD-8P (Group 8). It includes an overview of how the group is structured, how it communicated and how it formulated plans for this particular group project. Throughout the report we will use the terms team to refer to Team D (composed of Group 7 and 8), group (to refer to either Group 7 or 8) and subgroup (to refer to the smaller groups that were formed around certain tasks within each group).
+\subsection{Tasks}
+\input{tasks}
+
+\section{Communication Channels}
+\input{communications}
+
+\section{Task Allocation}
+\input{allocation}
+
+\section{Progress Tracking}
+\input{progress}
+
+\section{Risks}
+\input{riskassessment}
+\section{Budget}
+\input{budget}
+\section{Team Plan}
+\input{teamplan}
+
+\section{Conclusion}
+In face of such a large task the group has kept itself on track in an organized, and relaxed, fashion. Expectations were high for the first friendly, but due to several different factors the robot did not perform as expected. The second friendly allowed us to see our progress in comparison to other teams and, although we did not win any matches, we did see significant improvement in the robot's performance.
+
+\newpage
+\section*{Appendix A - Periodic Questions}
+\begin{figure}[H]
+    \centering
+    \includepdf[page=5, scale=0.8]{SDPGroup8Log.pdf}
+    \label{fig:andralog}
+\end{figure}
+\newpage
+\section*{Appendix B - Normal Log}
+\begin{figure}[H]
+    \centering
+    \includepdf[page=14, scale=0.75]{SDPGroup8Log.pdf}
+    \label{fig:veskolog}
+\end{figure}
+\newpage
+\begin{landscape}
+\section*{Appendix C - Sample Gantt Chart}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.54]{gantt}
+    \label{fig:ganttchart}
+\end{figure}
+\end{landscape}
+\end{document}
