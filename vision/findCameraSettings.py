@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import consol
-import my_tracker
+import tracker
 import tracker
 
 import vision
@@ -126,7 +126,7 @@ if __name__ == '__main__':
             if distance < best_distance:
                 best_distance   = distance
                 best_brightness = test_brightness
-            
+
         print "Best brightness: "+str(best_brightness)
         settings['brightness']  = best_brightness
         auto_brightness = False
@@ -159,7 +159,7 @@ if __name__ == '__main__':
             if distance < best_distance:
                 best_distance = distance
                 best_contrast = test_contrast
-            
+
         print "Best contrast: "+str(best_contrast)
         settings['contrast']  = best_contrast
         auto_contrast = False
