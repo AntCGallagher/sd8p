@@ -1,499 +1,412 @@
+
 import cv2
 import numpy as np
-from collections import namedtuple
-import warnings
-from findHSV import CalibrationGUI
-import matplotlib.pyplot as plt
+import tools
+import vision
+import math
+from colors import BGR_COMMON
+#from findHSV import CalibrationGUI
 
-# Turn off warnings for PolynomialFit
-warnings.simplefilter('ignore', np.RankWarning)
-warnings.simplefilter('ignore', RuntimeWarning)
+class MyTracker(object):
 
-
-BoundingBox = namedtuple('BoundingBox', 'x y width height')
-Center = namedtuple('Center', 'x y')
-
-
-class Tracker(object):
-    @staticmethod
-    def oddify(inte):
-        if inte == 0:
-            inte +=1
-        elif inte % 2 == 0:
-            inte -= 1
-        else:
-            pass
-        return inte
-
-    def get_contours(self, frame, crop, adjustments, o_type=None):
-        """
-        Adjust the given frame based on 'min', 'max', 'contrast' and 'blur'
-        keys in adjustments dictionary.
-        """
-        try:
+    def __init__(self, calibration, pitch_number):
+        self.calibration    = calibration
+        self.time           = tools.current_milli_time()
+        self.pitch_number = pitch_number
+        self.ball_queue     = []
 
 
+    def processed_mask(self, image, color):
+        BLUR_VALUE      = self.calibration[color]['blur']
+        MIN_VALUE       = self.calibration[color]['min']
+        MAX_VALUE       = self.calibration[color]['max']
+        CONTRAST_VALUE  = self.calibration[color]['contrast']
+        OPEN_KERNEL     = (int)(self.calibration[color]['open_kernel'])
+        CLOSE_KERNEL    = (int)(self.calibration[color]['close_kernel'])
+        ERODE_KERNEL    = (int)(self.calibration[color]['erode'])
+        HIGHPASS_VALUE  = self.calibration[color]['highpass']
+        OBJECT_COUNT    = (int)(self.calibration[color]['object_count'])
 
-            if o_type == 'BALL':
-                frame = frame[crop[2]:crop[3], crop[0]:crop[1]]
-            if frame is None:
-                return None
-            if adjustments['blur'] >= 1:
-                blur = self.oddify(adjustments['blur'])
-                # print adjustments['blur']
+        # prevent damage to original image
+        frame = image.copy()
 
-                frame =  cv2.GaussianBlur(frame, (blur, blur), 0)
-                # plt.imshow(frame)
-                # plt.show()
+        # Apply gaussian blur to soften noise
+        blur = BLUR_VALUE
+        if blur >= 1:
+            if blur % 2 == 0:
+                blur += 1
+            frame = cv2.GaussianBlur(frame, (blur, blur), 0)
 
+        # apply contrast
+        contrast = CONTRAST_VALUE
+        if contrast >= 1.0:
+            frame = cv2.add(frame, np.array([contrast]))
 
-            hp = adjustments.get('highpass')
-
-            if hp is None:
-                hp = 0
-
-            if adjustments['contrast'] >= 1.0:
-                frame = cv2.add(frame,
-                                np.array([float(adjustments['contrast'])]))
-
-            # Convert frame to HSV
-            frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-            # Create a mask
-            frame_mask = cv2.inRange(frame_hsv,
-                                     adjustments['min'],
-                                     adjustments['max'])
+        # get initial frame mask
+        frame_yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        min_color = MIN_VALUE
+        max_color = MAX_VALUE
+        frame_mask = cv2.inRange(frame_yuv, min_color, max_color)
 
 
-
-            frame_mask = CalibrationGUI.highpass(frame_mask, frame, hp)
-
-            # Find contours
-            if adjustments['open'] >= 1:
-                kernel = np.ones((2,2),np.uint8)
+        if OPEN_KERNEL >= 1:
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (OPEN_KERNEL,OPEN_KERNEL))
                 frame_mask = cv2.morphologyEx(frame_mask,
                                               cv2.MORPH_OPEN,
                                               kernel,
-                                              iterations=adjustments['open'])
-
-            if adjustments['close'] >= 1:
-                kernel = np.ones((2,2),np.uint8)
-                frame_mask = cv2.dilate(frame_mask,
-                                        kernel,
-                                        iterations=adjustments['close'])
-
-            if adjustments['erode'] >= 1:
-                kernel = np.ones((2,2),np.uint8)
+                                              iterations=1)
+        if CLOSE_KERNEL >= 1:
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (CLOSE_KERNEL,CLOSE_KERNEL))
+                frame_mask = cv2.morphologyEx(frame_mask,
+                                              cv2.MORPH_CLOSE,
+                                              kernel,
+                                              iterations=1)
+        if ERODE_KERNEL >= 1:
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (ERODE_KERNEL,ERODE_KERNEL))
                 frame_mask = cv2.erode(frame_mask,
                                         kernel,
-                                        iterations=adjustments['erode'])
+                                        iterations=1)
+
+        # NOT APPLYING HIGHPASS
+        #out = frame
+        #hp = int(HIGHPASS_VALUE)
+        #frame_mask = CalibrationGUI.highpass(frame_mask, frame, hp)
+        #cv2.imshow('frame mask'+str(color),frame_mask)
+
+        return frame_mask
+
+    def count_pixels(self, color, mask):
+        MIN_DATA    = self.calibration[color]['min']
+        MAX_DATA    = self.calibration[color]['max']
+        dst         = cv2.inRange(mask, MIN_DATA, MAX_DATA)
+
+        return cv2.countNonZero(dst)
 
 
+    def recognize_plates(self, image, robot_mask, ball_mask, draw=True, show_window=True):
+        # pink = self.calibrations['pink']
 
+        frame = image.copy()
 
+        #plate_mask = cv2.subtract(robot_mask, ball_mask)
+        plate_mask = robot_mask
 
+        #cv2.imshow("plate_mask", plate_mask)
 
-            contours, hierarchy = cv2.findContours(
-                frame_mask,
-                cv2.RETR_TREE,
-                cv2.CHAIN_APPROX_SIMPLE
-            )
+        # set processing values
+        BLUR   = 9;
+        KERNEL = 7;
 
-            return (contours, hierarchy, frame_mask)
-        except:
-            # bbbbb
-            raise
+        # process plate mask for whole plate detection
+        plate_mask = cv2.GaussianBlur(plate_mask, (BLUR, BLUR), 0)
+        #plate_mask = cv2.bilateralFilter(plate_mask,9,75,75)
+        kernel     = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (KERNEL,KERNEL))
+        plate_mask = cv2.morphologyEx(plate_mask, cv2.MORPH_CLOSE, kernel)
+        plate_mask = cv2.morphologyEx(plate_mask, cv2.MORPH_OPEN, kernel)
 
+        # get contours from the mask
+        _, contours, _ = cv2.findContours(plate_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    def get_contour_extremes(self, cnt):
+        # get number of plates expected
+        OBJECT_COUNT = (int)(self.calibration['plate']['object_count'])
+        sorted_cnt   = sorted(contours, key=lambda cnt: cv2.contourArea(cnt))
+        contours     = sorted_cnt[-OBJECT_COUNT:]
+
+        contour_frame = np.zeros((480, 640, 3), np.uint8)
+        cv2.drawContours(contour_frame, contours, -1, (255,255,255), cv2.FILLED);
+        cv2.imshow('all-contours mask', contour_frame)
+
+        cnt_index  = 0       # contour  index to process
+        robot_data = []     # robot data to be returned
+
+        if show_window:
+            test_mask  = np.zeros((480, 640, 3), np.uint8)
+
+        for cnt in contours:
+
+            # check for countours of decent size
+            if cv2.contourArea(cnt) < 300:
+                cnt_index += 1
+                continue
+
+            # copy the contour part from the image
+            contour_frame = np.zeros((480, 640, 3), np.uint8)
+            cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
+            contour_frame = cv2.bitwise_and(image, contour_frame)
+
+            if show_window:
+                test_mask     = cv2.bitwise_or(test_mask, contour_frame)
+
+            contour_frame = cv2.cvtColor(contour_frame, cv2.COLOR_BGR2YUV)
+
+            # count blue coloured pixels
+            blue_no   = self.count_pixels('blue', contour_frame)
+            # count yellow coloured pixels
+            yellow_no = self.count_pixels('yellow', contour_frame)
+            # count green coloured pixels
+            green_no  = self.count_pixels('bright_green', contour_frame)
+            # count pink coloured pixels
+            pink_no   = self.count_pixels('pink', contour_frame)
+
+            # calculate ratios for definig teams
+            blue_yellow_ration = blue_no / (yellow_no + 1)
+            pink_green_ration  = pink_no / (green_no + 1)
+
+            # find the mass centre of the single circle (to find angle)
+            if pink_green_ration < 0.5:
+                #pink
+                min_range = self.calibration['pink']['min']
+                max_range = self.calibration['pink']['max']
+            else:
+                #green
+                min_range = self.calibration['bright_green']['min']
+                max_range = self.calibration['bright_green']['max']
+
+            tmp_mask = cv2.inRange(contour_frame, min_range, max_range)
+            m        = cv2.moments(tmp_mask, True)
+            (tx, ty) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
+
+            if draw:
+                cv2.circle(image, (tx, ty), 5, (100, 255, 255), -1)
+
+            # find the rotated rectangle around the plate
+            rect = cv2.minAreaRect(cnt)
+            box  = cv2.boxPoints(rect)
+            box  = np.int0(box)
+
+            if draw:
+                cv2.drawContours(test_mask,[box],0,(0,0,255),2)
+
+            minx, miny, maxx, maxy = 100000,100000,0,0
+            for (x, y) in box:
+                miny = min(miny, y)
+                minx = min(minx, x)
+                maxy = max(miny, y)
+                maxx = max(minx, x)
+
+            # find the closest corner to the mass centre
+            closest_corner = 0
+            distance       = 10000000
+            for i in range(4):
+                tmp_dist = (box[i][0] - tx) * (box[i][0] - tx) + (box[i][1] - ty) * (box[i][1] - ty)
+                if (tmp_dist < distance):
+                    distance       = tmp_dist
+                    closest_corner = i
+
+            if draw:
+                cv2.circle(image, (box[closest_corner][0], box[closest_corner][1]), 5, (100, 100, 255), -1)
+
+            # find centre
+            m = cv2.moments(cnt, False);
+            (cx, cy) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
+
+            if pink_green_ration < 0.5:
+                group = 'bright_green'
+            else:
+                group = 'pink'
+
+            if blue_yellow_ration < 1.0:
+                team = 'yellow'
+            else:
+                team = 'blue'
+
+            # get direction
+            direction_vector_x = -(box[(closest_corner) % 4][0] - box[(closest_corner + 1) % 4][0])
+            direction_vector_y = -(box[(closest_corner) % 4][1] - box[(closest_corner + 1) % 4][1])
+            angle = math.atan2(direction_vector_y, direction_vector_x) + math.pi / 2
+            if angle > math.pi:
+                angle -= 2 * math.pi
+            angle = angle / 2 / math.pi * 360
+
+            angle -= 90
+            robot_data.append({'center': (cx, cy), 'angle': angle, 'team': team, 'group': group})
+
+            if draw:
+                cv2.line(image, (cx, cy), (cx + direction_vector_x, cy + direction_vector_y),(255, 255, 255), 3)
+                cv2.drawContours(image,[box],0,(0,0,255),2)
+                #cv2.putText(self.frame, "PLATE: b-y ratio %lf p-g ratio %lf" % (byr, pgr), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, None, 1)
+                #cv2.putText(image, "PLATE: team %s group %s" % (team, group), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.7, None, 1)
+                cv2.imshow('image', image)
+
+            cnt_index += 1
+
+        if show_window:
+            cv2.imshow("contours ", test_mask)
+
+        contour_mask = cv2.cvtColor(test_mask, cv2.COLOR_BGR2GRAY)
+        _, contour_mask = cv2.threshold(contour_mask,0,255,cv2.THRESH_BINARY)
+
+        # print(robot_data)
+        return robot_data, image, contour_mask
+
+    def get_masks(self, image):
+
+        ball_mask  = None
+        plate_mask = None
+
+        # Ball mask
+        red_mask        = self.processed_mask(image, 'red')
+        violet_mask     = self.processed_mask(image, 'violet')
+        ball_mask       = cv2.bitwise_or(red_mask, violet_mask)
+
+        # Robot mask
+        #plate_mask      = self.processed_mask(image, 'plate')
+        pink_mask       = self.processed_mask(image, 'pink')
+        plate_mask       = self.processed_mask(image, 'plate')
+        green_mask       = self.processed_mask(image, 'bright_green')
+        yellow_mask       = self.processed_mask(image, 'yellow')
+        blue_mask       = self.processed_mask(image, 'blue')
+
+        # combine all colors into one plate mask
+        plate_mask      = cv2.bitwise_or(pink_mask, pink_mask)
+        plate_mask      = cv2.bitwise_or(plate_mask, green_mask)
+        plate_mask      = cv2.bitwise_or(plate_mask, yellow_mask)
+        plate_mask      = cv2.bitwise_or(plate_mask, blue_mask)
+
+        # pink and violet intercept
+        violet_mask     = cv2.subtract(violet_mask, pink_mask)
+        ball_mask       = cv2.bitwise_or(red_mask, violet_mask)
+
+        return ball_mask, plate_mask
+
+    def recognize_ball(self, image, robot_mask, ball_mask, show_window=False):
         """
-        Get extremes of a countour.
+        :return: radius, center, modified_frame
         """
-        leftmost = tuple(cnt[cnt[:, :, 0].argmin()][0])
-        rightmost = tuple(cnt[cnt[:, :, 0].argmax()][0])
-        topmost = tuple(cnt[cnt[:, :, 1].argmin()][0])
-        bottommost = tuple(cnt[cnt[:, :, 1].argmax()][0])
-        return (leftmost,
-                topmost,
-                rightmost,
-                bottommost)
+        #cv2.imshow("ball_mask", ball_mask)
+        ball_mask = cv2.subtract(ball_mask, robot_mask)
 
-    def get_bounding_box(self, points):
-        """
-        Find the bounding box given points by looking at the extremes of each coordinate.
-        """
-        leftmost = min(points, key=lambda x: x[0])[0]
-        rightmost = max(points, key=lambda x: x[0])[0]
-        topmost = min(points, key=lambda x: x[1])[1]
-        bottommost = max(points, key=lambda x: x[1])[1]
-        return BoundingBox(leftmost,
-                           topmost,
-                           rightmost - leftmost,
-                           bottommost - topmost)
+        #cv2.imshow("robot_mask", robot_mask)
 
-    def get_contour_corners(self, contour):
-        """
-        Get exact corner points for the plate given one contour.
-        """
-        if contour is not None:
-            rectangle = cv2.minAreaRect(contour)
-            box = cv2.cv.BoxPoints(rectangle)
-            return np.int0(box)
+        # extract contours
+        #cv2.imshow("ball_mask", ball_mask)
+        _, contours, _  = cv2.findContours(ball_mask.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        largest_contour = self.get_largest_contour(contours)
 
-    def join_contours(self, contours):
-        """
-        Joins multiple contours together.
-        """
-        cnts = []
-        for i, cnt in enumerate(contours):
-            if cv2.contourArea(cnt) > 100:
-                cnts.append(cnt)
-        return reduce(lambda x, y: np.concatenate((x, y)),
-                                   cnts) if len(cnts) else None
+        cv2.drawContours(image, contours, -1, (255,255,0), 1)
+        # Ball is not detected
+        if largest_contour is None or cv2.contourArea(largest_contour) < 10:
+            #print("Ball is not detected!")
+            return 0, None, ball_mask
+
+        ((x, y), radius) = cv2.minEnclosingCircle(largest_contour)
+        center = (x, y)
+        self.ball_queue.append((x, y))
+
+        if len(self.ball_queue) > 5:
+            self.ball_queue = self.ball_queue[1:]
+        ball_vector_x = int(self.ball_queue[-1][0] - self.ball_queue[0][0])
+        ball_vector_y = int(self.ball_queue[-1][1] - self.ball_queue[0][1])
+
+        x = int(x)
+        y = int(y)
+
+        direction = (ball_vector_x, ball_vector_y)
+        cv2.line(image, (x, y), (x + ball_vector_x, y + ball_vector_y), (255, 255, 255))
+
+        # Draw ball outline
+        cv2.circle(image,(int(x), int(y)),4,(0,0,0))
+        cv2.circle(image,(int(x), int(y)),5,BGR_COMMON['red'])
+        cv2.circle(image,(int(x), int(y)),6,(0,0,0))
+
+        if show_window:
+            #cv2.`imshow`("ball_image ", image)
+            cv2.imshow("ball_mask", ball_mask)
+
+        return radius, center, direction, image
 
     def get_largest_contour(self, contours):
-        """
-        Find the largest of all contours.
-        """
         areas = [cv2.contourArea(c) for c in contours]
-        return contours[np.argmax(areas)]
+        return contours[np.argmax(areas)] if len(areas) > 0 else None
 
-    def get_smallest_contour(self, contours):
+    def get_world_state(self, image):
         """
-        Find the smallest of all contours.
+        Retrieves all data from vision system.
         """
-        areas = [cv2.contourArea(c) for c in contours]
-        ind = np.argsort(areas)
-        # for i in range(len(ind)):
-        #     if areas[ind[i]] > 5:
-        #         return areas[ind[i]]
-        return contours[np.argmin(areas)]
 
-    def get_contour_centre(self, contour):
-        """
-        Find the center of a contour by minimum enclousing circle approximation.
+        data = {'ball': {'center': (-1, -1), 'radius': 0, 'direction':(0,0)}, 'robots': []}
 
-        Returns: ((x, y), radius)
-        """
-        return cv2.minEnclosingCircle(contour)
+        frame = image
+        fore = image.copy()
 
-    def get_angle(self, line, dot):
-        """
-        From dot to line
-        """
-        diff_x = dot[0] - line[0]
-        diff_y = line[1] - dot[1]
-        angle = np.arctan2(diff_y, diff_x) % (2 * np.pi)
-        return angle
+        # background image used for background subtraction
+        #TODO make interface to acquire such image
+        og = cv2.imread('currBg_' + str(self.pitch_number) + '.png')
+        og = cv2.GaussianBlur(og,(3,3),0)
+        og = cv2.cvtColor(og,cv2.COLOR_BGR2YUV)
 
+        #background subtraction
+        fore = cv2.GaussianBlur(fore,(3,3),0)
+        yuv = cv2.cvtColor(fore,cv2.COLOR_BGR2YUV)
+        yuv = cv2.absdiff(yuv, og)
+        yuv = cv2.cvtColor(yuv,cv2.COLOR_BGR2GRAY )
+        #TODO create interface to change variable
+        mask = cv2.inRange(yuv, 14, 255) ################# variable - increase if extra bits, decrease otherwise
+        #TODO mask out sides of the pich
+        #mask = cv2.bitwise_and(mask, mask, mask=sides)
+        mask = cv2.GaussianBlur(mask,(11,11),0) ############## variable
+        retval,mask = cv2.threshold(mask,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        mask = cv2.GaussianBlur(mask,(19,19), 0) ############## variable
+        frame = cv2.bitwise_and(frame,frame, mask=mask)
+        cv2.imshow('bg sub', frame)
 
-class RobotTracker(Tracker):
+        ball_mask   = None
+        robot_mask  = None
+        ball_center = None
 
-    def __init__(self,
-                 color,
-                 crop,
-                 offset,
-                 pitch,
-                 name,
-                 calibration):
-        """
-        Initialize tracker.
+        ball_mask, robot_mask = self.get_masks(frame);
+        cv2.imshow("ball_mask ", ball_mask)
+        cv2.imshow("robot_mask ", robot_mask)
 
-        Params:
-            [string] color      the name of the color to pass in
-            [(left-min, right-max, top-min, bot-max)]
-                                crop  crop coordinates
-            [int]       offset          how much to offset the coordinates
-            [int]       pitch           the pitch we're tracking - used to find the right colors
-            [string]    name            name for debug purposes
-            [dict]      calibration     dictionary of calibration values
-        """
-        self.name = name
-        self.crop = crop
+        # Robots recognition code goes here.
+        # Store things into data dictionary.
+        plate_data, modified_frame, robot_mask = self.recognize_plates(image=image.copy(), robot_mask=robot_mask, ball_mask=ball_mask)
+        for robot in plate_data:
+            data['robots'].append(robot)
 
-        self.color = [calibration[color]]
+        ball_reck = self.recognize_ball(image=image, robot_mask=robot_mask, ball_mask=ball_mask)
 
-        self.color_name = color
-        self.offset = offset
-        self.pitch = pitch
-        self.calibration = calibration
+        if len(ball_reck) == 4:
+            ball_radius, ball_center, ball_direction, ball_image = ball_reck
 
-    def get_plate(self, frame):
-        """
-        Given the frame to search, find a bounding rectangle for the green plate
-
-        Returns:
-            list of corner points
-        """
-        # Adjustments are colors and contrast/blur
-        adjustments = self.calibration['plate']
-        contours = self.get_contours(frame.copy(),self.crop, adjustments)[0]
-        return self.get_contour_corners(self.join_contours(contours))
-
-    def get_dot(self, frame, x_offset, y_offset):
-        """
-        Find center point of the black dot on the plate.
-
-        Method:
-            1. Assume that the dot is within some proximity of the center of the plate.
-            2. Fill a dummy frame with black and draw white cirlce around to create a mask.
-            3. Mask against the frame to eliminate any robot parts looking like dark dots.
-            4. Use contours to detect the dot and return it's center.
-
-        Params:
-            frame       The frame to search
-            x_offset    The offset from the uncropped image - to be added to the final values
-            y_offset    The offset from the uncropped image - to be added to the final values
-        """
-        # Create dummy mask
-        height, width, channel = frame.shape
-        if height > 0 and width > 0:
-            mask_frame = frame.copy()
-
-            green_dummy = frame.copy()
-            # Fill the dummy frame
-            cv2.rectangle(mask_frame,
-                          (0, 0),
-                          (width, height),
-                          (0, 0, 0),
-                          -1)
-
-            cv2.rectangle(green_dummy,
-                           (0, 0),
-                           (width, height),
-                           (0, 255, 0),
-                           -1)
-
-            cv2.circle(mask_frame,
-                       (width / 2, height / 2),
-                       14,
-                       (255, 255, 255),
-                       -1)
-            cv2.circle(green_dummy,
-                        (width / 2, height / 2),
-                        14,
-                        (0, 0, 0),
-                        -1)
-
-            # Mask the original image
-            mask_frame = cv2.cvtColor(mask_frame,
-                                      cv2.COLOR_BGR2GRAY)
-            frame = cv2.bitwise_and(frame,
-                                    frame,
-                                    mask=mask_frame) + green_dummy
-            adjustment = self.calibration['dot']
-            contours = self.get_contours(frame,self.crop, adjustment,'dot')[0]
-            if contours and len(contours) > 0:
-                # Take the largest contour
-                contour = self.get_largest_contour(contours)
-                (x, y), radius = self.get_contour_centre(contour)
-                return Center(x + x_offset, y + y_offset)
-
-    def find(self, frame, queue):
-        """
-        Retrieve coordinates for the robot, it's orientation and speed - if
-        available.
-
-        Process:
-            1. Find green plate
-            2. Create a smaller frame with just the plate
-            3. Find dot inside the green plate (the smaller window)
-            4. Use plate corner points from (1) to determine angle
-
-        Params:
-            [np.array] frame                - the frame to scan
-            [multiprocessing.Queue] queue   - shared resource for process
-
-        Returns:
-            None. Result is put into the queue.
-        """
-        # Set up variables
-        x = y = angle = None
-        sides = direction = None
-        plate_corners = None
-        dot = front = None
-
-        # Trim the image to only consist of one zone
-        frame = frame[self.crop[2]:self.crop[3],
-                      self.crop[0]:self.crop[1]]
-
-        # (1) Find the plates
-        plate_corners = self.get_plate(frame)
-
-        if plate_corners is not None:
-            # Find the bounding box
-            plate_bound_box = self.get_bounding_box(plate_corners)
-
-            # set x and y coordinates
-            x = plate_bound_box.x + plate_bound_box.width / 2
-            y = plate_bound_box.y + plate_bound_box.height / 2
-
-            if (plate_bound_box.width > 0
-                and plate_bound_box.height > 0):
-                # (2) Trim to create a smaller frame
-                plate_frame = frame.copy()[
-                    plate_bound_box.y:plate_bound_box.y \
-                        + plate_bound_box.height,
-                    plate_bound_box.x:plate_bound_box.x + \
-                        plate_bound_box.width
-                ]
-
-                # (3) Search for the dot
-                dot = self.get_dot(plate_frame, plate_bound_box.x \
-                                        + self.offset,
-                                   plate_bound_box.y)
-
-                if dot is not None:
-                    # Since get_dot adds offset, we need to remove it
-                    dot_temp = Center(dot[0] - self.offset, dot[1])
-
-                    # Find two points from plate_corners that are the furthest from the dot
-
-                    distances = [
-                        (
-                            (dot_temp.x - p[0])**2 + \
-                                (dot_temp.y - p[1])**2,  # distance
-                            p[0],                                   # x coord
-                            p[1]                                    # y coord
-                        ) for p in plate_corners]
-
-                    distances.sort(key=lambda x: x[0],
-                                   reverse=True)
-
-                    # Front of the kicker should be the first two points in distances
-                    front = distances[:2]
-                    rear = distances[2:]
-
-                    # Calculate which of the rear points belongs to the first of the front
-                    first = front[0]
-                    front_rear_distances = [
-                        (
-                            (first[1] - p[0])**2 + (first[2] - p[1])**2,
-                            p[1],
-                            p[2]
-                        ) for p in rear]
-                    front_rear_distances.sort(key=lambda x: x[0])
-
-                    # Put the results together
-                    sides = [
-                        (
-                            Center(first[1], first[2]),
-                            Center(front_rear_distances[0][1],
-                                   front_rear_distances[0][2])
-                        ),
-                        (
-                            Center(front[1][1], front[1][2]),
-                            Center(front_rear_distances[1][1],
-                                   front_rear_distances[1][2])
-                        )
-                    ]
-
-                    # Direction is a line between the front points and rear points
-                    direction = (
-                        Center(
-                            (first[1] + front[1][1]) / 2 + self.offset,
-                            (front[1][2] + first[2]) / 2),
-                        Center(
-                            (front_rear_distances[1][1] + front_rear_distances[0][1]) \
-                                / 2 + self.offset,
-                            (front_rear_distances[1][2] + front_rear_distances[0][2]) / 2)
-                    )
-
-                    angle = self.get_angle(direction[1], direction[0])
-
-            # Offset the x coordinates
-            plate_corners = [(p[0] + self.offset, p[1]) for p in plate_corners]
-
-            if front is not None:
-                front = [(p[1] + self.offset, p[2]) for p in front]
-
-            queue.put({
-                'x': x + self.offset, 'y': y,
-                'name': self.name,
-                'angle': angle,
-                'dot': dot,
-                'box': plate_corners,
-                'direction': direction,
-                'front': front
-            })
+        if ball_center is not None:
+            # print("BALL - x : %d y : %d radius : %d" % (ball_center[0], ball_center[1], ball_radius))
+            data['ball']['radius'] = ball_radius
+            data['ball']['center'] = (ball_center[0], ball_center[1])
+            data['ball']['direction'] = ball_direction
 
 
-        queue.put({
-            'x': None, 'y': None,
-            'name': self.name,
-            'angle': None,
-            'dot': None,
-            'box': None,
-            'direction': None,
-            'front': None
-        })
-        pass
+        # Should return data dictionary and the modified frame to the drawing utilities.
+        return data, modified_frame
 
-class BallTracker(Tracker):
-    """
-    Track red ball on the pitch.
-    """
 
-    def __init__(self,
-                 crop,
-                 offset,
-                 pitch,
-                 calibration,
-                 name='ball'):
-        """
-        Initialize tracker.
+# Test tracking objects of certain color
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pitch", help="[0] Main pitch, [1] Secondary pitch")
+   # parser.add_argument("color", help="The color to adjust")
+    args = parser.parse_args()
 
-        Params:
-            [string] color      the name of the color to pass in
-            [(left-min, right-max, top-min, bot-max)]
-                                crop  crop coordinates
-            [int] offset        how much to offset the coordinates
-        """
-        self.crop = crop
-        # if pitch == 0:
-        #     self.color = PITCH0['red']
-        # else:
-        #     self.color = PITCH1['red']
-        self.color = [calibration['red']]
-        self.offset = offset
-        self.name = name
-        self.calibration = calibration
+    pitch_number = int(args.pitch)
 
-    def find(self, frame, queue):
-        for color in self.color:
-            """
-            contours, hierarchy, mask = self.preprocess(
-                frame,
-                self.crop,
-                color['min'],
-                color['max'],
-                color['contrast'],
-                color['blur']
-            )
-            """
-            # adjustments = {'min':,'mz'}
-            contours, hierarchy, mask = self.get_contours(frame.copy(),
-                                                          self.crop,
-                                                          color,
-                                                          'BALL')
+    capture = vision.Camera(pitch=pitch_number)
+    #capture = cv2.VideoCapture('output.avi')
+    calibration = tools.get_colors(pitch=pitch_number)
+    croppings = tools.get_croppings(pitch=pitch_number)
+    tracker = MyTracker(calibration=calibration, pitch_number=pitch_number)
 
-            if len(contours) <= 0:
-                # print 'No ball found.'
-                pass
-                # queue.put(None)
-            else:
-                # Trim contours matrix
-                cnt = self.get_largest_contour(contours)
+    while True:
 
-                # Get center
-                (x, y), radius = cv2.minEnclosingCircle(cnt)
+        frame = capture.get_frame()
+        #re,frame = capture.read()
 
-                queue.put({
-                    'name': self.name,
-                    'x': x,
-                    'y': y,
-                    'angle': None,
-                    'velocity': None
-                })
-        queue.put(None)
-        pass
+        data, modified_frame = tracker.get_world_state(frame)
+
+        cv2.imshow('Tracker', modified_frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    capture.release()
+    cv2.destroyAllWindows()
