@@ -5,7 +5,7 @@ import tools
 import vision
 import math
 from colors import BGR_COMMON
-#from findHSV import CalibrationGUI
+#from findYUV import CalibrationGUI
 
 class MyTracker(object):
 

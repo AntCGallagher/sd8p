@@ -3,7 +3,7 @@ import tools
 from colors import BGR_COMMON
 from collections import namedtuple
 import numpy as np
-from findHSV import CalibrationGUI
+from findYUV import CalibrationGUI
 
 
 """

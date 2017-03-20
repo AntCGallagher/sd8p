@@ -6,12 +6,12 @@ import consol
 import vision
 import tools
 
-CONTROL = ["Lower threshold for hue",
-           "Upper threshold for hue",
-           "Lower threshold for saturation",
-           "Upper threshold for saturation",
-           "Lower threshold for value",
-           "Upper threshold for value",
+CONTROL = ["Lower threshold for brightness",
+           "Upper threshold for brightness",
+           "Lower threshold for color U",
+           "Upper threshold for color U",
+           "Lower threshold for color V",
+           "Upper threshold for color V",
            "Contrast",
            "Gaussian blur",
            "Open kernel",
@@ -20,12 +20,12 @@ CONTROL = ["Lower threshold for hue",
            'High pass',
            'Object count']
 
-MAXBAR = {"Lower threshold for hue":360,
-          "Upper threshold for hue":360,
-          "Lower threshold for saturation":255,
-          "Upper threshold for saturation":255,
-          "Lower threshold for value":255,
-          "Upper threshold for value":255,
+MAXBAR = {"Lower threshold for brightness":360,
+          "Upper threshold for brightness":360,
+          "Lower threshold for color U":255,
+          "Upper threshold for color U":255,
+          "Lower threshold for color V":255,
+          "Upper threshold for color V":255,
           "Contrast":100,
           "Gaussian blur":100,
           "Open kernel": 10,
@@ -35,12 +35,12 @@ MAXBAR = {"Lower threshold for hue":360,
           'Object count':20,
         }
 
-INDEX = {"Lower threshold for hue":0,
-         "Upper threshold for hue":0,
-         "Lower threshold for saturation":1,
-         "Upper threshold for saturation":1,
-         "Lower threshold for value":2,
-         "Upper threshold for value":2
+INDEX = {"Lower threshold for brightness":0,
+         "Upper threshold for brightness":0,
+         "Lower threshold for color U":1,
+         "Upper threshold for color U":1,
+         "Lower threshold for color V":2,
+         "Upper threshold for color V":2
         }
 
 KEYS = {ord('y'):'yellow',
@@ -54,7 +54,7 @@ def nothing(x):
 class CalibrationGUI(object):
     """
     This class caters for the creation of
-    the hue, saturation, value, contrast and
+    the brightness, color U, color V, contrast and
     blur threshold trackbars
     """
     def __init__(self, calibration):
@@ -79,24 +79,24 @@ class CalibrationGUI(object):
 
         # print self.calibration
         createTrackbar = lambda setting, \
-                                value: \
+                                color V: \
                                     cv2.createTrackbar(
                                         setting,
                                         self.maskWindowName,
-                                        int(value),
+                                        int(color V),
                                         MAXBAR[setting], nothing)
 
-        createTrackbar('Lower threshold for hue',
+        createTrackbar('Lower threshold for brightness',
                        self.calibration[self.color]['min'][0])
-        createTrackbar('Upper threshold for hue',
+        createTrackbar('Upper threshold for brightness',
                        self.calibration[self.color]['max'][0])
-        createTrackbar('Lower threshold for saturation',
+        createTrackbar('Lower threshold for color U',
                        self.calibration[self.color]['min'][1])
-        createTrackbar('Upper threshold for saturation',
+        createTrackbar('Upper threshold for color U',
                        self.calibration[self.color]['max'][1])
-        createTrackbar('Lower threshold for value',
+        createTrackbar('Lower threshold for color V',
                        self.calibration[self.color]['min'][2])
-        createTrackbar('Upper threshold for value',
+        createTrackbar('Upper threshold for color V',
                        self.calibration[self.color]['max'][2])
         createTrackbar('Contrast',
                        self.calibration[self.color]['contrast'])
@@ -139,26 +139,26 @@ class CalibrationGUI(object):
 
         getTrackbarPos = lambda setting: cv2.getTrackbarPos(setting, self.maskWindowName)
 
-        values = {}
+        color Vs = {}
         for setting in CONTROL:
-            values[setting] = float(getTrackbarPos(setting))
-        values['Gaussian blur'] = int(values['Gaussian blur'])
+            color Vs[setting] = float(getTrackbarPos(setting))
+        color Vs['Gaussian blur'] = int(color Vs['Gaussian blur'])
 
         self.calibration[self.color]['min'] = np.array(
-                                                [values['Lower threshold for hue'],
-                                                 values['Lower threshold for saturation'],
-                                                 values['Lower threshold for value']])
+                                                [color Vs['Lower threshold for brightness'],
+                                                 color Vs['Lower threshold for color U'],
+                                                 color Vs['Lower threshold for color V']])
         self.calibration[self.color]['max'] = np.array(
-                                                    [values['Upper threshold for hue'],
-                                                     values['Upper threshold for saturation'],
-                                                     values['Upper threshold for value']])
-        self.calibration[self.color]['contrast']        = values['Contrast']
-        self.calibration[self.color]['blur']            = values['Gaussian blur']
-        self.calibration[self.color]['open_kernel']     = int(values['Open kernel'])
-        self.calibration[self.color]['close_kernel']    = int(values['Close kernel'])
-        self.calibration[self.color]['erode']           = int(values['Erode'])
-        self.calibration[self.color]['highpass']        = values['High pass']
-        self.calibration[self.color]['object_count']    = values['Object count']
+                                                    [color Vs['Upper threshold for brightness'],
+                                                     color Vs['Upper threshold for color U'],
+                                                     color Vs['Upper threshold for color V']])
+        self.calibration[self.color]['contrast']        = color Vs['Contrast']
+        self.calibration[self.color]['blur']            = color Vs['Gaussian blur']
+        self.calibration[self.color]['open_kernel']     = int(color Vs['Open kernel'])
+        self.calibration[self.color]['close_kernel']    = int(color Vs['Close kernel'])
+        self.calibration[self.color]['erode']           = int(color Vs['Erode'])
+        self.calibration[self.color]['highpass']        = color Vs['High pass']
+        self.calibration[self.color]['object_count']    = color Vs['Object count']
 
         mask = self.get_mask(frame)
         cv2.imshow(self.frameWindowName, mask)
@@ -290,10 +290,10 @@ class CalibrationGUI(object):
     # mouse callback function
     def mouse_call(self, event,x,y,flags,param):
         #global ix,iy,drawing,mode
-        consol.log('param', param, 'Find HSV')
+        consol.log('param', param, 'Find YUV')
 
         if event == cv2.EVENT_LBUTTONDOWN:
-            consol.log_time('Find HSV', 'mouse click')
+            consol.log_time('Find YUV', 'mouse click')
 
             frame_yuv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2YUV)
 
@@ -304,7 +304,7 @@ class CalibrationGUI(object):
 
             # fliped on purpose
             yuv = frame_yuv[y][x]
-            consol.log('pixel color (yuv)', yuv, 'Find HSV')
+            consol.log('pixel color (yuv)', yuv, 'Find YUV')
 
             yuv_delta = np.array([15, 50, 50])
 
@@ -312,8 +312,8 @@ class CalibrationGUI(object):
             yuv_min = yuv - yuv_delta
             yuv_max = yuv + yuv_delta
 
-            consol.log('max (yuv)', yuv_max, 'Find HSV')
-            consol.log('min (yuv)', yuv_min, 'Find HSV')
+            consol.log('max (yuv)', yuv_max, 'Find YUV')
+            consol.log('min (yuv)', yuv_min, 'Find YUV')
 
 
             self.set_slider(yuv_min, yuv_max)
@@ -321,22 +321,22 @@ class CalibrationGUI(object):
 
 
 
-            consol.log('pixel color', col, 'Find HSV')
-            consol.log('pixel xy', [x, y], 'Find HSV')
-            consol.log('frame size', [len(self.frame[0]), len(self.frame)], 'Find HSV')
+            consol.log('pixel color', col, 'Find YUV')
+            consol.log('pixel xy', [x, y], 'Find YUV')
+            consol.log('frame size', [len(self.frame[0]), len(self.frame)], 'Find YUV')
 
 
     def set_slider(self, yuv_min, yuv_max):
         setTrackbarPos = lambda setting, pos: cv2.setTrackbarPos(setting, self.maskWindowName, pos)
-        values = {}
+        color Vs = {}
 
-        setTrackbarPos('Lower threshold for hue', yuv_min[0])
-        setTrackbarPos('Lower threshold for saturation', yuv_min[1])
-        setTrackbarPos('Lower threshold for value', yuv_min[2])
+        setTrackbarPos('Lower threshold for brightness', yuv_min[0])
+        setTrackbarPos('Lower threshold for color U', yuv_min[1])
+        setTrackbarPos('Lower threshold for color V', yuv_min[2])
 
-        setTrackbarPos('Upper threshold for hue', yuv_max[0])
-        setTrackbarPos('Upper threshold for saturation', yuv_max[1])
-        setTrackbarPos('Upper threshold for value', yuv_max[2])
+        setTrackbarPos('Upper threshold for brightness', yuv_max[0])
+        setTrackbarPos('Upper threshold for color U', yuv_max[1])
+        setTrackbarPos('Upper threshold for color V', yuv_max[2])
 
 
     def get_pixel_col(self, x, y):
@@ -369,7 +369,7 @@ if __name__ == '__main__':
         # capture frame by frame
         frame = cam.get_frame()
 
-        # TESTING/IDEA - For green dots, plates, and blue dots, use a HSV normalised frame.
+        # TODO TESTING/IDEA - For green dots, plates, and blue dots, use a HSV normalised frame.
         # if (args.color == "blue" or args.color == "green" or args.color == "bright_green" or args.color == "plate"):
         #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         #     frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
