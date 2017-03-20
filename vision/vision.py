@@ -57,9 +57,10 @@ class Camera(object):
 
         frame = self.fix_perspective(frame)
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        #frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
-        frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
+        #TODO testing normalisation
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        # #frame[:, :, 1] = cv2.equalizeHist(frame[:, :, 1])
+        # frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
 
 
         # fix noise
