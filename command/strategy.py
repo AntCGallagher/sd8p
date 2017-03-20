@@ -430,6 +430,61 @@ class Strategy(object):
                 their_x = int(raw_input("our x: "))
                 their_y = int(raw_input("our x: "))
                 our_x = int(raw_input("our x: "))
+            if inp == "reverse":
+                curr_world = World.get_world()
+                robots = curr_world.robots
+                robot0 = curr_world.robots[0]
+                robot1 = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                me = robot0
+                print "Positon: ", me.x, " ", me.y, " ", me.rot
+                reverse = False
+
+                if me.x < 45:
+                    if me.y > 187:
+                        if me.rot > 270 or (me.rot > -90 and me.rot < 0):
+                            reverse = True
+                    elif me.y < 36:
+                        if ((me.rot < -270 and me.rot > -360) or (me.rot > 0 and me.rot < 90)):
+                            reverse = True
+                    else:
+                        if not(me.rot > -90 and me.rot < 90):
+                            reverse = True
+                elif me.x > 260:
+                    if me.y > 187:
+                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                            reverse = True
+                    elif me.y < 36:
+                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                            reverse = True
+                    else:
+                        if not((me.rot > 90 and me.rot < 270) or (me.rot < -90 and me.rot > -270)):
+                            reverse = True
+                elif me.y > 187:
+                    if me.x > 260:
+                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                            reverse = True
+                    elif me.x < 45:
+                        if me.rot > 270 or (me.rot > -90 and me.rot < 0):
+                            reverse = True
+                    else:
+                        if not((me.rot > 180 and me.rot < 360) or (me.rot < 0 and me.rot > -180)):
+                            reverse = True
+                elif me.y < 36:
+                    if me.x > 260:
+                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                            reverse = True
+                    elif me.x < 45:
+                        if ((me.rot < -270 and me.rot > -360) or (me.rot > 0 and me.rot < 90)):
+                            reverse = True
+                    else:
+                        if not((me.rot > 0 and me.rot < 180) or (me.rot < -180 and me.rot > -360)):
+                            reverse = True
+
+                if (reverse):
+                    print "Strategy: Too close to the wall reversing"
+                    comms.stop()
             if inp == "zone":
                 robot_num = int(raw_input("robot num: "))
                 teamSideLeft = World.our_side == "Left"
