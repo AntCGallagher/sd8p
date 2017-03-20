@@ -79,11 +79,11 @@ class CalibrationGUI(object):
 
         # print self.calibration
         createTrackbar = lambda setting, \
-                                color V: \
+                                color_V: \
                                     cv2.createTrackbar(
                                         setting,
                                         self.maskWindowName,
-                                        int(color V),
+                                        int(color_V),
                                         MAXBAR[setting], nothing)
 
         createTrackbar('Lower threshold for brightness',
@@ -139,26 +139,26 @@ class CalibrationGUI(object):
 
         getTrackbarPos = lambda setting: cv2.getTrackbarPos(setting, self.maskWindowName)
 
-        color Vs = {}
+        color_Vs = {}
         for setting in CONTROL:
-            color Vs[setting] = float(getTrackbarPos(setting))
-        color Vs['Gaussian blur'] = int(color Vs['Gaussian blur'])
+            color_Vs[setting] = float(getTrackbarPos(setting))
+        color_Vs['Gaussian blur'] = int(color_Vs['Gaussian blur'])
 
         self.calibration[self.color]['min'] = np.array(
-                                                [color Vs['Lower threshold for brightness'],
-                                                 color Vs['Lower threshold for color U'],
-                                                 color Vs['Lower threshold for color V']])
+                                                [color_Vs['Lower threshold for brightness'],
+                                                 color_Vs['Lower threshold for color U'],
+                                                 color_Vs['Lower threshold for color V']])
         self.calibration[self.color]['max'] = np.array(
-                                                    [color Vs['Upper threshold for brightness'],
-                                                     color Vs['Upper threshold for color U'],
-                                                     color Vs['Upper threshold for color V']])
-        self.calibration[self.color]['contrast']        = color Vs['Contrast']
-        self.calibration[self.color]['blur']            = color Vs['Gaussian blur']
-        self.calibration[self.color]['open_kernel']     = int(color Vs['Open kernel'])
-        self.calibration[self.color]['close_kernel']    = int(color Vs['Close kernel'])
-        self.calibration[self.color]['erode']           = int(color Vs['Erode'])
-        self.calibration[self.color]['highpass']        = color Vs['High pass']
-        self.calibration[self.color]['object_count']    = color Vs['Object count']
+                                                    [color_Vs['Upper threshold for brightness'],
+                                                     color_Vs['Upper threshold for color U'],
+                                                     color_Vs['Upper threshold for color V']])
+        self.calibration[self.color]['contrast']        = color_Vs['Contrast']
+        self.calibration[self.color]['blur']            = color_Vs['Gaussian blur']
+        self.calibration[self.color]['open_kernel']     = int(color_Vs['Open kernel'])
+        self.calibration[self.color]['close_kernel']    = int(color_Vs['Close kernel'])
+        self.calibration[self.color]['erode']           = int(color_Vs['Erode'])
+        self.calibration[self.color]['highpass']        = color_Vs['High pass']
+        self.calibration[self.color]['object_count']    = color_Vs['Object count']
 
         mask = self.get_mask(frame)
         cv2.imshow(self.frameWindowName, mask)
@@ -328,7 +328,7 @@ class CalibrationGUI(object):
 
     def set_slider(self, yuv_min, yuv_max):
         setTrackbarPos = lambda setting, pos: cv2.setTrackbarPos(setting, self.maskWindowName, pos)
-        color Vs = {}
+        color_Vs = {}
 
         setTrackbarPos('Lower threshold for brightness', yuv_min[0])
         setTrackbarPos('Lower threshold for color U', yuv_min[1])
