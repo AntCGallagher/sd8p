@@ -1,13 +1,14 @@
 from vision.vision import Camera
 import vision.tools as tools
 #from vision.my_tracker import MyTracker
-from vision.vesko_tracker import MyTracker
+from vision.tracker import MyTracker
 from postprocessing.world import World
 import cv2
 from math import radians,cos,sin , pi
 from numpy import array
 from vision.colors import BGR_COMMON
 from vision.findCameraSettings import CameraCalibrationGUI
+import subprocess
 
 class VisionWrapper(object):
 
@@ -22,6 +23,8 @@ class VisionWrapper(object):
         self.calibration_gui    = CameraCalibrationGUI(calibration=self.calibration , name=self.GUI_name)
 
     def run(self):
+
+        subprocess.call("vision/xawtv.sh")
 
         images = []
 

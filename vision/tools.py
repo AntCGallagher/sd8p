@@ -145,8 +145,8 @@ def mask_pitch(frame, points):
     mask = frame.copy()
     points = np.array(points, np.int32)
     cv2.fillConvexPoly(mask, points, BLACK)
-    hsv_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv_mask, (0, 0, 0), (0, 0, 0))
+    yuv_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(yuv_mask, (0, 0, 0), (0, 0, 0))
     return cv2.bitwise_and(frame, frame, mask=mask)
 
 
