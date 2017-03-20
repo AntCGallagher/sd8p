@@ -675,6 +675,20 @@ class Strategy(object):
                 row.append(grid[y][x])
             print row
 
+    """
+    Methods to make strategy readable
+    """
+
+    def basicGo(self,comms,sleeptime):
+        comms.go()
+        time.sleep(sleeptime)
+        comms.stop()
+
+    def basicRotate(comms,angle):
+        comms.turn(angle,get_angle_corrections)
+        time.sleep(get_time_to_turn)
+        comms.stop()
+
     @staticmethod
     def stop():
         comms = Comms()
@@ -880,7 +894,7 @@ class Strategy(object):
                 comms.stop()
                 time.sleep(0.2)
             else :
-                #solo_strat = True
+                solo_strat = True
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
                     """
@@ -921,17 +935,17 @@ class Strategy(object):
                             time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
                             comms.turn(angle_to_obj)
                             comms.sleep(time_to_turn)
-                            comms.go()
-                            comms.sleep(time_to_object)
-                            comms.stop()
-                            time.sleep(0.2)
+                            self.basicGo(comms,time_to_turn)
 
                         else:
                             if verbose == "y": print "Strategy: Solo: Defending goal"
-                            defendloc = loctuple(243,112)
+                            if teamSideLeft:
+                                defendloc = loctuple(51,112)
+                            else:
+                                defendloc = loctuple(243,112)
                             if (math.sqrt(math.pow(me.x-defendloc.x,2) + math.pow(me.y - defendloc.y,2)) < 30):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
-                                if math.fabs(270-me.rot) < 15:
+                                if math.fabs(-90 - me.rot) < 15:
                                     # Move up and down
                                     if verbose == "y": print "Strategy: Solo: Defending"
                                     comms.go()
@@ -943,7 +957,7 @@ class Strategy(object):
                                 else:
                                     #Turn towards ball
                                     if verbose == "y": print "Strategy: Solo: Rotating to 0"
-                                    angle_to_obj = 270 - me.rot
+                                    angle_to_obj = -90 - me.rot
                                     comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
                                     time.sleep(get_time_to_turn(angle_to_obj))
                             else:
@@ -954,9 +968,7 @@ class Strategy(object):
                                 time_to_object = get_time_to_travel(me.x,defendloc.x,me.y,defendloc.y)
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
-                                comms.go()
-                                time.sleep(time_to_object)
-                                comms.stop()
+                                self.basicGo(comms,time_to_object)
                     else:
                         if verbose == "y": print "Strategy: Solo: Going for offense"
                         if me != None and ball != None:
@@ -975,9 +987,7 @@ class Strategy(object):
                             time.sleep(0.1)
                             comms.grab(1)
                             time.sleep(0.4)
-                            comms.go()
-                            time.sleep(time_to_object)
-                            comms.stop()
+                            self.basicGo(comms,time_to_object)
                             time.sleep(0.2)
                             comms.grab(0)
                             # TODO hasBall to the result of the IR sensor
@@ -1022,9 +1032,8 @@ class Strategy(object):
                             time.sleep(time_to_turn)
                             comms.stop()
 
-                            comms.go()
                             if verbose == "y": print "Strategy: Duo: Leaving zone"
-                            time.sleep(1)
+                            self.basicGo(comms,1)
 
                     if get_zone(ball.x,teamSideLeft) <= 0:
                         if verbose == "y": print "Strategy: Duo: Ball is in zone 0"
@@ -1061,9 +1070,7 @@ class Strategy(object):
                             comms.turn(angle_to_obj)
                             time.sleep(time_to_turn)
                             comms.stop()
-                            comms.go()
-                            time.sleep(time_to_object)
-                            comms.stop()
+                            self.basicGo(comms,time_to_object)
 
                     elif (math.fabs(juno_grid_pos.x - ball_grid_pos.x) <= 1 and math.fabs(juno_grid_pos.y - ball_grid_pos.y) <= 1):
                         if verbose == "y": print "Strategy: Duo: Ball is in near Juno."
@@ -1098,9 +1105,7 @@ class Strategy(object):
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.stop()
-                                comms.go()
-                                time.sleep(time_to_object)
-                                comms.stop()
+                                self.basicGo(comms,time_to_object)
                     else:
                         #Grid distances of robots to ball
                         robot2_ball_grid_dist = 100
@@ -1126,9 +1131,7 @@ class Strategy(object):
                             time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
                             if verbose == "y": print "Strategy: Duo: Trying to intercept"
                             time.sleep(time_to_turn)
-                            comms.go()
-                            time.sleep(time_to_object)
-                            comms.stop()
+                            self.basicGo(comms,time_to_object)
                         else:
                             if verbose == "y": print "Strategy: Duo: We are closest to ball"
 
@@ -1144,10 +1147,8 @@ class Strategy(object):
                             comms.grab(1)
                             time.sleep(0.4)
 
-                            comms.go()
                             if verbose == "y": print "Strategy: Duo: Heading towards ball"
-                            time.sleep(time_to_object)
-                            comms.stop()
+                            self.basicGo(comms,time_to_object)
                             time.sleep(0.2)
 
                             comms.grab(0)
