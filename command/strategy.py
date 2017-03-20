@@ -443,47 +443,53 @@ class Strategy(object):
 
                 if me.x < 45:
                     if me.y > 187:
-                        if me.rot > 270 or (me.rot > -90 and me.rot < 0):
+                        if not(me.rot >= 270 or (me.rot >= -90 and me.rot <= 90)):
                             reverse = True
                     elif me.y < 36:
-                        if ((me.rot < -270 and me.rot > -360) or (me.rot > 0 and me.rot < 90)):
+                        if ((me.rot <= -270 or not(me.rot >= -90 and me.rot <= 90))):
                             reverse = True
                     else:
-                        if not(me.rot > -90 and me.rot < 90):
+                        if not(me.rot >= -90 and me.rot <= 90):
                             reverse = True
                 elif me.x > 260:
                     if me.y > 187:
-                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                        if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
                             reverse = True
                     elif me.y < 36:
-                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                        if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
                             reverse = True
                     else:
-                        if not((me.rot > 90 and me.rot < 270) or (me.rot < -90 and me.rot > -270)):
+                        if not((me.rot >= 90 and me.rot <= 270) or (me.rot <= -90 and me.rot >= -270)):
                             reverse = True
                 elif me.y > 187:
                     if me.x > 260:
-                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                        if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
                             reverse = True
                     elif me.x < 45:
-                        if me.rot > 270 or (me.rot > -90 and me.rot < 0):
+                        if not(me.rot >= 270 or not(me.rot >= -90 and me.rot <= 0)):
                             reverse = True
                     else:
-                        if not((me.rot > 180 and me.rot < 360) or (me.rot < 0 and me.rot > -180)):
+                        if not((me.rot >= 180 and me.rot <= 360) or (me.rot <= 0 and me.rot >= -180)):
                             reverse = True
                 elif me.y < 36:
                     if me.x > 260:
-                        if ((me.rot < 270 and me.rot > 180) or (me.rot > -180 and me.rot < -90)):
+                        if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
                             reverse = True
                     elif me.x < 45:
-                        if ((me.rot < -270 and me.rot > -360) or (me.rot > 0 and me.rot < 90)):
+                        if ((me.rot <= -270 and me.rot >= -360) or (me.rot >= 0 and me.rot <= 90)):
                             reverse = True
                     else:
-                        if not((me.rot > 0 and me.rot < 180) or (me.rot < -180 and me.rot > -360)):
+                        if not((me.rot >= 0 and me.rot <= 180) or (me.rot <= -180 and me.rot >= -360)):
                             reverse = True
 
                 if (reverse):
                     print "Strategy: Too close to the wall reversing"
+                    comms.reverse(100)
+                    time.sleep(1)
+                    comms.stop()
+                else:
+                    comms.go()
+                    time.sleep(1)
                     comms.stop()
             if inp == "zone":
                 robot_num = int(raw_input("robot num: "))
@@ -1181,7 +1187,6 @@ class Strategy(object):
                                 comms.stop()
                                 time.sleep(0.2)
 
-
     def start4(self,verbose="n"):
         comms = Comms()
         comms.start()
@@ -1191,7 +1196,7 @@ class Strategy(object):
         missingJunoCounter = 0
         missingEnemy1Counter = 0
         missingEnemy2Counter = 0
-        maxMissCounter = 20
+        maxMissCounter = 5
 
         #Last known positions
         last_ball_x = 150
@@ -1243,7 +1248,7 @@ class Strategy(object):
             juno = robot1
 
             #Change condition to reflect when to change to solo or duo strategy
-            #Currently, if Juno is missing in 20 world models, will convert to solo strat
+            #Currently, if Juno is missing in 5 world models, will convert to solo strat
             ball_grid = None
             if juno != None:
                 print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
@@ -1347,7 +1352,7 @@ class Strategy(object):
                 comms.stop()
                 time.sleep(0.2)
             else :
-                solo_strat = True
+                #solo_strat = True
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
                     """
@@ -1364,10 +1369,6 @@ class Strategy(object):
                         robot2_ball_grid_dist = get_grid_distance(int(robot2_grid_pos.x),int(robot2_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
                     if robot3 != None and ball_grid_pos != None:
                         robot3_ball_grid_dist = get_grid_distance(int(robot3_grid_pos.x),int(robot3_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
-
-                    print ball_grid_pos.x, ball_grid_pos.y
-                    print me_ball_grid_dist, robot2_ball_grid_dist, robot3_ball_grid_dist
-
 
                     if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
                         if verbose == "y": print "Strategy: Solo: Going for defense"
@@ -1404,7 +1405,7 @@ class Strategy(object):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
                                 if math.fabs(270-me.rot) < 15:
                                     # Move up and down
-                                    print "defending?"
+                                    if verbose == "y": print "Strategy: Solo: Defending"
                                     comms.go()
                                     time.sleep(1)
                                     comms.stop()
@@ -1413,7 +1414,7 @@ class Strategy(object):
                                     comms.stop()
                                 else:
                                     #Turn towards ball
-                                    print "Turning"
+                                    if verbose == "y": print "Strategy: Solo: Rotating to 0"
                                     angle_to_obj = 270 - me.rot
                                     comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
                                     time.sleep(get_time_to_turn(angle_to_obj))
@@ -1451,28 +1452,31 @@ class Strategy(object):
                             comms.stop()
                             time.sleep(0.2)
                             comms.grab(0)
-                            curr_world = World.get_world()
-                            ball = curr_world.ball
-                            robots = curr_world.robots
-                            robot0 = curr_world.robots[0]
-                            me = robot0
-                            if me != None and ball != None:
-                                time.sleep(1)
-                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                if teamSideLeft:
-                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                time.sleep(0.2)
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                turn_angle = get_angle_to_send(angle_to_obj)
-                                time_to_turn = get_time_to_turn(turn_angle)
-                                if turn_angle != 0:
-                                    print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle)
-                                    time.sleep(time_to_turn)
-                                    comms.stop()
-                                time.sleep(1)
-                                comms.kick(10)
-                                time.sleep(1)
+                            # TODO hasBall to the result of the IR sensor
+                            hasBall = True
+                            if hasBall:
+                                curr_world = World.get_world()
+                                ball = curr_world.ball
+                                robots = curr_world.robots
+                                robot0 = curr_world.robots[0]
+                                me = robot0
+                                if me != None and ball != None:
+                                    time.sleep(1)
+                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                    if teamSideLeft:
+                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                    time.sleep(0.2)
+                                    angle_to_obj = us_to_obj_angle(me,goal)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(turn_angle)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", turn_angle
+                                        comms.turn(turn_angle)
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time.sleep(1)
+                                    comms.kick(10)
+                                    time.sleep(1)
                 else:
                     if verbose == "y": print "Strategy: Running DUO strat"
                     """
@@ -1482,7 +1486,6 @@ class Strategy(object):
 
                         if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
                         if me != None and oppgoal != None:
-                            print "facing ", oppgoal.x, oppgoal.y
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
                             time_to_turn = get_time_to_turn(angle_to_obj)
 
@@ -1495,9 +1498,6 @@ class Strategy(object):
                             if verbose == "y": print "Strategy: Duo: Leaving zone"
                             time.sleep(1)
 
-                    print ball.x, " ", ball.y, "|" , ball_grid_pos.x, ball_grid_pos.y
-                    print juno.x, " ", juno.y, "|" , juno_grid_pos.x, juno_grid_pos.y
-                    print me.x, " ", me.y, "|" , our_grid_pos.x, our_grid_pos.y
                     if get_zone(ball.x,teamSideLeft) <= 0:
                         if verbose == "y": print "Strategy: Duo: Ball is in zone 0"
                         weight = 0;
@@ -1582,7 +1582,7 @@ class Strategy(object):
                             robot2_ball_grid_dist = get_grid_distance(robot2_grid_pos.x,robot2_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
                         if (robot3 != None):
                             robot3_ball_grid_dist = get_grid_distance(robot3_grid_pos.x,robot3_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
-                        print me_ball_grid_dist, robot2_ball_grid_dist, robot3_ball_grid_dist
+
                         if (me_ball_grid_dist > robot2_ball_grid_dist or me_ball_grid_dist > robot3_ball_grid_dist):
                             if verbose == "y": print "Strategy: Duo: Ball is closer to the enemy"
 
@@ -1625,27 +1625,30 @@ class Strategy(object):
                             comms.grab(0)
                             if verbose == "y": print "Strategy: Duo: Grabbing ball"
 
-                            curr_world = World.get_world()
-                            ball = curr_world.ball
-                            robots = curr_world.robots
-                            robot0 = curr_world.robots[0]
-                            me = robot0
-                            if me != None and ball != None:
-                                time.sleep(1)
-                                goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                if teamSideLeft:
-                                    goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                time.sleep(0.2)
-                                angle_to_obj = us_to_obj_angle(me,goal)
-                                turn_angle = get_angle_to_send(angle_to_obj)
-                                time_to_turn = get_time_to_turn(turn_angle)
-                                if turn_angle != 0:
-                                    print "Turnning to ball angle: ", turn_angle
-                                    comms.turn(turn_angle)
-                                    if verbose == "y": print "Strategy: Duo: Aiming"
-                                    time.sleep(time_to_turn)
-                                    comms.stop()
-                                time.sleep(1)
-                                comms.kick(10)
-                                if verbose == "y": print "Strategy: Duo: Shooting"
-                                time.sleep(1)
+                            # TODO hasBall to the result of the IR sensor
+                            hasBall = True
+                            if hasBall:
+                                curr_world = World.get_world()
+                                ball = curr_world.ball
+                                robots = curr_world.robots
+                                robot0 = curr_world.robots[0]
+                                me = robot0
+                                if me != None and ball != None:
+                                    time.sleep(1)
+                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                    if teamSideLeft:
+                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                    time.sleep(0.2)
+                                    angle_to_obj = us_to_obj_angle(me,goal)
+                                    turn_angle = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(turn_angle)
+                                    if turn_angle != 0:
+                                        print "Turnning to ball angle: ", turn_angle
+                                        comms.turn(turn_angle)
+                                        if verbose == "y": print "Strategy: Duo: Aiming"
+                                        time.sleep(time_to_turn)
+                                        comms.stop()
+                                    time.sleep(1)
+                                    comms.kick(10)
+                                    if verbose == "y": print "Strategy: Duo: Shooting"
+                                    time.sleep(1)
