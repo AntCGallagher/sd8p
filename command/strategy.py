@@ -1187,19 +1187,6 @@ class Strategy(object):
             me = robot0
             juno = robot1
 
-            # Objects grid locations
-            our_grid_pos = get_grid_pos(me.x,me.y)
-            ball_grid_pos = get_grid_pos(ball.x,ball.y)
-            juno_grid_pos = None
-            robot2_grid_pos = None
-            robot3_grid_pos = None
-            if juno != None:
-                juno_grid_pos = get_grid_pos(juno.x,juno.y)
-            if robot2 != None:
-                robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
-            if robot3 != None:
-                robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
-
             #Change condition to reflect when to change to solo or duo strategy
             #Currently, if Juno is missing in 20 world models, will convert to solo strat
             ball_grid = None
@@ -1274,15 +1261,28 @@ class Strategy(object):
             else:
                 solo_strat = False
 
+            # Objects grid locations
+            our_grid_pos = get_grid_pos(me.x,me.y)
+            ball_grid_pos = get_grid_pos(ball.x,ball.y)
+            juno_grid_pos = None
+            robot2_grid_pos = None
+            robot3_grid_pos = None
+            if juno != None:
+                juno_grid_pos = get_grid_pos(juno.x,juno.y)
+            if robot2 != None:
+                robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
+            if robot3 != None:
+                robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
+
             # Reverse if too close to wall and facing the wall. Else, continue normally
             reverse = False
-            if me.x < 40 and math.fabs(me.rot - 180) < 90:
+            if me.x < 40 and math.fabs(me.rot - 180) < 45:
                 reverse = True
-            elif me.x > 260 and math.fabs(me.rot - 0) < 90:
+            elif me.x > 260 and math.fabs(me.rot - 0) < 45:
                 reverse = True
-            elif me.y < 30 and math.fabs(me.rot - 270) < 90:
+            elif me.y < 30 and math.fabs(me.rot - 270) < 45:
                 reverse = True
-            elif me.y > 190 and math.fabs(me.rot - 90) < 90:
+            elif me.y > 190 and math.fabs(me.rot - 90) < 45:
                 reverse = True
 
             if (reverse):
@@ -1292,6 +1292,7 @@ class Strategy(object):
                 comms.stop()
                 time.sleep(0.2)
             else :
+                solo_strat = True
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
                     """
@@ -1302,12 +1303,16 @@ class Strategy(object):
                     me_ball_grid_dist = 100
                     robot2_ball_grid_dist = 100
                     robot3_ball_grid_dist = 100
-                    if me != None and ball_grid != None:
-                        me_ball_grid_dist = get_grid_distance(our_grid_pos.x,our_grid_pos.y,ball_grid.x,ball_grid.y)
-                    if robot2 != None and ball_grid != None:
-                        robot2_ball_grid_dist = get_grid_distance(robot2_grid_pos.x,robot2_grid_pos.y,ball_grid.x,ball_grid.y)
-                    if robot3 != None and ball_grid != None:
-                        robot3_ball_grid_dist = get_grid_distance(robot3_grid_pos.x,robot3_grid_pos.y,ball_grid.x,ball_grid.y)
+                    if me != None and ball_grid_pos != None:
+                        me_ball_grid_dist = get_grid_distance(int(our_grid_pos.x),int(our_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                    if robot2 != None and ball_grid_pos != None:
+                        robot2_ball_grid_dist = get_grid_distance(int(robot2_grid_pos.x),int(robot2_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                    if robot3 != None and ball_grid_pos != None:
+                        robot3_ball_grid_dist = get_grid_distance(int(robot3_grid_pos.x),int(robot3_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+
+                    print ball_grid_pos.x, ball_grid_pos.y
+                    print me_ball_grid_dist, robot2_ball_grid_dist, robot3_ball_grid_dist
+
 
                     if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
                         if verbose == "y": print "Strategy: Solo: Going for defense"
@@ -1339,21 +1344,30 @@ class Strategy(object):
 
                         else:
                             if verbose == "y": print "Strategy: Solo: Defending goal"
-                            print ourgoal.x, " ", me.x, " ", ourgoal.y, " ", me.y
-                            if (math.pow((me.x - ourgoal.x),2) + math.pow((me.y - ourgoal.y),2)) < math.pow(10,2):
+                            defendloc = loctuple(243,112)
+                            if (math.sqrt(math.pow(me.x-defendloc.x,2) + math.pow(me.y - defendloc.y,2)) < 30):
                                 if verbose == "y": print "Strategy: Solo: Near Goal"
-                                #Turn towards ball
-                                angle_to_obj = us_to_obj_angle(me,ball)
-                                angle_to_obj = get_angle_to_send(angle_to_obj)
-                                time_to_turn = get_time_to_turn(angle_to_obj)
-                                comms.turn(angle_to_obj)
-                                time.sleep(time_to_turn)
+                                if math.fabs(270-me.rot) < 15:
+                                    # Move up and down
+                                    print "defending?"
+                                    comms.go()
+                                    time.sleep(1)
+                                    comms.stop()
+                                    comms.reverse(10)
+                                    time.sleep(1)
+                                    comms.stop()
+                                else:
+                                    #Turn towards ball
+                                    print "Turning"
+                                    angle_to_obj = 270 - me.rot
+                                    comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
+                                    time.sleep(get_time_to_turn(angle_to_obj))
                             else:
                                 if verbose == "y": print "Strategy: Solo: Going to goal"
-                                angle_to_obj = us_to_obj_angle(me,ourgoal)
+                                angle_to_obj = us_to_obj_angle(me,defendloc)
                                 angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                time_to_object = get_time_to_travel(me.x,ourgoal.x,me.y,ourgoal.y)
+                                time_to_object = get_time_to_travel(me.x,defendloc.x,me.y,defendloc.y)
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.go()
@@ -1413,6 +1427,7 @@ class Strategy(object):
 
                         if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
                         if me != None and oppgoal != None:
+                            print "facing ", oppgoal.x, oppgoal.y
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
                             time_to_turn = get_time_to_turn(angle_to_obj)
 
