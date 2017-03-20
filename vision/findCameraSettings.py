@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import consol
 import my_tracker
-import test_tracker
+import tracker
 
 import vision
 import tools
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     calibration['camera'] = settings
 
     #tracker         = my_tracker.MyTracker(colors=colors, calibration=calibration)
-    tracker         = test_tracker.MyTracker(calibration=calibration)
+    tracker         = tracker.MyTracker(calibration=calibration)
 
     GUI_name        = "Camera calibration"
     calibration_gui = CameraCalibrationGUI(calibration=calibration, name=GUI_name)
