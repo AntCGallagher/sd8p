@@ -10,6 +10,8 @@ public:
   virtual void halt(void);
   virtual bool progress();
   static void initFromCommand(Command cmd);
+  void forward(int lowPowerMotor, int highPowerMotor, int lowPower, int highPower);
+  float getOffset();
 };
 
 #endif

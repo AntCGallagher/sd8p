@@ -204,11 +204,11 @@ class CalibrationGUI(object):
 
         self.frame = frame
 
-        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        frame_yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
 
         min_color = self.calibration[self.color]['min']
         max_color = self.calibration[self.color]['max']
-        frame_mask = cv2.inRange(frame_hsv, min_color, max_color)
+        frame_mask = cv2.inRange(frame_yuv, min_color, max_color)
 
         if self.calibration[self.color]['open_kernel'] >= 1:
                 k = self.calibration[self.color]['open_kernel']
@@ -232,7 +232,7 @@ class CalibrationGUI(object):
                                         iterations=1)
 
 
-        #frame_mask = cv2.inRange(frame_hsv, 0.0,0.0)
+        #frame_mask = cv2.inRange(frame_yuv, 0.0,0.0)
         #return frame
         #return frame_mask
 
@@ -275,10 +275,10 @@ class CalibrationGUI(object):
 
 
 
-            frame_hsv = cv2.cvtColor(lap, cv2.COLOR_BGR2YUV)
+            frame_yuv = cv2.cvtColor(lap, cv2.COLOR_BGR2YUV)
 
 
-            frame_mask_lap = cv2.inRange(frame_hsv, np.array([0,0,hp]), np.array([360,255,255]))
+            frame_mask_lap = cv2.inRange(frame_yuv, np.array([0,0,hp]), np.array([360,255,255]))
             f_mask = cv2.bitwise_and(frame_mask, frame_mask_lap)
 
 
@@ -295,7 +295,7 @@ class CalibrationGUI(object):
         if event == cv2.EVENT_LBUTTONDOWN:
             consol.log_time('Find HSV', 'mouse click')
 
-            frame_hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2YUV)
+            frame_yuv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2YUV)
 
 
 
@@ -303,20 +303,20 @@ class CalibrationGUI(object):
 
 
             # fliped on purpose
-            hsv = frame_hsv[y][x]
-            consol.log('pixel color (hsv)', hsv, 'Find HSV')
+            yuv = frame_yuv[y][x]
+            consol.log('pixel color (yuv)', yuv, 'Find HSV')
 
-            hsv_delta = np.array([15, 50, 50])
-
-
-            hsv_min = hsv - hsv_delta
-            hsv_max = hsv + hsv_delta
-
-            consol.log('max (hsv)', hsv_max, 'Find HSV')
-            consol.log('min (hsv)', hsv_min, 'Find HSV')
+            yuv_delta = np.array([15, 50, 50])
 
 
-            self.set_slider(hsv_min, hsv_max)
+            yuv_min = yuv - yuv_delta
+            yuv_max = yuv + yuv_delta
+
+            consol.log('max (yuv)', yuv_max, 'Find HSV')
+            consol.log('min (yuv)', yuv_min, 'Find HSV')
+
+
+            self.set_slider(yuv_min, yuv_max)
 
 
 
@@ -326,17 +326,17 @@ class CalibrationGUI(object):
             consol.log('frame size', [len(self.frame[0]), len(self.frame)], 'Find HSV')
 
 
-    def set_slider(self, hsv_min, hsv_max):
+    def set_slider(self, yuv_min, yuv_max):
         setTrackbarPos = lambda setting, pos: cv2.setTrackbarPos(setting, self.maskWindowName, pos)
         values = {}
 
-        setTrackbarPos('Lower threshold for hue', hsv_min[0])
-        setTrackbarPos('Lower threshold for saturation', hsv_min[1])
-        setTrackbarPos('Lower threshold for value', hsv_min[2])
+        setTrackbarPos('Lower threshold for hue', yuv_min[0])
+        setTrackbarPos('Lower threshold for saturation', yuv_min[1])
+        setTrackbarPos('Lower threshold for value', yuv_min[2])
 
-        setTrackbarPos('Upper threshold for hue', hsv_max[0])
-        setTrackbarPos('Upper threshold for saturation', hsv_max[1])
-        setTrackbarPos('Upper threshold for value', hsv_max[2])
+        setTrackbarPos('Upper threshold for hue', yuv_max[0])
+        setTrackbarPos('Upper threshold for saturation', yuv_max[1])
+        setTrackbarPos('Upper threshold for value', yuv_max[2])
 
 
     def get_pixel_col(self, x, y):

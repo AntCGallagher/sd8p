@@ -7,9 +7,7 @@
 class TurnInstruction : public Instruction {
 public:
   float deg;
-  unsigned long brakeTime;
-  bool braking;
-  int correctionsRemaining;
+  //int correctionsRemaining;
   
   int clicksAtBrake;
   int lastClicks;
@@ -19,10 +17,6 @@ public:
   virtual bool progress();
   static void initFromCommand(Command cmd);
 };
-
-void addClicksSinceLastProgress(int clicks, int timeSinceHead);
-void shiftClicksTimeArray(int left);
-float speedFromClicksTimeArray(long unsigned curTime);
 
 #endif
 

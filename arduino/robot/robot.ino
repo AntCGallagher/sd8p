@@ -1,3 +1,5 @@
+#include <SDPArduino.h>
+
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include <stdlib.h>
@@ -6,9 +8,13 @@
 #include "Comms.h"
 #include "Instruction.h"
 #include "MemoryFree.h"
+#include "compass.h"
+#include "DistanceGP2Y0A41SK.h"
+DistanceGP2Y0A41SK Dist;
 
 Comms comms;
 unsigned long memPrintTimer;
+int distance;
 
 void setup() {
   hardwareSetup();
@@ -24,12 +30,20 @@ void setup() {
   Serial.print(F("READY")) ;
   
   motorAllStop();
+
+  Dist.begin(A0);
+
+  compass_x_gainError = 0.90;
+  compass_y_gainError = 0.93;
+  compass_z_gainError = 0.58;
+  compass_x_offset = 874.14;
+  compass_y_offset = 281.26;
+  compass_z_offset = 1147.46;
   
-  //compassCalibrate();
-  
+  compass_init(2);
+  //compass_offset_calibration(3);
   
 }
-
 
 void loop() {
   // calls progress method on instruction at index 0
@@ -46,6 +60,19 @@ void loop() {
     } 
    memPrintTimer = millis();
   }
+
+//  distance = Dist.getDistanceCentimeter();
+//  Serial.print("Distance in centimeters: ");
+//  Serial.println(distance);
+//  delay(1000);
+
+  //updateMotorPositions();
+  //printMotorPositions();
+  //delay(1000);
+
+  //greenMotorMove(LH_IDX, 50, MOTOR_FWD);
+  //greenMotorMove(RH_IDX, 50, MOTOR_FWD);
+  //greenMotorMove(REAR_IDX, 50, MOTOR_FWD);
   
   //getCompass();
   

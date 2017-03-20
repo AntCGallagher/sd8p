@@ -98,12 +98,12 @@ if __name__ == "__main__" :
 			time.sleep(1)
 			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]
 			#Radians: Heading[0]; Degrees: Heading[1]
-			Raw, Scaled, Heading, ArctanYX = getCompass()
+			"""Raw, Scaled, Heading, ArctanYX = getCompass()
 			print("Raw: ", Raw)
 			print("Scaled: ", Scaled)
 			print("Heading: ", Heading)
 			print("ArctanYX: ", ArctanYX)
-		"""elif cmd == 'calibrate':
+		elif cmd == 'calibrate':
 			comms.port.write(bytes(';'))
 			time.sleep(1)
 			#X: Raw/Scaled[0]; Y: Raw/Scaled[1]; Z: Raw/Scaled[2]

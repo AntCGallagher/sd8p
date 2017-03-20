@@ -46,12 +46,32 @@ def ball_close(robot,ball):
     return math.sqrt(math.pow(robot.x -ball.x,2) + math.pow(robot.y - ball.y,2)) < 10
 
 def get_angle_to_send(angle):
-	if angle < 7 and angle > -7:
-		return 0
-	elif angle < 20 and angle > -20:
-		return angle+360
+	if angle > 0:
+		if angle < 10:
+			return angle + 10
+		if angle < 40:
+			return angle + 5
+		else:
+			return angle
 	else:
-		return angle
+		if angle > -10:
+			return angle - 10
+		if angle > -40:
+			return angle - 5
+		else:
+			return angle
+
+def get_angle_corrections(angle):
+	if angle > 0:
+		if angle < 50:
+			return 0
+		else:
+			return 1
+	else:
+		if angle > -16:
+			return 0
+		else:
+			return 1
 
 
 def get_time_to_angle(angle):
@@ -130,6 +150,23 @@ def set_magnitude( u , mag):
 		a = (a /la.norm(a)) * mag
 	return a
 
+def simple_intercept(op1,goal,us):
+	if(goal.x < 50):
+		pxy = namedtuple("C","x y")
+		pxy.x = op1.x - 40
+		if(op1.y < 108):
+			pxy.x = op1.x - 40
+		else:
+			pxy.x = op1.x + 40
+		return pxy
+	else:
+		pxy = namedtuple("C","x y")
+		pxy.x = op1.x + 40
+		if(op1.y < 108):
+			pxy.y = op1.y + 40
+		else:
+			pxy.y = op1.y - 40
+		return pxy
 
 def calculate_intercept_p(op1p , op2p ,usp) :
 	"""
@@ -507,3 +544,19 @@ def getPenaltyTakerPos(left, op1, op2):
 		return op2
 	else:
 		return None
+
+"""
+# TODO May need some callibration and change of algorithm
+def noSensorHasBall(me,ball):
+	# Acceptable distance and angle for hasBall assumption
+	dist = 10
+	angle = 30
+
+	dist_a = math.sqrt(math.pow(me.x-ball.x,2)+math.pow(me.y-ball.y,2));
+	dist_b = ball.y-me.y;
+	angle_a = me.rot - math.acos(dist_a/dist_b)
+
+	return angle_a < angle and dist_a < dist
+
+	return True
+"""

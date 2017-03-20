@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import time
 import tools
 import math
-import test_tracker
+import tracker
 import time
 
 WHITE = (255,255,255)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     calibration = tools.get_colors(pitch_number)
 
-    tracker = test_tracker.MyTracker(calibration=calibration)
+    tracker = tracker.MyTracker(calibration=calibration)
 
     cam = Camera(pitch=pitch_number)
 

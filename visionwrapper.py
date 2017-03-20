@@ -1,13 +1,15 @@
 from vision.vision import Camera
 import vision.tools as tools
 #from vision.my_tracker import MyTracker
-from vision.vesko_tracker import MyTracker
+from vision.tracker import MyTracker
 from postprocessing.world import World
 import cv2
 from math import radians,cos,sin , pi
 from numpy import array
 from vision.colors import BGR_COMMON
 from vision.findCameraSettings import CameraCalibrationGUI
+import subprocess
+from numpy import asarray, int0
 
 class VisionWrapper(object):
 
@@ -22,6 +24,8 @@ class VisionWrapper(object):
         self.calibration_gui    = CameraCalibrationGUI(calibration=self.calibration , name=self.GUI_name)
 
     def run(self):
+
+        subprocess.call("vision/xawtv.sh")
 
         images = []
 
@@ -76,9 +80,9 @@ class VisionWrapper(object):
 
             # Separate field in 6x4 for strategy debugging
             for l1 in range(0,640,107):
-                cv2.line(image, (l1,0), (l1,480), (209,192,142), thickness=1)
+                cv2.line(image, (l1,0), (l1,480), (255,255,255), thickness=1)
             for l2 in range(0,480,120):
-                cv2.line(image, (0,l2), (640,l2), (209,192,142), thickness=1)
+                cv2.line(image, (0,l2), (640,l2), (255,255,255), thickness=1)
 
             for i3 , robot in enumerate(w.robots):
                 if robot != None:
