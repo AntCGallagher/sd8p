@@ -12,19 +12,25 @@ import subprocess
 
 class VisionWrapper(object):
 
-    def __init__(self, pitch, ourTeamColor='yellow', otherTeamColor='blue', ballColor='red'):
-        self.pitch         = pitch
-        self.camera        = Camera(pitch=pitch)
-        self.calibration   = tools.get_colors(pitch)
-        self.tracker       = MyTracker(self.calibration, self.pitch)
+    def __init__(self, pitch, ourTeamColor='yellow', otherTeamColor='blue', ballColor='red', record = False):
+        self.pitch          = pitch
+        self.camera         = Camera(pitch=pitch)
+        self.calibration    = tools.get_colors(pitch)
+        self.tracker        = MyTracker(self.calibration, self.pitch)
         #self.tracker       = MyTracker([ourTeamColor, otherTeamColor, ballColor, 'pink', 'bright_green'], self.calibration)
-        self.points        = {} # point dictionary for tracked colors
-        self.GUI_name           = "Killer Robot App"
-        self.calibration_gui    = CameraCalibrationGUI(calibration=self.calibration , name=self.GUI_name)
+        self.points         = {} # point dictionary for tracked colors
+        self.GUI_name       = "Killer Robot App"
+        self.calibration_gui= CameraCalibrationGUI(calibration=self.calibration , name=self.GUI_name)
+        self.record         = record
 
     def run(self):
 
         subprocess.call("vision/xawtv.sh")
+
+        if (self.record == True):
+            fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+            output_name = 'output_' + str( tools.current_milli_time() ) + '.avi'
+            out = cv2.VideoWriter(output_name, fourcc, 24, (640,480))
 
         images = []
 
@@ -112,6 +118,8 @@ class VisionWrapper(object):
             #cv2.imshow('test', frame)
 
             #cv2.waitKey(0)
+            if (self.record == True):
+                out.write(image)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -126,7 +134,8 @@ class VisionWrapper(object):
             # Display the resulting frame
             #cv2.imshow('Killer Robot App', image)
 
-        # When everything is doen, release the capture
+        # When everything is done, release the capture
+        out.release()
         cv2.destroyAllWindows()
 
 

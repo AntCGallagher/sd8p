@@ -25,6 +25,7 @@ if __name__ == "__main__" :
 	parser.add_argument("team" , help="yellow or blue" )
 	parser.add_argument("our" , help="our 3 dots are: pink or bright_green" )
 	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
+	parser.add_argument("record" , help="add if you would like to record", nargs='?')
 	args = parser.parse_args()
 
 	# setup World model
@@ -33,7 +34,11 @@ if __name__ == "__main__" :
 	World.set_globals(pitch_number , args.side)
 
 	# start vision system in background thread
-	vis = VisionWrapper(pitch=pitch_number)
+	if (args.record == 'record'):
+		record = True
+	else:
+		record = False
+	vis = VisionWrapper(pitch=pitch_number, record=record)
 	t = Thread(target = vis.run)
 	t.daemon = True
 	t.start()
