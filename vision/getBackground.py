@@ -7,7 +7,7 @@ parser.add_argument("pitch", help="[0] Main pitch, [1] Secondary pitch")
 args = parser.parse_args()
 pitch_number = int(args.pitch)
 
-capture = Camera(pitch=0)
+capture = Camera(pitch=pitch_number)
 
 while True:
 
