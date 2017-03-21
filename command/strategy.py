@@ -143,14 +143,12 @@ class Strategy(object):
                     print "Ball not detected"
             if inp == "t":
                 value = int(raw_input("angle to turn: "))
-                value2 = int(raw_input("corrections: "))
-                comms.turn(value,value2)
+                ang = get_angle_to_send(value)
+                comms.turn(ang,0)
                 time.sleep(1.5)
             if inp == "go":
                 value = float(raw_input("Time to go: "))
-                comms.go()
-                time.sleep(value)
-                comms.stop()
+                self.basicGoSensor(comms,value)
             if inp == "s":
                 comms.stop()
                 time.sleep(1)
@@ -430,6 +428,11 @@ class Strategy(object):
                 their_x = int(raw_input("our x: "))
                 their_y = int(raw_input("our x: "))
                 our_x = int(raw_input("our x: "))
+            if inp == "hasball":
+    			comms.stop()
+    			comms.hasball()
+    			time.sleep(0.3)
+    			print(comms.got_ball())
             if inp == "reverse":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -684,6 +687,81 @@ class Strategy(object):
         time.sleep(sleeptime)
         comms.stop()
         time.sleep(0.1)
+
+    def basicGoSensor(self,comms,sleeptime):
+        grabbed = False
+        comms.grab(1)
+        time.sleep(0.2)
+        comms.go()
+        curr_time = time.time()
+        while(time.time()-curr_time < sleeptime):
+            time.sleep(0.1)
+            comms.hasball()
+            time.sleep(0.3)
+            if comms.got_ball():
+                print "Saw ball"
+                grabbed = True
+                comms.stop()
+                comms.grab(0)
+                break
+        comms.stop()
+        time.sleep(0.2)
+        comms.grab(0)
+        if grabbed:
+            print "Grabbed"
+        else:
+            print "No ball"
+
+    def basicGoSensorCollision(self,comms,sleeptime):
+        grabbed = False
+        colliding = False
+        comms.grab(1)
+        time.sleep(0.2)
+        comms.go()
+        curr_time = time.time()
+        while(time.time()-curr_time < sleeptime):
+            curr_world = World.get_world()
+            robots = curr_world.robots
+            robot0 = curr_world.robots[0]
+            robot1 = curr_world.robots[1]
+            robot2 = curr_world.robots[2]
+            robot3 = curr_world.robots[3]
+            time.sleep(0.1)
+            comms.hasball()
+            time.sleep(0.3)
+            if comms.got_ball():
+                print "Saw ball"
+                grabbed = True
+                comms.stop()
+                comms.grab(0)
+                break
+            if robot0 != None:
+                if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
+                    #print "Distance 1: ", (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2))
+                    if (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
+                        colliding = True
+                if robot2 != None:
+                    #print "Distance 2: ", (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2))
+                    if (math.pow((robot0.x - robot2.x),2) + math.pow((robot0.y - robot2.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
+                        colliding = True
+                if robot3 != None:
+                    #print "Distance 3: ", (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2))
+                    if (math.pow((robot0.x - robot3.x),2) + math.pow((robot0.y - robot3.y),2)) < math.pow(52,2) and math.pow((robot0.y - robot1.y),2) < math.pow(20,2):
+                        colliding = True
+            if colliding:
+                comms.stop()
+                break
+        comms.stop()
+        time.sleep(0.2)
+        comms.grab(0)
+        if grabbed:
+            print "Grabbed"
+        else:
+            print "No ball"
+        if colliding:
+            print "Collided"
+        else:
+            print "No collision"
 
     def basicRotate(self,comms,angle):
         comms.turn(angle,get_angle_corrections)
