@@ -43,16 +43,13 @@ bool GrabInstruction::progress() {
 
     //Serial.print(this->ungrab);
 
-    Serial.println(IRSensor.getDistanceCentimeter());
-
     if (this->ungrab) {
       Serial.println("Ungrab");
-      motorForward(GRABBER_IDX, 60);
+      motorForward(GRABBER_IDX, 70);
     }
-    else if (IRSensor.getDistanceCentimeter() < 9) {
+    else {
       Serial.println("Grab");
-      motorBackward(GRABBER_IDX, 60);
-      ballGrabbed = true;
+      motorBackward(GRABBER_IDX, 70);
     }
 
     delay(500);

@@ -63,6 +63,8 @@ if __name__ == "__main__" :
 		elif cmd == 'hasball':
 			comms.stop()
 			comms.hasball()
+			time.sleep(0.3)
+			print(comms.got_ball())
 		elif cmd == 'reverse':
 			comms.stop()
 			dist = raw_input('Distance: ')

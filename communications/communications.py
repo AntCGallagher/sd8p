@@ -12,7 +12,7 @@ from struct import pack
 # Based on code taken from https://bitbucket.org/craigwalton/sdp-g7
 class Comms(object):
 	active = False # Whether or not communications is active
-	hasball = False # Whether or not the robot has the ball
+	ball = False # Whether or not the robot has the ball
 	arduino_initialised = False # Messages will only be sent when the arduino is initialised
 	messages = [] # List containing all messages
 	message_buffer = Queue() # Queue of messages to try sending
@@ -125,13 +125,15 @@ class Comms(object):
 					print "Arduino ready!"
 					self.arduino_initialised = True
 
+				if ("$BALL" in joined):
+					# print "Got ball command!"
+					self.ball = True
+
 				# Print response to log
 				with self.outputLock:
 					with open(self.outputFilename, "a", False) as file:
 						file.write("@receive_messages " + str(joined) + "\n")
 
-				if ("$BALL" in joined):
-					hasball = True
 
 				# Otherwise, check for OK or ERR message
 				if ("$SUC" in joined):
@@ -151,8 +153,8 @@ class Comms(object):
 
  	# got_ball returns true if the ball has been received since the method was last checked
 	def got_ball(self):
-		if (hasball == True):
-			hasball = False
+		if (self.ball):
+			self.ball = False
 			return True
 		return False
 

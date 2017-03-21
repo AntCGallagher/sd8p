@@ -10,6 +10,7 @@
 #include "GrabInstruction.h"
 #include "ReceiveInstruction.h"
 #include "compass.h"
+#include "hardware.h"
 // #include "PrepKickInstruction.h"
 // #include "PenDefInstruction.h"
 
@@ -130,21 +131,9 @@ void Comms::checkForCompleteCommand() {
     // update maxIDSuccessPCToArd, tell PC success and execute instruction
     //this->maxIDSuccessPCToArd = cmd.id;
     // anticipate next command
-    if (cmd.opcode == 14) {
-      Serial.println();
-      Serial.print("ballgrabbed: ");
-      Serial.println(ballGrabbed);
-      if (ballGrabbed) {
-        Serial.print("it has za ball ");
-        this->respondBall();
-        cmd.instantiateInstruction();
-      }
-    }
-    else {
-      this->expectedMessageID = cmd.id + 1;
-      this->respondSuccess();
-      cmd.instantiateInstruction();
-    }
+    this->expectedMessageID = cmd.id + 1;
+    this->respondSuccess();
+    cmd.instantiateInstruction();
   } else {
     // tell the PC there was an error and clear the hardware buffer
     this->respondError();
@@ -211,12 +200,6 @@ void Comms::respondError() {
 */
 void Comms::respondSuccess() {
   Serial.print(F("$SUC&"));
-  Serial.print((this->expectedMessageID-1));
-  Serial.println(F(";"));
-}
-
-void Comms::respondBall() {
-  Serial.print(F("$BALL&"));
   Serial.print((this->expectedMessageID-1));
   Serial.println(F(";"));
 }
@@ -375,8 +358,9 @@ void Command::instantiateInstruction() {
       getCompass();
       break;
     case HASBALL:
-      Serial.println(ballGrabbed);
-      Serial.println(F("grabbing ungrabbing"));
+      if (IRSensor.getDistanceCentimeter() < 10) {
+        Serial.println(F("$BALL;"));
+      }
       break;
     default:
       Serial.println(F("Error: opcode not defined"));

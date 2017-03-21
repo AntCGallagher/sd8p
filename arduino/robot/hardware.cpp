@@ -37,8 +37,6 @@ void hardwareSetup() {
 
 /* MOTORS */
 
-bool ballGrabbed = false;
-
 long int positions[ROTARY_COUNT] = {0};
 
 void updateMotorPositions() {

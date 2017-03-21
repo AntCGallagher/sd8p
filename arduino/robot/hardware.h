@@ -26,7 +26,6 @@ enum MOTOR_DIR {
 #define PRINT_DELAY 200
 
 extern long int positions[ROTARY_COUNT];// = {0};
-extern bool ballGrabbed;
 extern DistanceGP2Y0A41SK IRSensor;
 
 void resetMotorPositions();
