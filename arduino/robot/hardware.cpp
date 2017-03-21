@@ -4,7 +4,8 @@
 #include "SDPArduino.h"
 
 #include <Wire.h>
-
+#include "DistanceGP2Y0A41SK.h"
+DistanceGP2Y0A41SK IRSensor;
 
 
 void hardwareSetup() {
@@ -31,9 +32,12 @@ void hardwareSetup() {
  Wire.begin(); //Makes arduino master of the I2C line.
  greenMotorAllStop();
  resetMotorPositions();
+ IRSensor.begin(A0);
 }
 
 /* MOTORS */
+
+bool ballGrabbed = false;
 
 long int positions[ROTARY_COUNT] = {0};
 

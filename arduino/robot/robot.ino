@@ -9,8 +9,7 @@
 #include "Instruction.h"
 #include "MemoryFree.h"
 #include "compass.h"
-#include "DistanceGP2Y0A41SK.h"
-DistanceGP2Y0A41SK Dist;
+
 
 Comms comms;
 unsigned long memPrintTimer;
@@ -23,15 +22,13 @@ void setup() {
   deleteAllInstructions();
 
   memPrintTimer = millis();
-  
+
   // let PC know we've started up and to send commands with ID starting at 1
   comms.sendArdReset();
-  
-  Serial.print(F("READY")) ;
-  
-  motorAllStop();
 
-  Dist.begin(A0);
+  Serial.print(F("READY")) ;
+
+  motorAllStop();
 
   compass_x_gainError = 0.90;
   compass_y_gainError = 0.93;
@@ -39,25 +36,25 @@ void setup() {
   compass_x_offset = 874.14;
   compass_y_offset = 281.26;
   compass_z_offset = 1147.46;
-  
+
   compass_init(2);
   //compass_offset_calibration(3);
-  
+
 }
 
 void loop() {
   // calls progress method on instruction at index 0
   progressInstruction();
-  
+
   comms.readSerial();
-  
+
   // check memory level every second
   if (millis() - memPrintTimer > 1000) {
     int memAvail = freeMemory();
     if (memAvail < 512) {
       Serial.println(F("Low Memory "));
       Serial.println(freeMemory());
-    } 
+    }
    memPrintTimer = millis();
   }
 
@@ -73,9 +70,9 @@ void loop() {
   //greenMotorMove(LH_IDX, 50, MOTOR_FWD);
   //greenMotorMove(RH_IDX, 50, MOTOR_FWD);
   //greenMotorMove(REAR_IDX, 50, MOTOR_FWD);
-  
+
   //getCompass();
-  
+
 }
 
 // converts single byte to int
@@ -83,19 +80,19 @@ int byteArrToUnsignedShort(byte arr[], int firstByteIdx) {
   return arr[firstByteIdx];
 }
 
-// given an array of bytes (most significant first), takes 2 bytes to 
+// given an array of bytes (most significant first), takes 2 bytes to
 // form an unsigned integer
 unsigned int byteArrToUnsignedInt(byte arr[], int firstByteIdx) {
   return arr[firstByteIdx] << 8 | arr[firstByteIdx+1];
 }
 
-// given an array of bytes (most significant first), takes 4 bytes to 
+// given an array of bytes (most significant first), takes 4 bytes to
 // form an unsigned integer
 unsigned long byteArrToUnsignedLong(byte arr[], int fbi) {
   return (unsigned long)arr[fbi] << 24 | (unsigned long)arr[fbi+1] << 16 | (unsigned long)arr[fbi+2] << 8 | (unsigned long)arr[fbi+3];
 }
 
-// given an array of bytes (most significant first), takes 2 bytes to 
+// given an array of bytes (most significant first), takes 2 bytes to
 // form a signed integer
 int byteArrToSignedInt(byte arr[], int firstByteIdx) {
   // cast to signed char so that int will interpret it in 2s compliment
@@ -107,14 +104,14 @@ void printVector(Vector v) {
   print(v.x);
   print(",");
   print(v.y);
-  println(")"); 
+  println(")");
 }
 
 Vector makeVector(double x, double y) {
   Vector v;
   v.x = x;
   v.y = y;
-  return v; 
+  return v;
 }
 
 void printPoint(Point p) {
@@ -122,14 +119,14 @@ void printPoint(Point p) {
   print(p.x);
   print(",");
   print(p.y);
-  println(")"); 
+  println(")");
 }
 
 Point makePoint(int x, int y) {
   Point p;
   p.x = x;
   p.y = y;
-  return p; 
+  return p;
 }
 
 void printPosition(Position p) {
@@ -137,7 +134,7 @@ void printPosition(Position p) {
   print(p.coor.x);
   print(",");
   print(p.coor.y);
-  print(") "); 
+  print(") ");
   println(p.head);
 }
 
@@ -145,14 +142,14 @@ Position makePosition(int x, int y, int h) {
   Position p;
   p.coor = makePoint(x, y);
   p.head = h;
-  return p; 
+  return p;
 }
 
 Position makePosition(Point point, int h) {
   Position p;
   p.coor = point;
   p.head = h;
-  return p; 
+  return p;
 }
 
 double toRad(double deg) {
@@ -160,7 +157,7 @@ double toRad(double deg) {
 }
 
 double toDeg(double rad) {
-  return rad * 180/M_PI; 
+  return rad * 180/M_PI;
 }
 
 // if heading u, to get to v, turn by x degrees
@@ -176,7 +173,7 @@ int pointToPointDistance(Point a, Point b) {
 }
 
 
-// Printing 
+// Printing
 
 #define IGNORE_PRINTS false
 
@@ -289,8 +286,3 @@ void print(bool b) {
 }
 
  /* END */
-
-
-
-
-

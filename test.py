@@ -56,12 +56,13 @@ if __name__ == "__main__" :
 			comms.goxy(fX, fY, h, tX, tY)
 		elif cmd == 'turn':
 	   		comms.stop()
-			comms.turn(raw_input('Degrees: '), raw_input('Corrections: '))
+			comms.turn(raw_input('Degrees: '))
 		elif cmd == 'kick':
 			comms.stop()
 			comms.kick(10)
 		elif cmd == 'hasball':
-			pass
+			comms.stop()
+			comms.hasball()
 		elif cmd == 'reverse':
 			comms.stop()
 			dist = raw_input('Distance: ')

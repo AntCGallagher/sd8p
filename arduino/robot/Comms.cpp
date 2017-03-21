@@ -130,9 +130,21 @@ void Comms::checkForCompleteCommand() {
     // update maxIDSuccessPCToArd, tell PC success and execute instruction
     //this->maxIDSuccessPCToArd = cmd.id;
     // anticipate next command
-    this->expectedMessageID = cmd.id + 1;
-    this->respondSuccess();
-    cmd.instantiateInstruction();
+    if (cmd.opcode == 14) {
+      Serial.println();
+      Serial.print("ballgrabbed: ");
+      Serial.println(ballGrabbed);
+      if (ballGrabbed) {
+        Serial.print("it has za ball ");
+        this->respondBall();
+        cmd.instantiateInstruction();
+      }
+    }
+    else {
+      this->expectedMessageID = cmd.id + 1;
+      this->respondSuccess();
+      cmd.instantiateInstruction();
+    }
   } else {
     // tell the PC there was an error and clear the hardware buffer
     this->respondError();
@@ -150,6 +162,7 @@ void Comms::checkForCompleteCommand() {
  Opcode must be valid
 */
 bool Comms::validateNewCommand(Command c) {
+  
   if (c.id == 1 && c.opcode == RESET)
     return true;
 
@@ -198,6 +211,12 @@ void Comms::respondError() {
 */
 void Comms::respondSuccess() {
   Serial.print(F("$SUC&"));
+  Serial.print((this->expectedMessageID-1));
+  Serial.println(F(";"));
+}
+
+void Comms::respondBall() {
+  Serial.print(F("$BALL&"));
   Serial.print((this->expectedMessageID-1));
   Serial.println(F(";"));
 }
@@ -354,6 +373,10 @@ void Command::instantiateInstruction() {
       break;
     case GETCOMPASS:
       getCompass();
+      break;
+    case HASBALL:
+      Serial.println(ballGrabbed);
+      Serial.println(F("grabbing ungrabbing"));
       break;
     default:
       Serial.println(F("Error: opcode not defined"));

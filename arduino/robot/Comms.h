@@ -71,6 +71,7 @@ class Comms {
 
     void respondError();
     void respondSuccess();
+    void respondBall();
 };
 
 #define MAX_PARAM_BYTES 10

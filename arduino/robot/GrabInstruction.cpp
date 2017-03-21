@@ -1,7 +1,8 @@
-#include "SDPArduino.h" 
+#include "SDPArduino.h"
 
 #include "GrabInstruction.h"
 #include "global.h"
+#include "hardware.h"
 
 // uncomment to print debug info
 #define DEBUG_GRAB
@@ -39,16 +40,19 @@ bool GrabInstruction::progress() {
     // power the grabber motor forward or backward, depending on if this instruction
     // if a "grab" or "ungrab" instruction
     //greenMotorMove(GRABBER_IDX, (this->ungrab) ? 100 : -100, MOTOR_FWD);
-   
-    Serial.print(this->ungrab);
-    
+
+    //Serial.print(this->ungrab);
+
+    Serial.println(IRSensor.getDistanceCentimeter());
+
     if (this->ungrab) {
       Serial.println("Ungrab");
       motorForward(GRABBER_IDX, 60);
     }
-    else {
+    else if (IRSensor.getDistanceCentimeter() < 9) {
       Serial.println("Grab");
       motorBackward(GRABBER_IDX, 60);
+      ballGrabbed = true;
     }
 
     delay(500);
@@ -93,4 +97,3 @@ bool GrabInstruction::progress() {
 
   return true;
 }
-

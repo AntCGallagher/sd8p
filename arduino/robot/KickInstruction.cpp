@@ -28,11 +28,14 @@ void KickInstruction::halt(void) {
 bool KickInstruction::progress(void) {
   //Serial.println("kicking");
   //motorBackward(GRABBER_IDX, 30);
-  while(positions[KICKER_IDX] > -24){
-    greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
-    updateMotorPositions();
+  if (ballGrabbed) {
+    while(positions[KICKER_IDX] > -24){
+      greenMotorMove(KICKER_IDX, 100, MOTOR_BWD);
+      updateMotorPositions();
+    }
+    greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
+    ballGrabbed = false;
   }
-  greenMotorMove(KICKER_IDX, 100, MOTOR_BRAKE);
   //greenMotorMove(GRABBER_IDX, 100, MOTOR_BRAKE);
   return true;
 }
@@ -53,4 +56,3 @@ bool KickInstruction::positionAcceptable(int pos, unsigned int stren, bool movin
   return true;
   //return (pos >= kickedPos(this->initialPosition, stren));
 }
-
