@@ -61,7 +61,7 @@ if __name__ == "__main__" :
 			comms.stop()
 			comms.kick(10)
 		elif cmd == 'hasball':
-			comms.stop()
+			#comms.stop()
 			comms.hasball()
 			time.sleep(0.3)
 			print(comms.got_ball())

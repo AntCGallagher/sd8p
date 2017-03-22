@@ -159,14 +159,20 @@ class Comms(object):
 		return False
 
 	def delete_up_to_id(self, idx):
+		# remove messages from list of unconfirmed messages, and reconstruct the message_buffer
+		# from all items greater than specified id
+		self.message_buffer = Queue()
 		for m in self.messages:
 			if (int(m.id) <= int(idx)):
 				self.messages.remove(m)
+			else:
+				self.message_buffer.put(m)
+
 
 	def resend_up_to_id(self, idx):
-		if (int(idx) == 0):
-			self.reset()
-			return
+		#if (int(idx) == 0):
+	#		self.reset()
+	#		return
 
 		self.message_buffer = Queue()
 		for m in self.messages:

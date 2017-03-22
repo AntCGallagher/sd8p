@@ -47,7 +47,7 @@ int noParamsBytesForOpcode(Opcode opcode) {
 }
 
 Comms::Comms() {
-  this->expectedMessageID = 1;
+  this->expectedMessageID = 2;
   this->clearSoftwareBuffer();
   this->clearSerialBuffer();
 }
@@ -81,9 +81,9 @@ void Comms::readSerial() {
 }
 
 /*
- Resets maxIDSuccessPCToArd to 1
+ Resets expectedMessageID
  Necessary when the PC-side system restarts but we haven't
- Set to 1 as opposed to 0 because the RESET command had ID 1
+ Set to 2 as opposed to 1 because the RESET command had ID 1
 */
 void Comms::resetMessID() {
   this->expectedMessageID = 2;
@@ -187,11 +187,11 @@ void Comms::sendArdReset() {
 }
 
 /*
- Respond Error and provide the last successfully received message ID
+ Respond Error and provide the next expected message ID
 */
 void Comms::respondError() {
   Serial.print(F("$ERR&"));
-  Serial.print((this->expectedMessageID-1));
+  Serial.print((this->expectedMessageID));
   Serial.println(F(";"));
 }
 
