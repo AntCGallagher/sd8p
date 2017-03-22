@@ -699,10 +699,8 @@ class Strategy(object):
             comms.hasball()
             time.sleep(0.3)
             if comms.got_ball():
-                print "Saw ball"
+                print "Saw ball and time diff: ", time.time()-curr_time
                 grabbed = True
-                comms.stop()
-                comms.grab(0)
                 break
         comms.stop()
         time.sleep(0.2)
@@ -973,7 +971,8 @@ class Strategy(object):
                 comms.stop()
                 time.sleep(0.2)
             else :
-                solo_strat = True
+                #TODO: Delete for match
+                #solo_strat = True
                 if solo_strat:
                     if verbose == "y": print "Strategy: Running SOLO strat"
                     """
@@ -1069,8 +1068,10 @@ class Strategy(object):
                             self.basicGo(comms,time_to_object)
                             time.sleep(0.2)
                             comms.grab(0)
-                            # TODO hasBall to the result of the IR sensor
-                            hasBall = True
+                            time.sleep(0.1)
+                            comms.hasball()
+                            time.sleep(0.2)
+                            hasBall = omms.got_ball()
                             if hasBall:
                                 curr_world = World.get_world()
                                 ball = curr_world.ball
@@ -1233,8 +1234,11 @@ class Strategy(object):
                             comms.grab(0)
                             if verbose == "y": print "Strategy: Duo: Grabbing ball"
 
-                            # TODO hasBall to the result of the IR sensor
-                            hasBall = True
+                            time.sleep(0.1)
+                            comms.hasball()
+                            time.sleep(0.2)
+                            hasBall = omms.got_ball()
+
                             if hasBall:
                                 curr_world = World.get_world()
                                 ball = curr_world.ball
