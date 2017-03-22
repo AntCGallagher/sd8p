@@ -231,7 +231,7 @@ class MyTracker(object):
                 angle -= 2 * math.pi
             angle = angle / 2 / math.pi * 360
 
-            #angle -= 90
+            angle -= 90
             robot_data.append({'center': (cx, cy), 'angle': angle, 'team': team, 'group': group})
 
             if draw:
