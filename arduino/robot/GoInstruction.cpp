@@ -33,7 +33,12 @@ bool GoInstruction::progress() {
   error = offset - heading;
   
   greenMotorMove(LH_IDX, 100, MOTOR_FWD);
-  greenMotorMove(RH_IDX, 100, MOTOR_FWD);
+  greenMotorMove(RH_IDX, 100, MOTOR_FWD);#
+  
+  if (IRSensor.getDistanceCentimeter() < 9) {
+    Serial.println(F("$BALL;"));
+    return true;
+  }
 
   int power = 60;
   if (offset < 180 /*&& abs(error) > 5*/) {

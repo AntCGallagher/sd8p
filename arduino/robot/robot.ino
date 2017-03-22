@@ -38,7 +38,7 @@ void setup() {
   compass_z_offset = 1147.46;
 
   compass_init(2);
-  //compass_offset_calibration(3);
+  compass_offset_calibration(3);
 
 }
 

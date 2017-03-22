@@ -695,13 +695,17 @@ class Strategy(object):
         comms.go()
         curr_time = time.time()
         while(time.time()-curr_time < sleeptime):
-            time.sleep(0.1)
+            #time.sleep(0.1)
             comms.hasball()
-            time.sleep(0.3)
+            time.sleep(0.21)
             if comms.got_ball():
                 print "Saw ball and time diff: ", time.time()-curr_time
                 grabbed = True
+                comms.stop()
+                time.sleep(0.15)
+                comms.grab(0)
                 break
+        time.sleep(0.15)
         comms.stop()
         time.sleep(0.2)
         comms.grab(0)
