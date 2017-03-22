@@ -48,6 +48,7 @@ class Strategy(object):
         inp = ""
         comms = Comms()
         comms.start()
+        time.sleep(0.2)
         while inp != "done":
             inp = raw_input("(p/gxy/grb/t/m/turntest/turntest2/g/pos/rpos/gridxy/xygrid/rgrid)")
             if inp == "p":
@@ -385,6 +386,9 @@ class Strategy(object):
                         print "Ball is close"
                     else:
                         print "Ball is far"
+            if inp == "collisiongo":
+                value = float(raw_input("Time to go: "))
+                self.basicGoCollision(comms,value)
             if inp == "collision":
                 value = float(raw_input("Time to go: "))
                 curr_world = World.get_world()
@@ -429,10 +433,11 @@ class Strategy(object):
                 their_y = int(raw_input("our x: "))
                 our_x = int(raw_input("our x: "))
             if inp == "hasball":
-    			comms.stop()
-    			comms.hasball()
-    			time.sleep(0.3)
-    			print(comms.got_ball())
+                comms.stop()
+                time.sleep(0.2)
+                comms.hasball()
+                time.sleep(0.2)
+                print(comms.got_ball())
             if inp == "reverse":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -689,33 +694,18 @@ class Strategy(object):
         time.sleep(0.1)
 
     def basicGoSensor(self,comms,sleeptime):
-        grabbed = False
         comms.grab(1)
         time.sleep(0.2)
         comms.go()
-        curr_time = time.time()
-        while(time.time()-curr_time < sleeptime):
-            #time.sleep(0.1)
-            comms.hasball()
-            time.sleep(0.21)
-            if comms.got_ball():
-                print "Saw ball and time diff: ", time.time()-curr_time
-                grabbed = True
-                comms.stop()
-                time.sleep(0.15)
-                comms.grab(0)
-                break
-        time.sleep(0.15)
+        time.sleep(sleeptime)
         comms.stop()
         time.sleep(0.2)
-        comms.grab(0)
-        if grabbed:
-            print "Grabbed"
+        if comms.got_ball():
+            print "Currently have the ball"
         else:
             print "No ball"
 
-    def basicGoSensorCollision(self,comms,sleeptime):
-        grabbed = False
+    def basicGoCollision(self,comms,sleeptime):
         colliding = False
         comms.grab(1)
         time.sleep(0.2)
@@ -724,19 +714,8 @@ class Strategy(object):
         while(time.time()-curr_time < sleeptime):
             curr_world = World.get_world()
             robots = curr_world.robots
-            robot0 = curr_world.robots[0]
-            robot1 = curr_world.robots[1]
-            robot2 = curr_world.robots[2]
+            robot0 = curr_world.robots[2]
             robot3 = curr_world.robots[3]
-            time.sleep(0.1)
-            comms.hasball()
-            time.sleep(0.3)
-            if comms.got_ball():
-                print "Saw ball"
-                grabbed = True
-                comms.stop()
-                comms.grab(0)
-                break
             if robot0 != None:
                 if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
                     #print "Distance 1: ", (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2))
@@ -753,13 +732,10 @@ class Strategy(object):
             if colliding:
                 comms.stop()
                 break
+        time.sleep(0.2)
         comms.stop()
         time.sleep(0.2)
         comms.grab(0)
-        if grabbed:
-            print "Grabbed"
-        else:
-            print "No ball"
         if colliding:
             print "Collided"
         else:
@@ -774,8 +750,9 @@ class Strategy(object):
     def stop():
         comms = Comms()
         comms.start()
-        comms.stop()
-        comms.stop()
+        comms.reset()
+        time.sleep(0.2)
+        comms.reset()
 
     def start4(self,verbose="n"):
         comms = Comms()
@@ -1075,7 +1052,7 @@ class Strategy(object):
                             time.sleep(0.1)
                             comms.hasball()
                             time.sleep(0.2)
-                            hasBall = omms.got_ball()
+                            hasBall = comms.got_ball()
                             if hasBall:
                                 curr_world = World.get_world()
                                 ball = curr_world.ball
@@ -1241,7 +1218,7 @@ class Strategy(object):
                             time.sleep(0.1)
                             comms.hasball()
                             time.sleep(0.2)
-                            hasBall = omms.got_ball()
+                            hasBall = comms.got_ball()
 
                             if hasBall:
                                 curr_world = World.get_world()

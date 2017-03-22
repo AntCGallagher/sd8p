@@ -130,10 +130,12 @@ void Comms::checkForCompleteCommand() {
   if (this->validateNewCommand(cmd)) {
     // update maxIDSuccessPCToArd, tell PC success and execute instruction
     //this->maxIDSuccessPCToArd = cmd.id;
-    // anticipate next command
-    this->expectedMessageID = cmd.id + 1;
-    this->respondSuccess();
-    cmd.instantiateInstruction();
+    // anticipate next command, if the command is a repeat, we have already resent the success message
+    if (cmd.id == this->expectedMessageID) {
+      this->expectedMessageID = cmd.id + 1;
+      this->respondSuccess();
+      cmd.instantiateInstruction();
+    }
   } else {
     // tell the PC there was an error and clear the hardware buffer
     this->respondError();
@@ -155,6 +157,13 @@ bool Comms::validateNewCommand(Command c) {
   if (c.id == 1 && c.opcode == RESET)
     return true;
 
+  if (c.id < this->expectedMessageID) {
+    Serial.print(F("$SUC&"));
+    Serial.print((this->c.id));
+    Serial.println(F(";"));
+    return true;
+  }
+  
   if (c.id != this->expectedMessageID) {
     Serial.println(F("ERRid"));
     Serial.println(c.id);
