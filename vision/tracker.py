@@ -124,6 +124,7 @@ class MyTracker(object):
 
         for cnt in contours:
 
+            #TODO check if contours have a square shape
             # check for countours of decent size
             if cv2.contourArea(cnt) < 300:
                 cnt_index += 1
@@ -131,7 +132,15 @@ class MyTracker(object):
 
             # copy the contour part from the image
             contour_frame = np.zeros((480, 640, 3), np.uint8)
-            cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
+            #TODO
+            #old
+            #cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
+            #new
+            rect = cv2.minAreaRect(cnt)
+            box  = cv2.boxPoints(rect)
+            box = np.int0(box)
+            cv2.drawContours(contour_frame, [box], -1, (255,255,255), cv2.FILLED)
+            #----
             contour_frame = cv2.bitwise_and(image, contour_frame)
 
             if show_window:
@@ -149,8 +158,12 @@ class MyTracker(object):
             pink_no   = self.count_pixels('pink', contour_frame)
 
             # calculate ratios for definig teams
-            blue_yellow_ration = blue_no / (yellow_no + 1)
-            pink_green_ration  = pink_no / (green_no + 1)
+            blue_yellow_ration = blue_no / (yellow_no + 0.1)
+            pink_green_ration  = pink_no / (green_no + 0.1)
+
+            #TODO
+            # if (blue_yellow_ration > 0.9 and blue_yellow_ration/1 > 0.9):
+            #     continue
 
             # find the mass centre of the single circle (to find angle)
             if pink_green_ration < 0.5:
