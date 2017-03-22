@@ -158,8 +158,8 @@ class MyTracker(object):
             pink_no   = self.count_pixels('pink', contour_frame)
 
             # calculate ratios for definig teams
-            blue_yellow_ration = blue_no / (yellow_no + 0.1)
-            pink_green_ration  = pink_no / (green_no + 0.1)
+            blue_yellow_ration = blue_no / (yellow_no + 1)
+            pink_green_ration  = pink_no / (green_no + 1)
 
             #TODO
             # if (blue_yellow_ration > 0.9 and blue_yellow_ration/1 > 0.9):
@@ -231,7 +231,7 @@ class MyTracker(object):
                 angle -= 2 * math.pi
             angle = angle / 2 / math.pi * 360
 
-            angle -= 90
+            #angle -= 90
             robot_data.append({'center': (cx, cy), 'angle': angle, 'team': team, 'group': group})
 
             if draw:
