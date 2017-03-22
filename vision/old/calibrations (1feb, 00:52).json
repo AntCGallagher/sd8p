@@ -5,94 +5,31 @@
                 "object_count": 2.0, 
                 "erode": 0, 
                 "min": [
-                    57.0, 
-                    0.0, 
-                    133.0
+                    91.0, 
+                    155.0, 
+                    16.0
                 ], 
                 "max": [
-                    360.0, 
-                    140.0, 
-                    255.0
+                    121.0, 
+                    255.0, 
+                    116.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
                 "blur": 5, 
                 "contrast": 0.0
             }, 
             "plate": {
-                "object_count": 4, 
+                "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
                     47.0, 
-                    0.0, 
-                    0.0
-                ], 
-                "max": [
-                    109.0, 
-                    145.0, 
-                    111.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 5, 
-                "contrast": 0.0
-            }, 
-            "bright_green": {
-                "object_count": 8.0, 
-                "erode": 0, 
-                "min": [
-                    82.0, 
-                    0.0, 
-                    0.0
-                ], 
-                "max": [
-                    225.0, 
-                    135.0, 
+                    91.0, 
                     103.0
                 ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 3, 
-                "contrast": 0.0
-            }, 
-            "camera": {
-                "hue": 50.0, 
-                "saturation": 50.0, 
-                "contrast": 50.0, 
-                "brightness": 30.0
-            }, 
-            "yellow": {
-                "object_count": 2.0, 
-                "erode": 0, 
-                "min": [
-                    180.0, 
-                    115.0, 
-                    0.0
-                ], 
                 "max": [
-                    235.0, 
-                    206.0, 
-                    88.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 4, 
-                "contrast": 0.0
-            }, 
-            "pink": {
-                "object_count": 8.0, 
-                "erode": 0, 
-                "min": [
-                    87.0, 
-                    156.0, 
-                    109.0
-                ], 
-                "max": [
-                    348.0, 
+                    360.0, 
                     255.0, 
                     255.0
                 ], 
@@ -100,10 +37,73 @@
                 "close_kernel": 0, 
                 "open_kernel": 0, 
                 "blur": 5, 
+                "contrast": 58.0
+            }, 
+            "bright_green": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    43.0, 
+                    177.0, 
+                    69.0
+                ], 
+                "max": [
+                    73.0, 
+                    255.0, 
+                    148.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 4, 
+                "contrast": 0.0
+            }, 
+            "camera": {
+                "hue": 50.0, 
+                "saturation": 50.0, 
+                "contrast": 50.0, 
+                "brightness": 9.0
+            }, 
+            "yellow": {
+                "object_count": 3.0, 
+                "erode": 0, 
+                "min": [
+                    19.0, 
+                    161.0, 
+                    196.0
+                ], 
+                "max": [
+                    38.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 0, 
+                "contrast": 7.0
+            }, 
+            "pink": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    155.0, 
+                    136.0, 
+                    115.0
+                ], 
+                "max": [
+                    182.0, 
+                    241.0, 
+                    250.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 3, 
                 "contrast": 0.0
             }, 
             "green": {
-                "object_count": 8, 
+                "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
                     43.0, 
@@ -121,37 +121,18 @@
                 "blur": 5, 
                 "contrast": 0.0
             }, 
-            "red": {
+            "dot": {
                 "object_count": 1.0, 
-                "erode": 0, 
+                "erode": 0.0, 
                 "min": [
-                    23.0, 
-                    170.0, 
-                    0.0
+                    0.0, 
+                    0.0, 
+                    3.0
                 ], 
                 "max": [
-                    101.0, 
+                    360.0, 
                     255.0, 
-                    255.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 8, 
-                "contrast": 0.0
-            }, 
-            "violet": {
-                "object_count": 1.0, 
-                "erode": 0, 
-                "min": [
-                    20.0, 
-                    167.0, 
-                    115.0
-                ], 
-                "max": [
-                    54.0, 
-                    255.0, 
-                    255.0
+                    91.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
@@ -159,23 +140,80 @@
                 "blur": 0, 
                 "contrast": 0.0
             }, 
-            "dot": {
+            "violet": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    171.0, 
+                    213.0, 
+                    0.0
+                ], 
+                "max": [
+                    225.0, 
+                    255.0, 
+                    189.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 1, 
+                "blur": 4, 
+                "contrast": 9.0
+            }, 
+            "red": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    171.0, 
+                    220.0, 
+                    0.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 0, 
+                "blur": 5, 
+                "contrast": 11.0
+            }, 
+            "violet": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
                     164.0, 
-                    125.0, 
-                    142.0
+                    206.0, 
+                    110.0
                 ], 
                 "max": [
                     194.0, 
-                    225.0, 
-                    242.0
+                    255.0, 
+                    210.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 12, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 10, 
+                "contrast": 0.0
+            }, 
+            "dot": {
+                "object_count": 1.0, 
+                "erode": 0.0, 
+                "min": [
+                    0.0, 
+                    0.0, 
+                    3.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    91.0
+                ], 
+                "highpass": 0.0, 
+                "blur": 0, 
+                "close": 0.0, 
+                "open": 0.0, 
                 "contrast": 0.0
             }
         }, 
@@ -184,91 +222,28 @@
                 "object_count": 2.0, 
                 "erode": 0, 
                 "min": [
-                    0.0, 
-                    0.0, 
-                    140.0
+                    91.0, 
+                    155.0, 
+                    16.0
                 ], 
                 "max": [
-                    48.0, 
+                    121.0, 
                     255.0, 
-                    255.0
+                    116.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 11, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 5, 
                 "contrast": 0.0
             }, 
             "plate": {
-                "object_count": 4, 
+                "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
                     47.0, 
-                    0.0, 
-                    0.0
-                ], 
-                "max": [
-                    109.0, 
-                    145.0, 
-                    111.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 5, 
-                "contrast": 0.0
-            }, 
-            "bright_green": {
-                "object_count": 8.0, 
-                "erode": 0, 
-                "min": [
-                    0.0, 
-                    30.0, 
-                    0.0
-                ], 
-                "max": [
-                    150.0, 
-                    127.0, 
-                    119.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 1, 
-                "open_kernel": 1, 
-                "blur": 5, 
-                "contrast": 0.0
-            }, 
-            "camera": {
-                "hue": 50.0, 
-                "saturation": 50.0, 
-                "contrast": 50.0, 
-                "brightness": 30.0
-            }, 
-            "yellow": {
-                "object_count": 2.0, 
-                "erode": 0, 
-                "min": [
-                    180.0, 
-                    115.0, 
-                    0.0
-                ], 
-                "max": [
-                    233.0, 
-                    238.0, 
-                    94.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 4, 
-                "contrast": 0.0
-            }, 
-            "pink": {
-                "object_count": 8.0, 
-                "erode": 0, 
-                "min": [
-                    61.0, 
-                    144.0, 
-                    122.0
+                    91.0, 
+                    103.0
                 ], 
                 "max": [
                     360.0, 
@@ -276,13 +251,76 @@
                     255.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 2, 
-                "open_kernel": 2, 
-                "blur": 7, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 5, 
+                "contrast": 58.0
+            }, 
+            "bright_green": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    43.0, 
+                    177.0, 
+                    69.0
+                ], 
+                "max": [
+                    73.0, 
+                    255.0, 
+                    148.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 4, 
+                "contrast": 0.0
+            }, 
+            "camera": {
+                "hue": 50.0, 
+                "saturation": 50.0, 
+                "contrast": 50.0, 
+                "brightness": 9.0
+            }, 
+            "yellow": {
+                "object_count": 3.0, 
+                "erode": 0, 
+                "min": [
+                    19.0, 
+                    161.0, 
+                    196.0
+                ], 
+                "max": [
+                    38.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 0, 
+                "open_kernel": 0, 
+                "blur": 0, 
+                "contrast": 7.0
+            }, 
+            "pink": {
+                "object_count": 8.0, 
+                "erode": 0, 
+                "min": [
+                    155.0, 
+                    136.0, 
+                    115.0
+                ], 
+                "max": [
+                    182.0, 
+                    241.0, 
+                    250.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
+                "open_kernel": 3, 
+                "blur": 3, 
                 "contrast": 0.0
             }, 
             "green": {
-                "object_count": 8, 
+                "object_count": 4.0, 
                 "erode": 0, 
                 "min": [
                     43.0, 
@@ -300,37 +338,18 @@
                 "blur": 5, 
                 "contrast": 0.0
             }, 
-            "red": {
+            "dot": {
                 "object_count": 1.0, 
-                "erode": 0, 
+                "erode": 0.0, 
                 "min": [
                     0.0, 
-                    155.0, 
-                    0.0
+                    0.0, 
+                    3.0
                 ], 
                 "max": [
                     360.0, 
-                    177.0, 
-                    255.0
-                ], 
-                "highpass": 0.0, 
-                "close_kernel": 0, 
-                "open_kernel": 0, 
-                "blur": 8, 
-                "contrast": 0.0
-            }, 
-            "violet": {
-                "object_count": 1.0, 
-                "erode": 0, 
-                "min": [
-                    0.0, 
-                    141.0, 
-                    128.0
-                ], 
-                "max": [
-                    16.0, 
                     255.0, 
-                    255.0
+                    91.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
@@ -338,24 +357,43 @@
                 "blur": 0, 
                 "contrast": 0.0
             }, 
-            "dot": {
+            "violet": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    164.0, 
-                    125.0, 
-                    142.0
+                    171.0, 
+                    213.0, 
+                    0.0
                 ], 
                 "max": [
-                    194.0, 
                     225.0, 
-                    242.0
+                    255.0, 
+                    189.0
                 ], 
                 "highpass": 0.0, 
-                "close_kernel": 0, 
+                "close_kernel": 3, 
+                "open_kernel": 1, 
+                "blur": 4, 
+                "contrast": 9.0
+            }, 
+            "red": {
+                "object_count": 1.0, 
+                "erode": 0, 
+                "min": [
+                    171.0, 
+                    220.0, 
+                    0.0
+                ], 
+                "max": [
+                    360.0, 
+                    255.0, 
+                    255.0
+                ], 
+                "highpass": 0.0, 
+                "close_kernel": 3, 
                 "open_kernel": 0, 
-                "blur": 12, 
-                "contrast": 0.0
+                "blur": 5, 
+                "contrast": 11.0
             }
         }
     }

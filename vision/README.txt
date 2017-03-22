@@ -6,7 +6,7 @@ Some tips to help navigate the bizare world of vision.
     A lot of funcitonality needs to be implemented for logic and
     object determination, refer to TODO comments.
 
--- findHSV.py <pitch> <color>
+-- findYUV.py <pitch> <color>
     
     In calibrations.json adjustments to various camera settings will be saved for <pitch> and <color>
     so that tracker can locate <color> object(s).
