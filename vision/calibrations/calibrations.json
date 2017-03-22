@@ -121,23 +121,23 @@
                 "blur": 5, 
                 "contrast": 0.0
             }, 
-            "dot": {
+            "red": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    164.0, 
-                    125.0, 
-                    142.0
+                    23.0, 
+                    170.0, 
+                    0.0
                 ], 
                 "max": [
-                    194.0, 
-                    225.0, 
-                    242.0
+                    101.0, 
+                    255.0, 
+                    255.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
                 "open_kernel": 0, 
-                "blur": 12, 
+                "blur": 8, 
                 "contrast": 0.0
             }, 
             "violet": {
@@ -159,23 +159,23 @@
                 "blur": 0, 
                 "contrast": 0.0
             }, 
-            "red": {
+            "dot": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    23.0, 
-                    170.0, 
-                    0.0
+                    164.0, 
+                    125.0, 
+                    142.0
                 ], 
                 "max": [
-                    101.0, 
-                    255.0, 
-                    255.0
+                    194.0, 
+                    225.0, 
+                    242.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
                 "open_kernel": 0, 
-                "blur": 8, 
+                "blur": 12, 
                 "contrast": 0.0
             }
         }, 
@@ -222,7 +222,7 @@
                 "object_count": 8.0, 
                 "erode": 0, 
                 "min": [
-                    93.0, 
+                    77.0, 
                     0.0, 
                     0.0
                 ], 
@@ -300,23 +300,23 @@
                 "blur": 5, 
                 "contrast": 0.0
             }, 
-            "dot": {
+            "red": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    164.0, 
-                    125.0, 
-                    142.0
+                    0.0, 
+                    151.0, 
+                    0.0
                 ], 
                 "max": [
-                    194.0, 
-                    225.0, 
-                    242.0
+                    82.0, 
+                    255.0, 
+                    255.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
                 "open_kernel": 0, 
-                "blur": 12, 
+                "blur": 8, 
                 "contrast": 0.0
             }, 
             "violet": {
@@ -338,23 +338,23 @@
                 "blur": 0, 
                 "contrast": 0.0
             }, 
-            "red": {
+            "dot": {
                 "object_count": 1.0, 
                 "erode": 0, 
                 "min": [
-                    0.0, 
-                    151.0, 
-                    0.0
+                    164.0, 
+                    125.0, 
+                    142.0
                 ], 
                 "max": [
-                    82.0, 
-                    255.0, 
-                    255.0
+                    194.0, 
+                    225.0, 
+                    242.0
                 ], 
                 "highpass": 0.0, 
                 "close_kernel": 0, 
                 "open_kernel": 0, 
-                "blur": 8, 
+                "blur": 12, 
                 "contrast": 0.0
             }
         }
