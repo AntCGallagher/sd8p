@@ -385,6 +385,9 @@ class Strategy(object):
                         print "Ball is close"
                     else:
                         print "Ball is far"
+            if inp == "collisiongo":
+                value = float(raw_input("Time to go: "))
+                self.basicGoCollision(comms,value)
             if inp == "collision":
                 value = float(raw_input("Time to go: "))
                 curr_world = World.get_world()
@@ -701,8 +704,7 @@ class Strategy(object):
         else:
             print "No ball"
 
-    def basicGoSensorCollision(self,comms,sleeptime):
-        grabbed = False
+    def basicGoCollision(self,comms,sleeptime):
         colliding = False
         comms.grab(1)
         time.sleep(0.2)
@@ -715,15 +717,6 @@ class Strategy(object):
             robot1 = curr_world.robots[1]
             robot2 = curr_world.robots[2]
             robot3 = curr_world.robots[3]
-            time.sleep(0.1)
-            comms.hasball()
-            time.sleep(0.3)
-            if comms.got_ball():
-                print "Saw ball"
-                grabbed = True
-                comms.stop()
-                comms.grab(0)
-                break
             if robot0 != None:
                 if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
                     #print "Distance 1: ", (math.pow((robot0.x - robot1.x),2) + math.pow((robot0.y - robot1.y),2))
@@ -740,13 +733,10 @@ class Strategy(object):
             if colliding:
                 comms.stop()
                 break
+        time.sleep(0.2)
         comms.stop()
         time.sleep(0.2)
         comms.grab(0)
-        if grabbed:
-            print "Grabbed"
-        else:
-            print "No ball"
         if colliding:
             print "Collided"
         else:
