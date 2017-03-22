@@ -48,6 +48,7 @@ class Strategy(object):
         inp = ""
         comms = Comms()
         comms.start()
+        time.sleep(0.2)
         while inp != "done":
             inp = raw_input("(p/gxy/grb/t/m/turntest/turntest2/g/pos/rpos/gridxy/xygrid/rgrid)")
             if inp == "p":
@@ -713,9 +714,7 @@ class Strategy(object):
         while(time.time()-curr_time < sleeptime):
             curr_world = World.get_world()
             robots = curr_world.robots
-            robot0 = curr_world.robots[0]
-            robot1 = curr_world.robots[1]
-            robot2 = curr_world.robots[2]
+            robot0 = curr_world.robots[2]
             robot3 = curr_world.robots[3]
             if robot0 != None:
                 if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
@@ -751,8 +750,9 @@ class Strategy(object):
     def stop():
         comms = Comms()
         comms.start()
-        comms.stop()
-        comms.stop()
+        comms.reset()
+        time.sleep(0.2)
+        comms.reset()
 
     def start4(self,verbose="n"):
         comms = Comms()
