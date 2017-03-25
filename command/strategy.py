@@ -691,7 +691,7 @@ class Strategy(object):
         comms.go()
         time.sleep(sleeptime)
         comms.stop()
-        time.sleep(0.1)
+        time.sleep(0.2)
 
     def basicGoSensor(self,comms,sleeptime):
         comms.grab(1)
@@ -714,7 +714,9 @@ class Strategy(object):
         while(time.time()-curr_time < sleeptime):
             curr_world = World.get_world()
             robots = curr_world.robots
-            robot0 = curr_world.robots[2]
+            robot0 = curr_world.robots[0]
+            robot1 = curr_world.robots[1]
+            robot2 = curr_world.robots[2]
             robot3 = curr_world.robots[3]
             if robot0 != None:
                 if robot1 != None and robot1.x != robot0.x and robot1.y != robot0.y:
@@ -1088,7 +1090,7 @@ class Strategy(object):
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
                             time_to_turn = get_time_to_turn(angle_to_obj)
 
-                            comms.turn(time_to_turn)
+                            comms.turn(angle_to_obj)
                             if verbose == "y": print "Strategy: Duo: Facing opp goal"
                             time.sleep(time_to_turn)
                             comms.stop()
@@ -1190,6 +1192,7 @@ class Strategy(object):
                             angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                             time_to_turn = get_time_to_turn(angle_to_obj)
                             time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                            comms.turn(angle_to_obj,0)
                             if verbose == "y": print "Strategy: Duo: Trying to intercept"
                             time.sleep(time_to_turn)
                             self.basicGo(comms,time_to_object)
@@ -1215,7 +1218,7 @@ class Strategy(object):
                             comms.grab(0)
                             if verbose == "y": print "Strategy: Duo: Grabbing ball"
 
-                            time.sleep(0.1)
+                            time.sleep(0.2)
                             comms.hasball()
                             time.sleep(0.2)
                             hasBall = comms.got_ball()

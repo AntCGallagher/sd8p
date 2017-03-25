@@ -159,7 +159,7 @@ bool Comms::validateNewCommand(Command c) {
 
   if (c.id < this->expectedMessageID) {
     Serial.print(F("$SUC&"));
-    Serial.print((this->c.id));
+    Serial.print(c.id);
     Serial.println(F(";"));
     return true;
   }
