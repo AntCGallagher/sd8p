@@ -234,8 +234,8 @@ void compass_offset_calibration(int select){
     unsigned long t = millis();
     while(millis()-t <= 30000){
 
-      greenMotorMove(LH_IDX, -70, MOTOR_FWD);
-      greenMotorMove(RH_IDX, 70, MOTOR_FWD);
+      greenMotorMove(LH_IDX, -80, MOTOR_FWD);
+      greenMotorMove(RH_IDX, 80, MOTOR_FWD);
       
       compass_read_XYZdata();
       
