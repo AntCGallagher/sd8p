@@ -46,6 +46,13 @@ def ball_close(robot,ball):
     return math.sqrt(math.pow(robot.x -ball.x,2) + math.pow(robot.y - ball.y,2)) < 10
 
 def get_angle_to_send(angle):
+	angle = angle % 360
+	if angle <= 180:
+		return angle
+	else:
+		return -(360-angle)
+
+	"""
 	if angle > 0:
 		if angle < 10:
 			return angle + 10
@@ -60,6 +67,7 @@ def get_angle_to_send(angle):
 			return angle - 5
 		else:
 			return angle
+	"""
 
 def get_angle_corrections(angle):
 	if angle > 0:
