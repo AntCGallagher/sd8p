@@ -3,7 +3,7 @@ from math import atan2 , pi , sqrt, degrees
 from time import time
 from threading import Lock
 from vision.tools import get_croppings
-from numpy import *
+import numpy as np
 
 
 """
@@ -30,6 +30,7 @@ class World(object):
 	points_lock = Lock()
 	points = None
 	last_world = None
+	last_world_counter = 0
 	last_time = 0
 
 	ball_colour = "red"
@@ -47,6 +48,13 @@ class World(object):
 
 	our_side = "Left"
 	pitch_no = 0
+
+	history_length = 5
+	angle_history = [np.array([])] * 4
+	x_px_history = [np.ndarray([])] * 4
+	y_px_history = [np.ndarray([])] * 4
+	x_history = [np.ndarray([])] * 4
+	y_history = [np.ndarray([])] * 4
 
 	def __init__(self , points , c_time , old_world) :
 		self.robots = self.get_robots(points=points , last_world=old_world , c_time=c_time)
@@ -269,6 +277,15 @@ class World(object):
 		else :
 			return goals[0].get_outer_box() if outer else goals[0].points
 
+	def add_history(self, history, param, identity):
+			history[identity] = np.append(history[identity], [param])
+			#return np.nanmean(history[identity])
+			return np.nanmedian(history[identity])
+
+	def update_history(self, history, identity):
+		if (history[identity].size > World.history_length):
+				history[identity] = history[identity][-World.history_length:]
+
 	def get_robots(self, last_world, points, c_time):
 		# {'ball': {'center': (0, 0), 'radius': 0}, 'robots': []}
 		# {'center': (cx, cy), 'angle': angle, 'team': team, 'group': group}
@@ -276,16 +293,43 @@ class World(object):
 		robots     = [None]*4
 
 		for robot in robot_data:
+			###old
 			x_px, y_px = robot['center']
 			angle      = robot['angle']
 			x, y       = self.px_to_cm(x_px ,y_px)
 			identity   = self.identify_robot(team_color=robot['team'] , group_color=robot['group'])
-
+			###new
+			identity   = self.identify_robot(team_color=robot['team'] , group_color=robot['group'])
+			x_px       = self.add_history(history=World.x_px_history, param=robot['center'][0], identity=identity)
+			y_px	   = self.add_history(history=World.y_px_history, param=robot['center'][1], identity=identity)
+			angle      = self.add_history(history=World.angle_history, param=robot['angle'], identity=identity)
+			x 		   = self.add_history(history=World.x_history, param=self.px_to_cm(x_px ,y_px)[0], identity=identity)
+			y          = self.add_history(history=World.y_history, param=self.px_to_cm(x_px ,y_px)[1], identity=identity)
+			###----
 			robots[identity]  = Robot(x, y, angle, x_px, y_px , c_time)
+			#print( '---i= ' + str(identity) + ' angle=' + str(angle) + ' new_angle=' + str(robot['angle']))
 
 		for i , robot in enumerate(robots):
 			if robot == None and last_world != None and last_world.robots != None:
-				robots[i] = last_world.robots[i]
+				++self.last_world_counter
+				if (self.last_world_counter<20):
+					robots[i] = last_world.robots[i]
+				else:
+					self.last_world_counter = 0
+			if robot == None:
+				World.angle_history[i] = np.append(World.angle_history[i], [np.nan])
+				World.x_px_history[i] = np.append(World.angle_history[i], [np.nan])
+				World.y_px_history[i] = np.append(World.angle_history[i], [np.nan])
+				World.x_history[i] = np.append(World.angle_history[i], [np.nan])
+				World.y_history[i] = np.append(World.angle_history[i], [np.nan])
+
+		for identity in range(4):
+			#print('-----'+str(identity)+'-----size '+ str(World.angle_history[identity].size) + '---- ' + str(World.angle_history[identity]))
+			self.update_history(World.angle_history, identity)
+			self.update_history(World.x_px_history, identity)
+			self.update_history(World.y_px_history, identity)
+			self.update_history(World.x_history, identity)
+			self.update_history(World.y_history, identity)
 
 		return robots
 
