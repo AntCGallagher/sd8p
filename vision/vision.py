@@ -20,7 +20,7 @@ class Camera(object):
 
     def __init__(self, port=0, pitch=0):
         self.pitch              = pitch
-        self.capture            = cv2.VideoCapture(port)
+        self.capture            = cv2.VideoCapture('output.avi')
 
         calibration             = tools.get_colors(pitch=pitch)
         self.camera_settings    = calibration["camera"]

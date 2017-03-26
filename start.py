@@ -26,6 +26,7 @@ if __name__ == "__main__" :
 	parser.add_argument("our" , help="our 3 dots are: pink or bright_green" )
 	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
 	parser.add_argument("record" , help="add if you would like to record", nargs='?')
+	parser.add_argument("extras" , help="add if you would like to show vision features for debugging", nargs='?')
 	args = parser.parse_args()
 
 	# setup World model
@@ -33,12 +34,17 @@ if __name__ == "__main__" :
 	pitch_number = int(args.pitch)
 	World.set_globals(pitch_number , args.side)
 
-	# start vision system in background thread
+
 	if (args.record == 'record'):
 		record = True
 	else:
 		record = False
-	vis = VisionWrapper(pitch=pitch_number, record=record)
+	if (args.extras == 'extras'):
+		extras = True
+	else:
+		extras = False
+	# start vision system in background thread
+	vis = VisionWrapper(pitch=pitch_number, record=record, extras=extras)
 	t = Thread(target = vis.run)
 	t.daemon = True
 	t.start()

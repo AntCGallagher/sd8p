@@ -9,11 +9,12 @@ from colors import BGR_COMMON
 
 class MyTracker(object):
 
-    def __init__(self, calibration, pitch_number):
+    def __init__(self, calibration, pitch_number, extras = False):
         self.calibration    = calibration
         self.time           = tools.current_milli_time()
         self.pitch_number = pitch_number
         self.ball_queue     = []
+        self.extras         = extras
 
 
     def processed_mask(self, image, color):
@@ -83,7 +84,7 @@ class MyTracker(object):
         return cv2.countNonZero(dst)
 
 
-    def recognize_plates(self, image, robot_mask, ball_mask, draw=True, show_window=True):
+    def recognize_plates(self, image, robot_mask, ball_mask):
         # pink = self.calibrations['pink']
 
         frame = image.copy()
@@ -114,13 +115,13 @@ class MyTracker(object):
 
         contour_frame = np.zeros((480, 640, 3), np.uint8)
         cv2.drawContours(contour_frame, contours, -1, (255,255,255), cv2.FILLED);
-        cv2.imshow('all-contours mask', contour_frame)
+        if self.extras:
+            cv2.imshow('all-contours mask', contour_frame)
 
         cnt_index  = 0       # contour  index to process
         robot_data = []     # robot data to be returned
 
-        if show_window:
-            test_mask  = np.zeros((480, 640, 3), np.uint8)
+        test_mask  = np.zeros((480, 640, 3), np.uint8)
 
         for cnt in contours:
 
@@ -143,8 +144,7 @@ class MyTracker(object):
             #----
             contour_frame = cv2.bitwise_and(image, contour_frame)
 
-            if show_window:
-                test_mask     = cv2.bitwise_or(test_mask, contour_frame)
+            test_mask     = cv2.bitwise_or(test_mask, contour_frame)
 
             contour_frame = cv2.cvtColor(contour_frame, cv2.COLOR_BGR2YUV)
 
@@ -179,7 +179,7 @@ class MyTracker(object):
             m        = cv2.moments(tmp_mask, True)
             (tx, ty) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
 
-            if draw:
+            if self.extras:
                 cv2.circle(image, (tx, ty), 5, (100, 255, 255), -1)
 
             # find the rotated rectangle around the plate
@@ -187,8 +187,7 @@ class MyTracker(object):
             box  = cv2.boxPoints(rect)
             box  = np.int0(box)
 
-            if draw:
-                cv2.drawContours(test_mask,[box],0,(0,0,255),2)
+            cv2.drawContours(test_mask,[box],0,(0,0,255),2)
 
             minx, miny, maxx, maxy = 100000,100000,0,0
             for (x, y) in box:
@@ -206,7 +205,7 @@ class MyTracker(object):
                     distance       = tmp_dist
                     closest_corner = i
 
-            if draw:
+            if self.extras:
                 cv2.circle(image, (box[closest_corner][0], box[closest_corner][1]), 5, (100, 100, 255), -1)
 
             # find centre
@@ -234,7 +233,7 @@ class MyTracker(object):
             angle -= 90
             robot_data.append({'center': (cx, cy), 'angle': angle, 'team': team, 'group': group})
 
-            if draw:
+            if self.extras:
                 cv2.line(image, (cx, cy), (cx + direction_vector_x, cy + direction_vector_y),(255, 255, 255), 3)
                 cv2.drawContours(image,[box],0,(0,0,255),2)
                 #cv2.putText(self.frame, "PLATE: b-y ratio %lf p-g ratio %lf" % (byr, pgr), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, None, 1)
@@ -243,7 +242,7 @@ class MyTracker(object):
 
             cnt_index += 1
 
-        if show_window:
+        if self.extras:
             cv2.imshow("contours ", test_mask)
 
         contour_mask = cv2.cvtColor(test_mask, cv2.COLOR_BGR2GRAY)
@@ -282,7 +281,7 @@ class MyTracker(object):
 
         return ball_mask, plate_mask
 
-    def recognize_ball(self, image, robot_mask, ball_mask, show_window=False):
+    def recognize_ball(self, image, robot_mask, ball_mask):
         """
         :return: radius, center, modified_frame
         """
@@ -322,7 +321,7 @@ class MyTracker(object):
         cv2.circle(image,(int(x), int(y)),5,BGR_COMMON['red'])
         cv2.circle(image,(int(x), int(y)),6,(0,0,0))
 
-        if show_window:
+        if self.extras:
             #cv2.`imshow`("ball_image ", image)
             cv2.imshow("ball_mask", ball_mask)
 
@@ -361,15 +360,17 @@ class MyTracker(object):
         retval,mask = cv2.threshold(mask,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         mask = cv2.GaussianBlur(mask,(19,19), 0) ############## variable
         frame = cv2.bitwise_and(frame,frame, mask=mask)
-        cv2.imshow('bg sub', frame)
+        if self.extras:
+            cv2.imshow('bg sub', frame)
 
         ball_mask   = None
         robot_mask  = None
         ball_center = None
 
         ball_mask, robot_mask = self.get_masks(frame);
-        cv2.imshow("ball_mask ", ball_mask)
-        cv2.imshow("robot_mask ", robot_mask)
+        if self.extras:
+            cv2.imshow("ball_mask ", ball_mask)
+            cv2.imshow("robot_mask ", robot_mask)
 
         # Robots recognition code goes here.
         # Store things into data dictionary.

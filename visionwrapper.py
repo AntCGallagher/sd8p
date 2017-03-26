@@ -12,11 +12,11 @@ import subprocess
 
 class VisionWrapper(object):
 
-    def __init__(self, pitch, ourTeamColor='yellow', otherTeamColor='blue', ballColor='red', record = False):
+    def __init__(self, pitch, ourTeamColor='yellow', otherTeamColor='blue', ballColor='red', record = False, extras = False):
         self.pitch          = pitch
         self.camera         = Camera(pitch=pitch)
         self.calibration    = tools.get_colors(pitch)
-        self.tracker        = MyTracker(self.calibration, self.pitch)
+        self.tracker        = MyTracker(self.calibration, self.pitch, extras=extras)
         #self.tracker       = MyTracker([ourTeamColor, otherTeamColor, ballColor, 'pink', 'bright_green'], self.calibration)
         self.points         = {} # point dictionary for tracked colors
         self.GUI_name       = "Killer Robot App"
@@ -50,6 +50,9 @@ class VisionWrapper(object):
 
             # capture frame by frame
             frame = self.camera.get_frame()
+
+            if (self.record == True):
+                out.write(frame)
 
             #images.append(frame)
 
@@ -116,10 +119,7 @@ class VisionWrapper(object):
                 cv2.arrowedLine(image , (ball[0] , ball[1]) ,(int(ball[0] + w.ball.dir[0] ), int(ball[1] + w.ball.dir[1])) ,(255, 0 ,0) , 2)
 
             #cv2.imshow('test', frame)
-
             #cv2.waitKey(0)
-            if (self.record == True):
-                out.write(image)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
