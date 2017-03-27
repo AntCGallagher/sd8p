@@ -19,6 +19,7 @@ void TurnInstruction::halt(void) {
   greenMotorMove(LH_IDX, 0, MOTOR_FLOAT);
   greenMotorMove(RH_IDX, 0, MOTOR_FLOAT);
   greenMotorMove(REAR_IDX, 0, MOTOR_FLOAT);
+  greenMotorMove(GRABBER_IDX, 0, MOTOR_FLOAT);
 }
 
 float mode(int a[], int size) {
@@ -106,6 +107,7 @@ bool TurnInstruction::progress() {
     greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(RH_IDX, 100, MOTOR_BRAKE);
     greenMotorMove(REAR_IDX, 100, MOTOR_BRAKE);
+    greenMotorMove(GRABBER_IDX, 100, MOTOR_BRAKE);
     motorStop(GRABBER_IDX);
     
     /*Serial.print(F("The last last angle: "));
