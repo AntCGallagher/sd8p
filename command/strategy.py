@@ -694,15 +694,17 @@ class Strategy(object):
         time.sleep(0.2)
 
     def basicGoSensor(self,comms,sleeptime):
-        comms.grab(1)
-        time.sleep(0.2)
-        comms.go()
-        time.sleep(sleeptime)
-        comms.stop()
-        time.sleep(0.2)
         if comms.got_ball():
+            comms.grab(1)
+            time.sleep(0.2)
+            comms.go()
+            time.sleep(sleeptime)
+            comms.stop()
+            time.sleep(0.2)
             print "Currently have the ball"
         else:
+            comms.stop()
+            time.sleep(0.2)            
             print "No ball"
 
     def basicGoCollision(self,comms,sleeptime):
