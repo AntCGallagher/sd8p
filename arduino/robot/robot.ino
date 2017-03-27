@@ -33,9 +33,9 @@ void setup() {
   compass_x_gainError = 0.90;
   compass_y_gainError = 0.94;
   compass_z_gainError = 0.58;
-  compass_x_offset = 760.61;
-  compass_y_offset = 263.38;
-  compass_z_offset = 1180.56;
+  compass_x_offset = 732.36;
+  compass_y_offset = 341.83;
+  compass_z_offset = 1145.29;
 
   compass_init(2);
   //compass_offset_calibration(3);
