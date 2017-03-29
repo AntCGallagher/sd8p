@@ -44,10 +44,8 @@ class Strategy(object):
         self.comms = Comms()
 
 
-    def tests(self):
+    def tests(self, comms):
         inp = ""
-        comms = Comms()
-        comms.start()
         time.sleep(0.2)
         while inp != "done":
             inp = raw_input("(p/gxy/grb/t/m/turntest/turntest2/g/pos/rpos/gridxy/xygrid/rgrid)")
@@ -694,17 +692,16 @@ class Strategy(object):
         time.sleep(0.2)
 
     def basicGoSensor(self,comms,sleeptime):
-        if comms.got_ball():
+        if not comms.got_ball():
             comms.grab(1)
             time.sleep(0.2)
             comms.go()
             time.sleep(sleeptime)
             comms.stop()
             time.sleep(0.2)
-            print "Currently have the ball"
         else:
             comms.stop()
-            time.sleep(0.2)            
+            time.sleep(0.2)
             print "No ball"
 
     def basicGoCollision(self,comms,sleeptime):
@@ -758,10 +755,8 @@ class Strategy(object):
         time.sleep(0.2)
         comms.reset()
 
-    def start4(self,verbose="n"):
-        comms = Comms()
-        comms.start()
-        time.sleep(1)
+    def start4(self,comms, verbose="n"):
+        time.sleep(0.2)
 
         #Checking Juno
         missingJunoCounter = 0

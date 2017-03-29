@@ -1,6 +1,7 @@
 from visionwrapper import VisionWrapper
 from threading import Thread
 from postprocessing.world import World
+from communications.communications import Comms
 from command.strategy import Strategy
 import time
 from vision import tools
@@ -27,6 +28,7 @@ if __name__ == "__main__" :
 	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
 	parser.add_argument("opt1" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
 	parser.add_argument("opt2" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
+	parser.add_argument("opt3" , help="add 'verbose' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
 	args = parser.parse_args()
 
 	# setup World model
@@ -35,14 +37,19 @@ if __name__ == "__main__" :
 	World.set_globals(pitch_number , args.side)
 
 
-	if (args.opt1 == 'record' or args.opt2 == 'record'):
+	if (args.opt1 == 'record' or args.opt2 == 'record' or args.opt3 == 'record'):
 		record = True
 	else:
 		record = False
-	if (args.opt1 == 'extras' or args.opt2 == 'extras'):
+	if (args.opt1 == 'extras' or args.opt2 == 'extras' or args.opt3 == 'extras'):
 		extras = True
 	else:
 		extras = False
+	if (args.opt1 == 'verbose' or args.opt2 == 'verbose' or args.opt3 == 'verbose'):
+		verbose = "y"
+	else:
+		verbose = "n"
+		
 	# start vision system in background thread
 	vis = VisionWrapper(pitch=pitch_number, record=record, extras=extras)
 	t = Thread(target = vis.run)
@@ -51,20 +58,13 @@ if __name__ == "__main__" :
 
 	inp = ""
 	strategy = Strategy()
-	while inp != "s" or inp != "c":
-		inp = raw_input("stop or calibrate (s/c)? : ")
+	comms = Comms()
+	comms.start()
+	while inp != "t" or inp != "s" or inp != "r":
+		inp = raw_input("Tests, start or reset? (t/s/r) : ")
 		if inp == "s":
-			strategy.stop()
-		if inp == "c":
-			while inp != "done":
-				inp = raw_input("calibrate and type done: ")
-			while inp != "s" or inp != "t":
-				inp = raw_input("tests/start? (t/s): ")
-				if inp == "s":
-					verbose = raw_input("Verbose debug? (y/n)")
-					while inp != "y":
-				 		inp = raw_input("start? (y/n))")
-						if inp == "y":
-							strategy.start4(verbose)
-				if inp == "t":
-					strategy.tests()
+			strategy.start4(comms,verbose)
+		if inp == "t":
+			strategy.tests(comms)
+		if inp == "r":
+			comms.reset()
