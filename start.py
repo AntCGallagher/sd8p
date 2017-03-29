@@ -25,8 +25,8 @@ if __name__ == "__main__" :
 	parser.add_argument("team" , help="yellow or blue" )
 	parser.add_argument("our" , help="our 3 dots are: pink or bright_green" )
 	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
-	parser.add_argument("record" , help="add if you would like to record", nargs='?')
-	parser.add_argument("extras" , help="add if you would like to show vision features for debugging", nargs='?')
+	parser.add_argument("opt1" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
+	parser.add_argument("opt2" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
 	args = parser.parse_args()
 
 	# setup World model
@@ -35,11 +35,11 @@ if __name__ == "__main__" :
 	World.set_globals(pitch_number , args.side)
 
 
-	if (args.record == 'record'):
+	if (args.opt1 == 'record' or args.opt2 == 'record'):
 		record = True
 	else:
 		record = False
-	if (args.extras == 'extras'):
+	if (args.opt1 == 'extras' or args.opt2 == 'extras'):
 		extras = True
 	else:
 		extras = False
