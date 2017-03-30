@@ -757,407 +757,372 @@ class Strategy(object):
 
     def start4(self,comms, verbose="n"):
         time.sleep(0.2)
+        try:
+            #Checking Juno
+            missingJunoCounter = 0
+            missingEnemy1Counter = 0
+            missingEnemy2Counter = 0
+            maxMissCounter = 5
 
-        #Checking Juno
-        missingJunoCounter = 0
-        missingEnemy1Counter = 0
-        missingEnemy2Counter = 0
-        maxMissCounter = 5
+            #Last known positions
+            last_ball_x = 150
+            last_ball_y = 110
+            last_me_x = -1
+            last_me_y = -1
+            last_me_rot = 0
+            last_juno_x = -1
+            last_juno_y = -1
+            last_enemy1_x = -1
+            last_enemy1_y = -1
+            last_enemy2_x = -1
+            last_enemy2_y = -1
 
-        #Last known positions
-        last_ball_x = 150
-        last_ball_y = 110
-        last_me_x = -1
-        last_me_y = -1
-        last_me_rot = 0
-        last_juno_x = -1
-        last_juno_y = -1
-        last_enemy1_x = -1
-        last_enemy1_y = -1
-        last_enemy2_x = -1
-        last_enemy2_y = -1
+            # Boolean with which side we are playing
+            teamSideLeft = World.our_side == "Left"
 
-        # Boolean with which side we are playing
-        teamSideLeft = World.our_side == "Left"
+            # Named tuples (mini classes with no function)
+            # named tuple cannot be assigned values
+            loctuple = namedtuple("goal","x y")
+            metuple = namedtuple("me","x y rot")
+            robottuple = namedtuple("robot","x y")
+            balltuple = namedtuple("ball","x y")
 
-        # Named tuples (mini classes with no function)
-        # named tuple cannot be assigned values
-        loctuple = namedtuple("goal","x y")
-        metuple = namedtuple("me","x y rot")
-        robottuple = namedtuple("robot","x y")
-        balltuple = namedtuple("ball","x y")
-
-        # Check if we are in the right zone
-        ourgoal = None;
-        oppgoal = None;
-        if teamSideLeft:
-            ourgoal = loctuple(LEFTGOALX,LEFTGOALY)
-            oppgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
-        else:
-            ourgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
-            oppgoal = loctuple(LEFTGOALX,LEFTGOALY)
-
-        while True:
-            #Delays
-            time.sleep(0.8)
-
-            # Extract world model
-            curr_world = World.get_world()
-            ball = curr_world.ball
-            robots_array = curr_world.robots
-            robot0 = robots_array[0]
-            robot1 = robots_array[1]
-            robot2 = robots_array[2]
-            robot3 = robots_array[3]
-            # for easy reference and change. ps: I'm assuming robot1 is Juno
-            me = robot0
-            juno = robot1
-
-            #Change condition to reflect when to change to solo or duo strategy
-            #Currently, if Juno is missing in 5 world models, will convert to solo strat
-            ball_grid = None
-            if juno != None:
-                print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
-                if ball != None:
-                    ball_grid = get_grid_pos(ball.x,ball.y)
-                    juno_grid = get_grid_pos(juno.x,juno.y)
-                    if(ball_grid.x == juno_grid.x and ball_grid.y == juno_grid.y):
-                        missingJunoCounter = 0
-                if (juno.x == last_juno_x and juno.y == last_juno_y):
-                    missingJunoCounter += 1
-                else:
-                    missingJunoCounter = 0
-                    solo_strat = False
-                last_juno_x = juno.x
-                last_juno_y = juno.y
-                if missingJunoCounter >= maxMissCounter:
-                    if verbose == "y": print "Strategy: Juno in the same position/missing"
-                    solo_strat = True
-                    juno = None
+            # Check if we are in the right zone
+            ourgoal = None;
+            oppgoal = None;
+            if teamSideLeft:
+                ourgoal = loctuple(LEFTGOALX,LEFTGOALY)
+                oppgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
             else:
-                missingJunoCounter += 1
-                if missingJunoCounter == maxMissCounter:
-                    if verbose == "y": print "Strategy: Juno not found"
-                    solo_strat = True
-                    juno = None
+                ourgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
+                oppgoal = loctuple(LEFTGOALX,LEFTGOALY)
 
-            # Check if robot2 is working--------------------------------------------------------------------------------
-            if robot2 != None:
-                if (robot2.x == last_enemy1_x and robot2.y == last_enemy1_y):
+            while True:
+                #Delays
+                time.sleep(0.8)
+
+                # Extract world model
+                curr_world = World.get_world()
+                ball = curr_world.ball
+                robots_array = curr_world.robots
+                robot0 = robots_array[0]
+                robot1 = robots_array[1]
+                robot2 = robots_array[2]
+                robot3 = robots_array[3]
+                # for easy reference and change. ps: I'm assuming robot1 is Juno
+                me = robot0
+                juno = robot1
+
+                #Change condition to reflect when to change to solo or duo strategy
+                #Currently, if Juno is missing in 5 world models, will convert to solo strat
+                ball_grid = None
+                if juno != None:
+                    print "Juno: ", juno.x, " ", juno.y, " Last: ", last_juno_x, " ", last_juno_y, "Counter: ", missingJunoCounter
+                    if ball != None:
+                        ball_grid = get_grid_pos(ball.x,ball.y)
+                        juno_grid = get_grid_pos(juno.x,juno.y)
+                        if(ball_grid.x == juno_grid.x and ball_grid.y == juno_grid.y):
+                            missingJunoCounter = 0
+                    if (juno.x == last_juno_x and juno.y == last_juno_y):
+                        missingJunoCounter += 1
+                    else:
+                        missingJunoCounter = 0
+                        solo_strat = False
+                    last_juno_x = juno.x
+                    last_juno_y = juno.y
+                    if missingJunoCounter >= maxMissCounter:
+                        if verbose == "y": print "Strategy: Juno in the same position/missing"
+                        solo_strat = True
+                        juno = None
+                else:
+                    missingJunoCounter += 1
+                    if missingJunoCounter == maxMissCounter:
+                        if verbose == "y": print "Strategy: Juno not found"
+                        solo_strat = True
+                        juno = None
+
+                # Check if robot2 is working--------------------------------------------------------------------------------
+                if robot2 != None:
+                    if (robot2.x == last_enemy1_x and robot2.y == last_enemy1_y):
+                        missingEnemy1Counter += 1
+                        if missingEnemy1Counter == maxMissCounter:
+                            if verbose == "y": print "Strategy: Enemy 1 not found"
+                            last_enemy1_x = robot2.x
+                            last_enemy1_y = robot2.y
+                            robot2 = None
+                    else:
+                        missingEnemy1Counter = 0
+                else:
                     missingEnemy1Counter += 1
                     if missingEnemy1Counter == maxMissCounter:
                         if verbose == "y": print "Strategy: Enemy 1 not found"
-                        last_enemy1_x = robot2.x
-                        last_enemy1_y = robot2.y
                         robot2 = None
-                else:
-                    missingEnemy1Counter = 0
-            else:
-                missingEnemy1Counter += 1
-                if missingEnemy1Counter == maxMissCounter:
-                    if verbose == "y": print "Strategy: Enemy 1 not found"
-                    robot2 = None
 
-            # Check if robot3 is working--------------------------------------------------------------------------------
-            if robot3 != None:
-                if (robot3.x == last_enemy2_x and robot3.y == last_enemy2_y):
-                    missingEnemy1Counter += 1
+                # Check if robot3 is working--------------------------------------------------------------------------------
+                if robot3 != None:
+                    if (robot3.x == last_enemy2_x and robot3.y == last_enemy2_y):
+                        missingEnemy1Counter += 1
+                        if missingEnemy2Counter == maxMissCounter:
+                            if verbose == "y": print "Strategy: Enemy 2 not found"
+                            last_enemy2_x = robot3.x
+                            last_enemy2_y = robot3.y
+                            robot3 = None
+                        else:
+                            missingEnemy2Counter = 0
+                else:
+                    missingEnemy2Counter += 1
                     if missingEnemy2Counter == maxMissCounter:
                         if verbose == "y": print "Strategy: Enemy 2 not found"
-                        last_enemy2_x = robot3.x
-                        last_enemy2_y = robot3.y
                         robot3 = None
+
+                # Set last known location to ball and me--------------------------------------------------------------------
+                if ball == None:
+                    ball = balltuple(last_ball_x,last_ball_y)
+
+                if me == None:
+                    me = metuple(last_me_x,last_me_y,last_me_rot)
+
+                if juno == None:
+                    solo_strat = True
+                else:
+                    solo_strat = False
+
+                # Objects grid locations
+                our_grid_pos = get_grid_pos(me.x,me.y)
+                ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                juno_grid_pos = None
+                robot2_grid_pos = None
+                robot3_grid_pos = None
+                if juno != None:
+                    juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                if robot2 != None:
+                    robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
+                if robot3 != None:
+                    robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
+
+                # Reverse if too close to wall and facing the wall. Else, continue normally
+                reverse = False
+
+                if me.x < 45:
+                    if me.y > 187:
+                        if not(me.rot >= 270 or (me.rot >= -90 and me.rot <= 90)):
+                            reverse = True
+                    elif me.y < 36:
+                        if ((me.rot <= -270 or not(me.rot >= -90 and me.rot <= 90))):
+                            reverse = True
                     else:
-                        missingEnemy2Counter = 0
-            else:
-                missingEnemy2Counter += 1
-                if missingEnemy2Counter == maxMissCounter:
-                    if verbose == "y": print "Strategy: Enemy 2 not found"
-                    robot3 = None
-
-            # Set last known location to ball and me--------------------------------------------------------------------
-            if ball == None:
-                ball = balltuple(last_ball_x,last_ball_y)
-
-            if me == None:
-                me = metuple(last_me_x,last_me_y,last_me_rot)
-
-            if juno == None:
-                solo_strat = True
-            else:
-                solo_strat = False
-
-            # Objects grid locations
-            our_grid_pos = get_grid_pos(me.x,me.y)
-            ball_grid_pos = get_grid_pos(ball.x,ball.y)
-            juno_grid_pos = None
-            robot2_grid_pos = None
-            robot3_grid_pos = None
-            if juno != None:
-                juno_grid_pos = get_grid_pos(juno.x,juno.y)
-            if robot2 != None:
-                robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
-            if robot3 != None:
-                robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
-
-            # Reverse if too close to wall and facing the wall. Else, continue normally
-            reverse = False
-
-            if me.x < 45:
-                if me.y > 187:
-                    if not(me.rot >= 270 or (me.rot >= -90 and me.rot <= 90)):
-                        reverse = True
+                        if not(me.rot >= -90 and me.rot <= 90):
+                            reverse = True
+                elif me.x > 260:
+                    if me.y > 187:
+                        if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
+                            reverse = True
+                    elif me.y < 36:
+                        if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
+                            reverse = True
+                    else:
+                        if not((me.rot >= 90 and me.rot <= 270) or (me.rot <= -90 and me.rot >= -270)):
+                            reverse = True
+                elif me.y > 187:
+                    if me.x > 260:
+                        if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
+                            reverse = True
+                    elif me.x < 45:
+                        if not(me.rot >= 270 or not(me.rot >= -90 and me.rot <= 0)):
+                            reverse = True
+                    else:
+                        if not((me.rot >= 180 and me.rot <= 360) or (me.rot <= 0 and me.rot >= -180)):
+                            reverse = True
                 elif me.y < 36:
-                    if ((me.rot <= -270 or not(me.rot >= -90 and me.rot <= 90))):
-                        reverse = True
-                else:
-                    if not(me.rot >= -90 and me.rot <= 90):
-                        reverse = True
-            elif me.x > 260:
-                if me.y > 187:
-                    if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
-                        reverse = True
-                elif me.y < 36:
-                    if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
-                        reverse = True
-                else:
-                    if not((me.rot >= 90 and me.rot <= 270) or (me.rot <= -90 and me.rot >= -270)):
-                        reverse = True
-            elif me.y > 187:
-                if me.x > 260:
-                    if not((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
-                        reverse = True
-                elif me.x < 45:
-                    if not(me.rot >= 270 or not(me.rot >= -90 and me.rot <= 0)):
-                        reverse = True
-                else:
-                    if not((me.rot >= 180 and me.rot <= 360) or (me.rot <= 0 and me.rot >= -180)):
-                        reverse = True
-            elif me.y < 36:
-                if me.x > 260:
-                    if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
-                        reverse = True
-                elif me.x < 45:
-                    if ((me.rot <= -270 and me.rot >= -360) or (me.rot >= 0 and me.rot <= 90)):
-                        reverse = True
-                else:
-                    if not((me.rot >= 0 and me.rot <= 180) or (me.rot <= -180 and me.rot >= -360)):
-                        reverse = True
+                    if me.x > 260:
+                        if ((me.rot <= 270 and me.rot >= 180) or (me.rot >= -180 and me.rot <= -90)):
+                            reverse = True
+                    elif me.x < 45:
+                        if ((me.rot <= -270 and me.rot >= -360) or (me.rot >= 0 and me.rot <= 90)):
+                            reverse = True
+                    else:
+                        if not((me.rot >= 0 and me.rot <= 180) or (me.rot <= -180 and me.rot >= -360)):
+                            reverse = True
 
-            if (reverse):
-                if verbose == "y": print "Strategy: Too close to the wall reversing"
-                comms.reverse(100)
-                time.sleep(0.8)
-                comms.stop()
-                time.sleep(0.2)
-            else :
-                #TODO: Delete for match
-                #solo_strat = True
-                if solo_strat:
-                    if verbose == "y": print "Strategy: Running SOLO strat"
-                    """
-                    Solo strategy starts here
-                    """
+                if (reverse):
+                    if verbose == "y": print "Strategy: Too close to the wall reversing"
+                    comms.reverse(100)
+                    time.sleep(0.8)
+                    comms.stop()
+                    time.sleep(0.2)
+                else :
+                    #TODO: Delete for match
+                    #solo_strat = True
+                    if solo_strat:
+                        if verbose == "y": print "Strategy: Running SOLO strat"
+                        """
+                        Solo strategy starts here
+                        """
 
-                    #Robot distances to ball
-                    me_ball_grid_dist = 100
-                    robot2_ball_grid_dist = 100
-                    robot3_ball_grid_dist = 100
-                    if me != None and ball_grid_pos != None:
-                        me_ball_grid_dist = get_grid_distance(int(our_grid_pos.x),int(our_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
-                    if robot2 != None and ball_grid_pos != None:
-                        robot2_ball_grid_dist = get_grid_distance(int(robot2_grid_pos.x),int(robot2_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
-                    if robot3 != None and ball_grid_pos != None:
-                        robot3_ball_grid_dist = get_grid_distance(int(robot3_grid_pos.x),int(robot3_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                        #Robot distances to ball
+                        me_ball_grid_dist = 100
+                        robot2_ball_grid_dist = 100
+                        robot3_ball_grid_dist = 100
+                        if me != None and ball_grid_pos != None:
+                            me_ball_grid_dist = get_grid_distance(int(our_grid_pos.x),int(our_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                        if robot2 != None and ball_grid_pos != None:
+                            robot2_ball_grid_dist = get_grid_distance(int(robot2_grid_pos.x),int(robot2_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                        if robot3 != None and ball_grid_pos != None:
+                            robot3_ball_grid_dist = get_grid_distance(int(robot3_grid_pos.x),int(robot3_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
 
-                    if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
-                        if verbose == "y": print "Strategy: Solo: Going for defense"
+                        if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
+                            if verbose == "y": print "Strategy: Solo: Going for defense"
 
-                        # Apparently calculate_intercept_p is not reliable
-                        blocking_enabled = False
-                        if blocking_enabled and (robot2_ball_grid_dist < 1 or robot3_ball_grid_dist < 1):
-                            # Select shooter
-                            shooter = None;
-                            if robot2_ball_grid_dist < 1:
-                                if verbose == "y": print "Strategy: Solo: Blocking robot2"
-                                shooter = robottuple(robot2.x,robot2.y)
-                            elif robot3_ball_grid_dist < 1:
-                                if verbose == "y": print "Strategy: Solo: Blocking robot3"
-                                shooter(robot3.x,robot3.y)
+                            # Apparently calculate_intercept_p is not reliable
+                            blocking_enabled = False
+                            if blocking_enabled and (robot2_ball_grid_dist < 1 or robot3_ball_grid_dist < 1):
+                                # Select shooter
+                                shooter = None;
+                                if robot2_ball_grid_dist < 1:
+                                    if verbose == "y": print "Strategy: Solo: Blocking robot2"
+                                    shooter = robottuple(robot2.x,robot2.y)
+                                elif robot3_ball_grid_dist < 1:
+                                    if verbose == "y": print "Strategy: Solo: Blocking robot3"
+                                    shooter(robot3.x,robot3.y)
 
-                            # Calculate intercept location
-                            pxy = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
-                            angle_to_obj = us_to_obj_angle(me,pxy)
-                            angle_to_obj = get_angle_to_send(angle_to_obj)
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
-                            comms.turn(angle_to_obj)
-                            comms.sleep(time_to_turn)
-                            self.basicGo(comms,time_to_turn)
-
-                        else:
-                            if verbose == "y": print "Strategy: Solo: Defending goal"
-                            if teamSideLeft:
-                                defendloc = loctuple(51,112)
-                            else:
-                                defendloc = loctuple(243,112)
-                            if (math.sqrt(math.pow(me.x-defendloc.x,2) + math.pow(me.y - defendloc.y,2)) < 30):
-                                if verbose == "y": print "Strategy: Solo: Near Goal"
-                                if math.fabs(-90 - me.rot) < 15:
-                                    # Move up and down
-                                    if verbose == "y": print "Strategy: Solo: Defending"
-                                    comms.go()
-                                    time.sleep(1)
-                                    comms.stop()
-                                    comms.reverse(10)
-                                    time.sleep(1)
-                                    comms.stop()
-                                else:
-                                    #Turn towards ball
-                                    if verbose == "y": print "Strategy: Solo: Rotating to 0"
-                                    angle_to_obj = -90 - me.rot
-                                    comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
-                                    time.sleep(get_time_to_turn(angle_to_obj))
-                            else:
-                                if verbose == "y": print "Strategy: Solo: Going to goal"
-                                angle_to_obj = us_to_obj_angle(me,defendloc)
+                                # Calculate intercept location
+                                pxy = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                                angle_to_obj = us_to_obj_angle(me,pxy)
                                 angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                time_to_object = get_time_to_travel(me.x,defendloc.x,me.y,defendloc.y)
+                                time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
                                 comms.turn(angle_to_obj)
-                                time.sleep(time_to_turn)
+                                comms.sleep(time_to_turn)
+                                self.basicGo(comms,time_to_turn)
+
+                            else:
+                                if verbose == "y": print "Strategy: Solo: Defending goal"
+                                if teamSideLeft:
+                                    defendloc = loctuple(51,112)
+                                else:
+                                    defendloc = loctuple(243,112)
+                                if (math.sqrt(math.pow(me.x-defendloc.x,2) + math.pow(me.y - defendloc.y,2)) < 30):
+                                    if verbose == "y": print "Strategy: Solo: Near Goal"
+                                    if math.fabs(-90 - me.rot) < 15:
+                                        # Move up and down
+                                        if verbose == "y": print "Strategy: Solo: Defending"
+                                        comms.go()
+                                        time.sleep(1)
+                                        comms.stop()
+                                        comms.reverse(10)
+                                        time.sleep(1)
+                                        comms.stop()
+                                    else:
+                                        #Turn towards ball
+                                        if verbose == "y": print "Strategy: Solo: Rotating to 0"
+                                        angle_to_obj = -90 - me.rot
+                                        comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
+                                        time.sleep(get_time_to_turn(angle_to_obj))
+                                else:
+                                    if verbose == "y": print "Strategy: Solo: Going to goal"
+                                    angle_to_obj = us_to_obj_angle(me,defendloc)
+                                    angle_to_obj = get_angle_to_send(angle_to_obj)
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    time_to_object = get_time_to_travel(me.x,defendloc.x,me.y,defendloc.y)
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    self.basicGo(comms,time_to_object)
+                        else:
+                            if verbose == "y": print "Strategy: Solo: Going for offense"
+                            if me != None and ball != None:
+                                ball_grid = get_grid_pos(ball.x,ball.y)
+                                angle_to_obj = us_to_obj_angle(me,ball)
+                                angle_to_obj = get_angle_to_send(angle_to_obj)
+                                time_to_turn = get_time_to_turn(angle_to_obj)
+                                turn_angle = get_angle_to_send(angle_to_obj)
+                                if turn_angle != 0:
+                                    print "Turning to ball angle: ", angle_to_obj
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                print "Time to sleep: ", time_to_object
+                                time.sleep(0.3)
+                                comms.grab(1)
+                                time.sleep(0.4)
                                 self.basicGo(comms,time_to_object)
+                                time.sleep(0.2)
+                                comms.grab(0)
+                                time.sleep(0.1)
+                                comms.hasball()
+                                time.sleep(0.2)
+                                hasBall = comms.got_ball()
+                                if hasBall:
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        time.sleep(1)
+                                        goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle)
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        time.sleep(1)
                     else:
-                        if verbose == "y": print "Strategy: Solo: Going for offense"
-                        if me != None and ball != None:
-                            ball_grid = get_grid_pos(ball.x,ball.y)
-                            angle_to_obj = us_to_obj_angle(me,ball)
-                            angle_to_obj = get_angle_to_send(angle_to_obj)
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            turn_angle = get_angle_to_send(angle_to_obj)
-                            if turn_angle != 0:
-                                print "Turning to ball angle: ", angle_to_obj
+                        if verbose == "y": print "Strategy: Running DUO strat"
+                        """
+                        Duo strategy starts here
+                        """
+                        if get_zone(me.x,teamSideLeft) <= 0:
+
+                            if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
+                            if me != None and oppgoal != None:
+                                angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
+                                time_to_turn = get_time_to_turn(angle_to_obj)
+
                                 comms.turn(angle_to_obj)
+                                if verbose == "y": print "Strategy: Duo: Facing opp goal"
                                 time.sleep(time_to_turn)
                                 comms.stop()
-                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
-                            print "Time to sleep: ", time_to_object
-                            time.sleep(0.3)
-                            comms.grab(1)
-                            time.sleep(0.4)
-                            self.basicGo(comms,time_to_object)
-                            time.sleep(0.2)
-                            comms.grab(0)
-                            time.sleep(0.1)
-                            comms.hasball()
-                            time.sleep(0.2)
-                            hasBall = comms.got_ball()
-                            if hasBall:
-                                curr_world = World.get_world()
-                                ball = curr_world.ball
-                                robots = curr_world.robots
-                                robot0 = curr_world.robots[0]
-                                me = robot0
-                                if me != None and ball != None:
-                                    time.sleep(1)
-                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                    if teamSideLeft:
-                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                    time.sleep(0.2)
-                                    angle_to_obj = us_to_obj_angle(me,goal)
-                                    turn_angle = get_angle_to_send(angle_to_obj)
-                                    time_to_turn = get_time_to_turn(turn_angle)
-                                    if turn_angle != 0:
-                                        print "Turnning to ball angle: ", turn_angle
-                                        comms.turn(turn_angle)
-                                        time.sleep(time_to_turn)
-                                        comms.stop()
-                                    time.sleep(1)
-                                    comms.kick(10)
-                                    time.sleep(1)
-                else:
-                    if verbose == "y": print "Strategy: Running DUO strat"
-                    """
-                    Duo strategy starts here
-                    """
-                    if get_zone(me.x,teamSideLeft) <= 0:
 
-                        if verbose == "y": print "Strategy: Duo: We are in the wrong zone"
-                        if me != None and oppgoal != None:
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,oppgoal))
-                            time_to_turn = get_time_to_turn(angle_to_obj)
+                                if verbose == "y": print "Strategy: Duo: Leaving zone"
+                                self.basicGo(comms,1)
 
-                            comms.turn(angle_to_obj)
-                            if verbose == "y": print "Strategy: Duo: Facing opp goal"
-                            time.sleep(time_to_turn)
-                            comms.stop()
+                        if get_zone(ball.x,teamSideLeft) <= 0:
+                            if verbose == "y": print "Strategy: Duo: Ball is in zone 0"
+                            weight = 0;
+                            if robot2_grid_pos != None:
+                                if (robot2_grid_pos.y >= 2):
+                                    weight += 1
+                                else:
+                                    weight -= 1
+                            if robot3_grid_pos != None:
+                                if (robot3_grid_pos.y >= 2):
+                                    weight += 1
+                                else:
+                                    weight -= 1
 
-                            if verbose == "y": print "Strategy: Duo: Leaving zone"
-                            self.basicGo(comms,1)
-
-                    if get_zone(ball.x,teamSideLeft) <= 0:
-                        if verbose == "y": print "Strategy: Duo: Ball is in zone 0"
-                        weight = 0;
-                        if robot2_grid_pos != None:
-                            if (robot2_grid_pos.y >= 2):
-                                weight += 1
+                            targetloc = None
+                            if weight >= 0:
+                                targetloc = loctuple(TARGETLOCTOPX,TARGETLOCTOPY)
                             else:
-                                weight -= 1
-                        if robot3_grid_pos != None:
-                            if (robot3_grid_pos.y >= 2):
-                                weight += 1
-                            else:
-                                weight -= 1
+                                targetloc = loctuple(TARGETLOCBOTX,TARGETLOCBOTY)
 
-                        targetloc = None
-                        if weight >= 0:
-                            targetloc = loctuple(TARGETLOCTOPX,TARGETLOCTOPY)
-                        else:
-                            targetloc = loctuple(TARGETLOCBOTX,TARGETLOCBOTY)
-
-                        if math.fabs(me.x - int(targetloc.x)) + math.fabs(me.y - int(targetloc.y)) < 30:
-                            if verbose == "y": print "Strategy: Duo: Facing the ball"
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            comms.turn(angle_to_obj)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                        else:
-                            if verbose == "y": print "Strategy: Duo: Going to target location"
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,targetloc))
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            time_to_object = get_time_to_travel(me.x,targetloc.x,me.y,targetloc.y)
-                            comms.turn(angle_to_obj)
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            self.basicGo(comms,time_to_object)
-
-                    elif (math.fabs(juno_grid_pos.x - ball_grid_pos.x) <= 1 and math.fabs(juno_grid_pos.y - ball_grid_pos.y) <= 1):
-                        if verbose == "y": print "Strategy: Duo: Ball is in near Juno."
-
-                        weight = 0;
-                        if juno_grid_pos != None:
-                            if (juno_grid_pos.y >= 2):
-                                weight += 1
-                            else:
-                                weight -= 1
-
-                        targetloc = None
-                        if weight >= 0:
-                            targetloc = loctuple(TARGETLOCTOPX,TARGETLOCTOPY)
-                        else:
-                            targetloc = loctuple(TARGETLOCBOTX,TARGETLOCBOTY)
-
-                        if math.fabs(me.x - int(targetloc.x)) + math.fabs(me.y - int(targetloc.y)) < 30:
-                            if me != None and ball != None:
+                            if math.fabs(me.x - int(targetloc.x)) + math.fabs(me.y - int(targetloc.y)) < 30:
                                 if verbose == "y": print "Strategy: Duo: Facing the ball"
                                 angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                                 time_to_turn = get_time_to_turn(angle_to_obj)
                                 comms.turn(angle_to_obj)
                                 time.sleep(time_to_turn)
                                 comms.stop()
-                        else:
-                            if me != None:
+                            else:
                                 if verbose == "y": print "Strategy: Duo: Going to target location"
                                 angle_to_obj = get_angle_to_send(us_to_obj_angle(me,targetloc))
                                 time_to_turn = get_time_to_turn(angle_to_obj)
@@ -1166,82 +1131,120 @@ class Strategy(object):
                                 time.sleep(time_to_turn)
                                 comms.stop()
                                 self.basicGo(comms,time_to_object)
-                    else:
-                        #Grid distances of robots to ball
-                        robot2_ball_grid_dist = 100
-                        robot3_ball_grid_dist = 100
-                        me_ball_grid_dist = get_grid_distance(our_grid_pos.x,our_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
-                        if (robot2 != None):
-                            robot2_ball_grid_dist = get_grid_distance(robot2_grid_pos.x,robot2_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
-                        if (robot3 != None):
-                            robot3_ball_grid_dist = get_grid_distance(robot3_grid_pos.x,robot3_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
 
-                        if (me_ball_grid_dist > robot2_ball_grid_dist or me_ball_grid_dist > robot3_ball_grid_dist):
-                            if verbose == "y": print "Strategy: Duo: Ball is closer to the enemy"
+                        elif (math.fabs(juno_grid_pos.x - ball_grid_pos.x) <= 1 and math.fabs(juno_grid_pos.y - ball_grid_pos.y) <= 1):
+                            if verbose == "y": print "Strategy: Duo: Ball is in near Juno."
 
-                            # Point is not used yet because of unreliability?
-                            """
-                            if(robot2_ball_grid_dist > robot3_ball_grid_dist):
-                                point = simple_intercept({robot3.x,robot3.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                            weight = 0;
+                            if juno_grid_pos != None:
+                                if (juno_grid_pos.y >= 2):
+                                    weight += 1
+                                else:
+                                    weight -= 1
+
+                            targetloc = None
+                            if weight >= 0:
+                                targetloc = loctuple(TARGETLOCTOPX,TARGETLOCTOPY)
                             else:
-                                point = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
-                            """
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
-                            comms.turn(angle_to_obj,0)
-                            if verbose == "y": print "Strategy: Duo: Trying to intercept"
-                            time.sleep(time_to_turn)
-                            self.basicGo(comms,time_to_object)
-                        else:
-                            if verbose == "y": print "Strategy: Duo: We are closest to ball"
+                                targetloc = loctuple(TARGETLOCBOTX,TARGETLOCBOTY)
 
-                            if verbose == "y": print "Strategy: Duo: Going towards the ball"
-                            angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
-                            time_to_turn = get_time_to_turn(angle_to_obj)
-                            time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
-
-                            comms.turn(angle_to_obj)
-                            if verbose == "y": print "Strategy: Duo: Facing ball"
-                            time.sleep(time_to_turn)
-                            comms.stop()
-                            comms.grab(1)
-                            time.sleep(0.4)
-
-                            if verbose == "y": print "Strategy: Duo: Heading towards ball"
-                            self.basicGo(comms,time_to_object)
-                            time.sleep(0.2)
-
-                            comms.grab(0)
-                            if verbose == "y": print "Strategy: Duo: Grabbing ball"
-
-                            time.sleep(0.2)
-                            comms.hasball()
-                            time.sleep(0.2)
-                            hasBall = comms.got_ball()
-
-                            if hasBall:
-                                curr_world = World.get_world()
-                                ball = curr_world.ball
-                                robots = curr_world.robots
-                                robot0 = curr_world.robots[0]
-                                me = robot0
+                            if math.fabs(me.x - int(targetloc.x)) + math.fabs(me.y - int(targetloc.y)) < 30:
                                 if me != None and ball != None:
-                                    time.sleep(1)
-                                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
-                                    if teamSideLeft:
-                                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
-                                    time.sleep(0.2)
-                                    angle_to_obj = us_to_obj_angle(me,goal)
-                                    turn_angle = get_angle_to_send(angle_to_obj)
-                                    time_to_turn = get_time_to_turn(turn_angle)
-                                    if turn_angle != 0:
-                                        print "Turnning to ball angle: ", turn_angle
-                                        comms.turn(turn_angle)
-                                        if verbose == "y": print "Strategy: Duo: Aiming"
-                                        time.sleep(time_to_turn)
-                                        comms.stop()
-                                    time.sleep(1)
-                                    comms.kick(10)
-                                    if verbose == "y": print "Strategy: Duo: Shooting"
-                                    time.sleep(1)
+                                    if verbose == "y": print "Strategy: Duo: Facing the ball"
+                                    angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                            else:
+                                if me != None:
+                                    if verbose == "y": print "Strategy: Duo: Going to target location"
+                                    angle_to_obj = get_angle_to_send(us_to_obj_angle(me,targetloc))
+                                    time_to_turn = get_time_to_turn(angle_to_obj)
+                                    time_to_object = get_time_to_travel(me.x,targetloc.x,me.y,targetloc.y)
+                                    comms.turn(angle_to_obj)
+                                    time.sleep(time_to_turn)
+                                    comms.stop()
+                                    self.basicGo(comms,time_to_object)
+                        else:
+                            #Grid distances of robots to ball
+                            robot2_ball_grid_dist = 100
+                            robot3_ball_grid_dist = 100
+                            me_ball_grid_dist = get_grid_distance(our_grid_pos.x,our_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
+                            if (robot2 != None):
+                                robot2_ball_grid_dist = get_grid_distance(robot2_grid_pos.x,robot2_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
+                            if (robot3 != None):
+                                robot3_ball_grid_dist = get_grid_distance(robot3_grid_pos.x,robot3_grid_pos.y,ball_grid_pos.x,ball_grid_pos.y)
+
+                            if (me_ball_grid_dist > robot2_ball_grid_dist or me_ball_grid_dist > robot3_ball_grid_dist):
+                                if verbose == "y": print "Strategy: Duo: Ball is closer to the enemy"
+
+                                # Point is not used yet because of unreliability?
+                                """
+                                if(robot2_ball_grid_dist > robot3_ball_grid_dist):
+                                    point = simple_intercept({robot3.x,robot3.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                                else:
+                                    point = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                                """
+                                angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                                time_to_turn = get_time_to_turn(angle_to_obj)
+                                time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                comms.turn(angle_to_obj,0)
+                                if verbose == "y": print "Strategy: Duo: Trying to intercept"
+                                time.sleep(time_to_turn)
+                                self.basicGo(comms,time_to_object)
+                            else:
+                                if verbose == "y": print "Strategy: Duo: We are closest to ball"
+
+                                if verbose == "y": print "Strategy: Duo: Going towards the ball"
+                                angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                                time_to_turn = get_time_to_turn(angle_to_obj)
+                                time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+
+                                comms.turn(angle_to_obj)
+                                if verbose == "y": print "Strategy: Duo: Facing ball"
+                                time.sleep(time_to_turn)
+                                comms.stop()
+                                comms.grab(1)
+                                time.sleep(0.4)
+
+                                if verbose == "y": print "Strategy: Duo: Heading towards ball"
+                                self.basicGo(comms,time_to_object)
+                                time.sleep(0.2)
+
+                                comms.grab(0)
+                                if verbose == "y": print "Strategy: Duo: Grabbing ball"
+
+                                time.sleep(0.2)
+                                comms.hasball()
+                                time.sleep(0.2)
+                                hasBall = comms.got_ball()
+
+                                if hasBall:
+                                    curr_world = World.get_world()
+                                    ball = curr_world.ball
+                                    robots = curr_world.robots
+                                    robot0 = curr_world.robots[0]
+                                    me = robot0
+                                    if me != None and ball != None:
+                                        time.sleep(1)
+                                        goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                                        if teamSideLeft:
+                                            goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                                        time.sleep(0.2)
+                                        angle_to_obj = us_to_obj_angle(me,goal)
+                                        turn_angle = get_angle_to_send(angle_to_obj)
+                                        time_to_turn = get_time_to_turn(turn_angle)
+                                        if turn_angle != 0:
+                                            print "Turnning to ball angle: ", turn_angle
+                                            comms.turn(turn_angle)
+                                            if verbose == "y": print "Strategy: Duo: Aiming"
+                                            time.sleep(time_to_turn)
+                                            comms.stop()
+                                        time.sleep(1)
+                                        comms.kick(10)
+                                        if verbose == "y": print "Strategy: Duo: Shooting"
+                                        time.sleep(1)
+        except:
+            comms.reset()
+            print "Emergency stop!"
