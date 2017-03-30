@@ -1246,5 +1246,5 @@ class Strategy(object):
                                         if verbose == "y": print "Strategy: Duo: Shooting"
                                         time.sleep(1)
         except:
-            comms.reset()
             print "Emergency stop!"
+            comms.reset()

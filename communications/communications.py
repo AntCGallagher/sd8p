@@ -49,23 +49,27 @@ class Comms(object):
 			return
 
 	def start(self):
-		if (not self.active):
-			self.active = True
+		try:
+			if (not self.active):
+				self.active = True
 
-			# Create thread to handle outgoing messages
-			sender = Thread(target=self.send_messages)
-			sender.daemon = True
-			sender.start()
+				# Create thread to handle outgoing messages
+				sender = Thread(target=self.send_messages)
+				sender.daemon = True
+				sender.start()
 
-			# Create thread to listen for incoming messages
-			receiver = Thread(target=self.receive_messages)
-			receiver.daemon = True
-			receiver.start()
+				# Create thread to listen for incoming messages
+				receiver = Thread(target=self.receive_messages)
+				receiver.daemon = True
+				receiver.start()
 
-			# Reset arduino communications
-			self.reset()
-		else:
-			print "Cannot start again as Comms already active!"
+				# Reset arduino communications
+				self.reset()
+			else:
+				print "Cannot start again as Comms already active!"
+			return True
+		except:
+			return False
 
 
 	def send_messages(self):

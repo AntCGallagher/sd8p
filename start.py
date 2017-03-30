@@ -61,14 +61,17 @@ if __name__ == "__main__" :
 	comms = Comms()
 	while True:
 		try:
-			comms.start()
-			while inp != "t" or inp != "s" or inp != "r":
-				inp = raw_input("Tests, start or reset? (t/s/r) : ")
-				if inp == "s":
-					strategy.start4(comms,verbose)
-				if inp == "t":
-					strategy.tests(comms)
-				if inp == "r":
-					comms.reset()
+			comms_active = comms.start()
+			if comms_active:
+				while inp != "t" or inp != "s" or inp != "r":
+					inp = raw_input("Tests, start or reset? (t/s/r) : ")
+					if inp == "s":
+						strategy.start4(comms,verbose)
+					if inp == "t":
+						strategy.tests(comms)
+					if inp == "r":
+						comms.reset()
+			else:
+				print "Check RF!"
 		except:
-			print "RF not found!"
+			os._exit(1)
