@@ -49,7 +49,7 @@ if __name__ == "__main__" :
 		verbose = "y"
 	else:
 		verbose = "n"
-		
+
 	# start vision system in background thread
 	vis = VisionWrapper(pitch=pitch_number, record=record, extras=extras)
 	t = Thread(target = vis.run)
@@ -59,12 +59,16 @@ if __name__ == "__main__" :
 	inp = ""
 	strategy = Strategy()
 	comms = Comms()
-	comms.start()
-	while inp != "t" or inp != "s" or inp != "r":
-		inp = raw_input("Tests, start or reset? (t/s/r) : ")
-		if inp == "s":
-			strategy.start4(comms,verbose)
-		if inp == "t":
-			strategy.tests(comms)
-		if inp == "r":
-			comms.reset()
+	while True:
+		try:
+			comms.start()
+			while inp != "t" or inp != "s" or inp != "r":
+				inp = raw_input("Tests, start or reset? (t/s/r) : ")
+				if inp == "s":
+					strategy.start4(comms,verbose)
+				if inp == "t":
+					strategy.tests(comms)
+				if inp == "r":
+					comms.reset()
+		except:
+			print "RF not found!"
