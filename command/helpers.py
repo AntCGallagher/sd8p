@@ -158,23 +158,25 @@ def set_magnitude( u , mag):
 		a = (a /la.norm(a)) * mag
 	return a
 
-def simple_intercept(op1,goal,us):
-	if(goal.x < 50):
-		pxy = namedtuple("C","x y")
-		pxy.x = op1.x - 40
-		if(op1.y < 108):
-			pxy.x = op1.x - 40
-		else:
-			pxy.x = op1.x + 40
-		return pxy
+def simple_intercept(op1x,op1y,goalx,goaly,usx,usy):
+	pxy = namedtuple("pxy","x y")
+
+	if(goalx < 50):
+		pxy.x = op1x - 55
 	else:
-		pxy = namedtuple("C","x y")
-		pxy.x = op1.x + 40
-		if(op1.y < 108):
-			pxy.y = op1.y + 40
-		else:
-			pxy.y = op1.y - 40
-		return pxy
+		pxy.x = op1 + 55
+		
+	if op1y > 190:
+		pxy.y = op1y - 45
+	elif op1y > 140:
+		pxy.y = op1y - 25
+	elif op1y > 108:
+		pxy.y = op1y
+	elif op1y > 60:
+		pxy.y = op1y + 25
+	else:
+		pxy.y = op1y + 45
+	return pxy
 
 def calculate_intercept_p(op1p , op2p ,usp) :
 	"""

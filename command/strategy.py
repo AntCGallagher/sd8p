@@ -424,18 +424,101 @@ class Strategy(object):
                     if colliding:
                         comms.stop()
                         break
-            if inp == "intercept":
-                our_x = int(raw_input("our x: "))
-                our_y = int(raw_input("our x: "))
-                their_x = int(raw_input("our x: "))
-                their_y = int(raw_input("our x: "))
-                our_x = int(raw_input("our x: "))
             if inp == "hasball":
                 comms.stop()
                 time.sleep(0.2)
                 comms.hasball()
                 time.sleep(0.2)
                 print(comms.got_ball())
+            if inp == "intercept":
+                loctuple = namedtuple("goal","x y")
+                metuple = namedtuple("me","x y rot")
+                robottuple = namedtuple("robot","x y")
+                balltuple = namedtuple("ball","x y")
+                curr_world = World.get_world()
+                teamSideLeft = World.our_side == "Left"
+                robots = curr_world.robots
+                me = curr_world.robots[0]
+                juno = curr_world.robots[1]
+                robot2 = curr_world.robots[2]
+                robot3 = curr_world.robots[3]
+                ball = curr_world.ball
+                ourgoal = None;
+                oppgoal = None;
+                if teamSideLeft:
+                    ourgoal = loctuple(LEFTGOALX,LEFTGOALY)
+                    oppgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
+                else:
+                    ourgoal = loctuple(RIGHTGOALX,RIGHTGOALY)
+                    oppgoal = loctuple(LEFTGOALX,LEFTGOALY)
+                me_ball_grid_dist = 100
+                robot2_ball_grid_dist = 100
+                robot3_ball_grid_dist = 100
+                our_grid_pos = get_grid_pos(me.x,me.y)
+                ball_grid_pos = get_grid_pos(ball.x,ball.y)
+                juno_grid_pos = None
+                robot2_grid_pos = None
+                robot3_grid_pos = None
+                if juno != None:
+                    juno_grid_pos = get_grid_pos(juno.x,juno.y)
+                if robot2 != None:
+                    robot2_grid_pos = get_grid_pos(robot2.x,robot2.y)
+                if robot3 != None:
+                    robot3_grid_pos = get_grid_pos(robot3.x,robot3.y)
+                if me != None and ball_grid_pos != None:
+                    me_ball_grid_dist = get_grid_distance(int(our_grid_pos.x),int(our_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                if robot2 != None and ball_grid_pos != None:
+                    robot2_ball_grid_dist = get_grid_distance(int(robot2_grid_pos.x),int(robot2_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+                if robot3 != None and ball_grid_pos != None:
+                    robot3_ball_grid_dist = get_grid_distance(int(robot3_grid_pos.x),int(robot3_grid_pos.y),int(ball_grid_pos.x),int(ball_grid_pos.y))
+
+                if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
+                    print "Strategy: Solo: Going for defense"
+
+                    # TODO: Apparently calculate_intercept_p is not reliable
+                    blocking_enabled = True
+                    if blocking_enabled and (robot2_ball_grid_dist < 1 or robot3_ball_grid_dist < 1):
+                        # Select shooter
+                        shooter = None
+                        if robot2_ball_grid_dist < 1:
+                            print "Strategy: Solo: Blocking robot2"
+                            shooter = robottuple(robot2.x,robot2.y)
+                        elif robot3_ball_grid_dist < 1:
+                            print "Strategy: Solo: Blocking robot3"
+                            shooter = robottuple(robot3.x,robot3.y)
+
+                        # Calculate intercept location
+                        pxy = simple_intercept(shooter.x,shooter.y,ourgoal.x,ourgoal.y,me.x,me.y)
+                        print "intercept: ", pxy.x , pxy.y
+                        angle_to_obj = us_to_obj_angle(me,pxy)
+                        angle_to_obj = get_angle_to_send(angle_to_obj)
+                        time_to_turn = get_time_to_turn(angle_to_obj)
+                        time_to_object = get_time_to_travel(me.x,me.y,pxy.x,pxy.y)
+
+                    else:
+                        print "Strategy: Solo: Defending goal"
+                        if teamSideLeft:
+                            defendloc = loctuple(51,112)
+                        else:
+                            defendloc = loctuple(243,112)
+                        if (math.sqrt(math.pow(me.x-defendloc.x,2) + math.pow(me.y - defendloc.y,2)) < 30):
+                            print "Strategy: Solo: Near Goal"
+                            if math.fabs(-90 - me.rot) < 15:
+                                # Move up and down
+                                print "Strategy: Solo: Defending"
+                            else:
+                                #Turn towards ball
+                                #TODO: Test this
+                                print "Strategy: Solo: Rotating to 0"
+                                angle_to_obj = -90 - me.rot
+                        else:
+                            print "Strategy: Solo: Going to goal"
+                            angle_to_obj = us_to_obj_angle(me,defendloc)
+                            angle_to_obj = get_angle_to_send(angle_to_obj)
+                            time_to_turn = get_time_to_turn(angle_to_obj)
+                            time_to_object = get_time_to_travel(me.x,defendloc.x,me.y,defendloc.y)
+                else:
+                    print "Offense"
             if inp == "reverse":
                 curr_world = World.get_world()
                 robots = curr_world.robots
@@ -973,7 +1056,7 @@ class Strategy(object):
                         if robot2_ball_grid_dist < me_ball_grid_dist or robot3_ball_grid_dist < me_ball_grid_dist:
                             if verbose == "y": print "Strategy: Solo: Going for defense"
 
-                            # Apparently calculate_intercept_p is not reliable
+                            # TODO: Apparently calculate_intercept_p is not reliable
                             blocking_enabled = False
                             if blocking_enabled and (robot2_ball_grid_dist < 1 or robot3_ball_grid_dist < 1):
                                 # Select shooter
@@ -983,10 +1066,10 @@ class Strategy(object):
                                     shooter = robottuple(robot2.x,robot2.y)
                                 elif robot3_ball_grid_dist < 1:
                                     if verbose == "y": print "Strategy: Solo: Blocking robot3"
-                                    shooter(robot3.x,robot3.y)
+                                    shooter = robottuple(robot3.x,robot3.y)
 
                                 # Calculate intercept location
-                                pxy = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                                pxy = simple_intercept(shooter.x,shooter.y,ourgoal.x,ourgoal.y,me.x,me.y)
                                 angle_to_obj = us_to_obj_angle(me,pxy)
                                 angle_to_obj = get_angle_to_send(angle_to_obj)
                                 time_to_turn = get_time_to_turn(angle_to_obj)
@@ -1014,6 +1097,7 @@ class Strategy(object):
                                         comms.stop()
                                     else:
                                         #Turn towards ball
+                                        #TODO: Test this
                                         if verbose == "y": print "Strategy: Solo: Rotating to 0"
                                         angle_to_obj = -90 - me.rot
                                         comms.turn(angle_to_obj,get_angle_corrections(angle_to_obj))
@@ -1189,7 +1273,7 @@ class Strategy(object):
                                 angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
                                 time_to_turn = get_time_to_turn(angle_to_obj)
                                 time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
-                                comms.turn(angle_to_obj,0)
+                                comms.turn(angle_to_obj)
                                 if verbose == "y": print "Strategy: Duo: Trying to intercept"
                                 time.sleep(time_to_turn)
                                 self.basicGo(comms,time_to_object)
@@ -1219,7 +1303,7 @@ class Strategy(object):
                                 comms.hasball()
                                 time.sleep(0.2)
                                 hasBall = comms.got_ball()
-
+                                time.sleep(0.3)
                                 if hasBall:
                                     curr_world = World.get_world()
                                     ball = curr_world.ball
