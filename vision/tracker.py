@@ -84,7 +84,7 @@ class MyTracker(object):
         return cv2.countNonZero(dst)
 
 
-    def recognize_plates(self, image, robot_mask, ball_mask):
+    def recognize_plates(self, image, robot_mask, ball_mask, draw=True):
         # pink = self.calibrations['pink']
 
         frame = image.copy()
@@ -95,7 +95,7 @@ class MyTracker(object):
         #cv2.imshow("plate_mask", plate_mask)
 
         # set processing values
-        BLUR   = 9;
+        BLUR   = 11;
         KERNEL = 7;
 
         # process plate mask for whole plate detection
@@ -121,19 +121,19 @@ class MyTracker(object):
         cnt_index  = 0       # contour  index to process
         robot_data = []     # robot data to be returned
 
-        test_mask  = np.zeros((480, 640, 3), np.uint8)
-
+        if draw:
+            test_mask  = np.zeros((480, 640, 3), np.uint8)
         for cnt in contours:
 
             #TODO check if contours have a square shape
             # check for countours of decent size
-            if cv2.contourArea(cnt) < 300:
+            if cv2.contourArea(cnt) < 300 or cv2.contourArea(cnt) > 1500:
                 cnt_index += 1
                 continue
 
             # copy the contour part from the image
             contour_frame = np.zeros((480, 640, 3), np.uint8)
-            #TODO
+            #TODO cleanup @vesko
             #old
             #cv2.drawContours(contour_frame, contours, cnt_index, (255,255,255), cv2.FILLED);
             #new
@@ -141,32 +141,75 @@ class MyTracker(object):
             box  = cv2.boxPoints(rect)
             box = np.int0(box)
             cv2.drawContours(contour_frame, [box], -1, (255,255,255), cv2.FILLED)
+
+            # find centre
+            m = cv2.moments(cnt, False);
+            (cx, cy) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
             #----
             contour_frame = cv2.bitwise_and(image, contour_frame)
 
-            test_mask     = cv2.bitwise_or(test_mask, contour_frame)
+            if draw:
+                test_mask     = cv2.bitwise_or(test_mask, contour_frame)
 
             contour_frame = cv2.cvtColor(contour_frame, cv2.COLOR_BGR2YUV)
 
+
+
+            #new
+            bisectors = box
+            bisectors = (bisectors + np.roll(bisectors, 2)) / 2
+
+            middle_dot_rect = cv2.minAreaRect(bisectors)
+            middle_dot_mask = np.zeros((480, 640, 3), np.uint8)
+            cv2.ellipse(middle_dot_mask, middle_dot_rect, (255,255,255), -1)
+            middle_dot_mask = cv2.bitwise_and(contour_frame, middle_dot_mask)
             # count blue coloured pixels
-            blue_no   = self.count_pixels('blue', contour_frame)
+            blue_no   = self.count_pixels('blue', middle_dot_mask)
             # count yellow coloured pixels
-            yellow_no = self.count_pixels('yellow', contour_frame)
-            # count green coloured pixels
-            green_no  = self.count_pixels('bright_green', contour_frame)
-            # count pink coloured pixels
-            pink_no   = self.count_pixels('pink', contour_frame)
+            yellow_no = self.count_pixels('yellow', middle_dot_mask)
 
+            #old
+            # # count blue coloured pixels
+            # blue_no   = self.count_pixels('blue', contour_frame)
+            # # count yellow coloured pixels
+            # yellow_no = self.count_pixels('yellow', contour_frame)
+            #-----
+
+            #new
+            green_no = 0
+            pink_no = 0
+            for i in range(4):
+                outer_dots_mask = np.zeros((480, 640, 3), np.uint8) * 4
+                vertices = np.array([ box[i], bisectors[i], np.array([cx,cy]), bisectors[(i + 1) % 4] ])
+                outer_dot_rect = cv2.minAreaRect(vertices)
+                cv2.ellipse(outer_dots_mask, outer_dot_rect, (255,255,255), -1)
+                # count green coloured pixels
+                outer_dots_mask = cv2.bitwise_and(contour_frame, outer_dots_mask)
+                green_pixels  = self.count_pixels('bright_green', outer_dots_mask)
+                # count pink coloured pixels
+                pink_pixels   = self.count_pixels('pink', outer_dots_mask)
+                if (green_pixels > pink_pixels):
+                    green_no += 1
+                else:
+                    pink_no += 1
             # calculate ratios for definig teams
-            blue_yellow_ration = blue_no / (yellow_no + 1)
-            pink_green_ration  = pink_no / (green_no + 1)
-
-            #TODO
-            # if (blue_yellow_ration > 0.9 and blue_yellow_ration/1 > 0.9):
-            #     continue
+            blue_yellow_ratio = blue_no / (yellow_no + 1)
+            pink_green_ratio  = pink_no / (green_no + 1)
+            #old
+            # # count green coloured pixels
+            # green_no  = self.count_pixels('bright_green', contour_frame)
+            # # count pink coloured pixels
+            # pink_no   = self.count_pixels('pink', contour_frame)
+            # print('orig_green '+str(green_no))
+            # print('orig_pink '+str(pink_no))
+            #
+            # # calculate ratios for definig teams
+            # blue_yellow_ratio = blue_no / (yellow_no + 1)
+            # pink_green_ratio  = pink_no / (green_no + 1)
+            #------
 
             # find the mass centre of the single circle (to find angle)
-            if pink_green_ration < 0.5:
+            if pink_green_ratio < 0.5:
                 #pink
                 min_range = self.calibration['pink']['min']
                 max_range = self.calibration['pink']['max']
@@ -178,16 +221,11 @@ class MyTracker(object):
             tmp_mask = cv2.inRange(contour_frame, min_range, max_range)
             m        = cv2.moments(tmp_mask, True)
             (tx, ty) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
+            if draw:
+                cv2.circle(image, (tx, ty), 5, (255, 255, 255), -1)
 
-            if self.extras:
-                cv2.circle(image, (tx, ty), 5, (100, 255, 255), -1)
-
-            # find the rotated rectangle around the plate
-            rect = cv2.minAreaRect(cnt)
-            box  = cv2.boxPoints(rect)
-            box  = np.int0(box)
-
-            cv2.drawContours(test_mask,[box],0,(0,0,255),2)
+            if draw:
+                cv2.drawContours(test_mask,[box],0,(0,0,255),2)
 
             minx, miny, maxx, maxy = 100000,100000,0,0
             for (x, y) in box:
@@ -205,19 +243,15 @@ class MyTracker(object):
                     distance       = tmp_dist
                     closest_corner = i
 
-            if self.extras:
+            if draw:
                 cv2.circle(image, (box[closest_corner][0], box[closest_corner][1]), 5, (100, 100, 255), -1)
 
-            # find centre
-            m = cv2.moments(cnt, False);
-            (cx, cy) = int(m['m10'] / (m['m00'] + 0.001)), int(m['m01'] / (m['m00'] + 0.001))
-
-            if pink_green_ration < 0.5:
+            if pink_green_ratio < 0.5:
                 group = 'bright_green'
             else:
                 group = 'pink'
 
-            if blue_yellow_ration < 1.0:
+            if blue_yellow_ratio < 1.0:
                 team = 'yellow'
             else:
                 team = 'blue'
@@ -233,12 +267,13 @@ class MyTracker(object):
             angle -= 90
             robot_data.append({'center': (cx, cy), 'angle': angle, 'team': team, 'group': group})
 
-            if self.extras:
+            if draw:
                 cv2.line(image, (cx, cy), (cx + direction_vector_x, cy + direction_vector_y),(255, 255, 255), 3)
                 cv2.drawContours(image,[box],0,(0,0,255),2)
                 #cv2.putText(self.frame, "PLATE: b-y ratio %lf p-g ratio %lf" % (byr, pgr), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, None, 1)
                 #cv2.putText(image, "PLATE: team %s group %s" % (team, group), (maxx, maxy), cv2.FONT_HERSHEY_SIMPLEX, 0.7, None, 1)
-                cv2.imshow('image', image)
+                if self.extras:
+                    cv2.imshow('image', image)
 
             cnt_index += 1
 
@@ -351,9 +386,9 @@ class MyTracker(object):
         fore = cv2.GaussianBlur(fore,(3,3),0)
         yuv = cv2.cvtColor(fore,cv2.COLOR_BGR2YUV)
         yuv = cv2.absdiff(yuv, og)
-        yuv = cv2.cvtColor(yuv,cv2.COLOR_BGR2GRAY )
+        yuv = cv2.cvtColor(yuv,cv2.COLOR_BGR2GRAY)
         #TODO create interface to change variable
-        mask = cv2.inRange(yuv, 14, 255) ################# variable - increase if extra bits, decrease otherwise
+        mask = cv2.inRange(yuv, 15, 255) #################TODO interface variable - increase if extra bits, decrease otherwise
         #TODO mask out sides of the pich
         #mask = cv2.bitwise_and(mask, mask, mask=sides)
         mask = cv2.GaussianBlur(mask,(11,11),0) ############## variable
@@ -362,6 +397,21 @@ class MyTracker(object):
         frame = cv2.bitwise_and(frame,frame, mask=mask)
         if self.extras:
             cv2.imshow('bg sub', frame)
+        #------
+        # TESTING DIFFERENT BACKGROUND SUBTRACTION FOR PRESENTATION
+        # GENERIC OPENCV BG SUBTRACTION
+        # og = cv2.imread('currBg_' + str(self.pitch_number) + '.png')
+        # og = cv2.GaussianBlur(og,(5,5),0)
+        # #og = cv2.cvtColor(og,cv2.COLOR_BGR2YUV)
+        # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+        # fgbg = cv2.createBackgroundSubtractorMOG2(history=1)
+        # fgmask = fgbg.apply(og, learningRate=1)
+        # fore = cv2.GaussianBlur(fore,(5,5),0)
+        # fgmask = fgbg.apply(fore)
+        # fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)
+        # if self.extras:
+        #      cv2.imshow('bg sub', cv2.bitwise_and(frame, frame, mask=fgmask))
+        #------
 
         ball_mask   = None
         robot_mask  = None

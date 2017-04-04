@@ -30,7 +30,7 @@ class World(object):
 	points_lock = Lock()
 	points = None
 	last_world = None
-	last_world_counter = 0
+	last_world_counter = np.zeros(4)
 	last_time = 0
 
 	ball_colour = "red"
@@ -294,10 +294,10 @@ class World(object):
 
 		for robot in robot_data:
 			###old
-			x_px, y_px = robot['center']
-			angle      = robot['angle']
-			x, y       = self.px_to_cm(x_px ,y_px)
-			identity   = self.identify_robot(team_color=robot['team'] , group_color=robot['group'])
+			# x_px, y_px = robot['center']
+			# angle      = robot['angle']
+			# x, y       = self.px_to_cm(x_px ,y_px)
+			# identity   = self.identify_robot(team_color=robot['team'] , group_color=robot['group'])
 			###new
 			identity   = self.identify_robot(team_color=robot['team'] , group_color=robot['group'])
 			x_px       = self.add_history(history=World.x_px_history, param=robot['center'][0], identity=identity)
@@ -311,17 +311,21 @@ class World(object):
 
 		for i , robot in enumerate(robots):
 			if robot == None and last_world != None and last_world.robots != None:
-				++self.last_world_counter
-				if (self.last_world_counter<20):
+			#	World.last_world_counter[i] += 1
+				if (World.last_world_counter[i]<20):
 					robots[i] = last_world.robots[i]
 				else:
-					self.last_world_counter = 0
+					print('oooops')
+					World.last_world_counter[i] = 0
 			if robot == None:
+				World.last_world_counter[i] += 1
 				World.angle_history[i] = np.append(World.angle_history[i], [np.nan])
-				World.x_px_history[i] = np.append(World.angle_history[i], [np.nan])
-				World.y_px_history[i] = np.append(World.angle_history[i], [np.nan])
-				World.x_history[i] = np.append(World.angle_history[i], [np.nan])
-				World.y_history[i] = np.append(World.angle_history[i], [np.nan])
+				World.x_px_history[i] = np.append(World.x_px_history[i], [np.nan])
+				World.y_px_history[i] = np.append(World.y_px_history[i], [np.nan])
+				World.x_history[i] = np.append(World.x_history[i], [np.nan])
+				World.y_history[i] = np.append(World.y_history[i], [np.nan])
+			else:
+				World.last_world_counter[i] = 0
 
 		for identity in range(4):
 			#print('-----'+str(identity)+'-----size '+ str(World.angle_history[identity].size) + '---- ' + str(World.angle_history[identity]))
