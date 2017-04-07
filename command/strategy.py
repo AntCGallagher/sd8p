@@ -992,6 +992,27 @@ class Strategy(object):
 
                 # Reverse if too close to wall and facing the wall. Else, continue normally
                 reverse = False
+                
+                comms.hasball()
+                time.sleep(0.3)
+                if comms.got_ball():
+                if me != None:
+                    time.sleep(1)
+                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                    if teamSideLeft:
+                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                    time.sleep(0.2)
+                    angle_to_obj = us_to_obj_angle(me,goal)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    if turn_angle != 0:
+                        print "Turning to ball angle: ", turn_angle
+                        comms.turn(turn_angle)
+                        if verbose == "y": print "Strategy: Aiming"
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    time.sleep(1)
+                    comms.kick(10)
 
                 if me.x < 45:
                     if me.y > 187:
