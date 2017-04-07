@@ -315,7 +315,6 @@ class World(object):
 				if (World.last_world_counter[i]<20):
 					robots[i] = last_world.robots[i]
 				else:
-					print('oooops')
 					World.last_world_counter[i] = 0
 			if robot == None:
 				World.last_world_counter[i] += 1
