@@ -26,9 +26,9 @@ if __name__ == "__main__" :
 	parser.add_argument("team" , help="yellow or blue" )
 	parser.add_argument("our" , help="our 3 dots are: pink or bright_green" )
 	parser.add_argument("side" , help="which side of the pitch is ours, left or right?")
-	parser.add_argument("opt1" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
-	parser.add_argument("opt2" , help="add 'record' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
-	parser.add_argument("opt3" , help="add 'verbose' if you would like to record or add 'extras' to show vision features for debugging", nargs='?')
+	parser.add_argument("opt1" , help="add 'verbose' for strategy debugging, add 'record' if you would like to record match, add 'vision' for vision debugging", nargs='?')
+	parser.add_argument("opt2" , help="add 'verbose' for strategy debugging, add 'record' if you would like to record match, add 'vision' for vision debugging", nargs='?')
+	parser.add_argument("opt3" , help="add 'verbose' for strategy debugging, add 'record' if you would like to record match, add 'vision' for vision debugging", nargs='?')
 	args = parser.parse_args()
 
 	# setup World model
@@ -41,7 +41,7 @@ if __name__ == "__main__" :
 		record = True
 	else:
 		record = False
-	if (args.opt1 == 'extras' or args.opt2 == 'extras' or args.opt3 == 'extras'):
+	if (args.opt1 == 'vision' or args.opt2 == 'vision' or args.opt3 == 'vision'):
 		extras = True
 	else:
 		extras = False
