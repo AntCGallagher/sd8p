@@ -826,7 +826,7 @@ class Strategy(object):
             print "No collision"
 
     def basicRotate(self,comms,angle):
-        comms.turn(angle,get_angle_corrections)
+        comms.turn(angle)
         time.sleep(get_time_to_turn)
         comms.stop()
 
@@ -881,7 +881,7 @@ class Strategy(object):
                 oppgoal = loctuple(LEFTGOALX,LEFTGOALY)
 
             while True:
-                #Delays
+                #DelaysUntitled Diagram
                 time.sleep(0.8)
 
                 # Extract world model
@@ -961,9 +961,16 @@ class Strategy(object):
                 # Set last known location to ball and me--------------------------------------------------------------------
                 if ball == None:
                     ball = balltuple(last_ball_x,last_ball_y)
+                else:
+                    last_ball_x = ball.x
+                    last_ball_y = ball.y
 
                 if me == None:
                     me = metuple(last_me_x,last_me_y,last_me_rot)
+                else:
+                    last_me_x = me.x
+                    last_me_y = me.y
+                    last_me_rot = me.rot
 
                 if juno == None:
                     solo_strat = True
@@ -985,6 +992,27 @@ class Strategy(object):
 
                 # Reverse if too close to wall and facing the wall. Else, continue normally
                 reverse = False
+                
+                comms.hasball()
+                time.sleep(0.3)
+                if comms.got_ball():
+                if me != None:
+                    time.sleep(1)
+                    goal = loctuple(SHOOTLEFTX,SHOOTLEFTY)
+                    if teamSideLeft:
+                        goal = loctuple(SHOOTRIGHTX,SHOOTRIGHTY)
+                    time.sleep(0.2)
+                    angle_to_obj = us_to_obj_angle(me,goal)
+                    turn_angle = get_angle_to_send(angle_to_obj)
+                    time_to_turn = get_time_to_turn(turn_angle)
+                    if turn_angle != 0:
+                        print "Turning to ball angle: ", turn_angle
+                        comms.turn(turn_angle)
+                        if verbose == "y": print "Strategy: Aiming"
+                        time.sleep(time_to_turn)
+                        comms.stop()
+                    time.sleep(1)
+                    comms.kick(10)
 
                 if me.x < 45:
                     if me.y > 187:
@@ -1263,16 +1291,15 @@ class Strategy(object):
                             if (me_ball_grid_dist > robot2_ball_grid_dist or me_ball_grid_dist > robot3_ball_grid_dist):
                                 if verbose == "y": print "Strategy: Duo: Ball is closer to the enemy"
 
-                                # Point is not used yet because of unreliability?
-                                """
+                                # TODO: Check for reliability
+                                point = None
                                 if(robot2_ball_grid_dist > robot3_ball_grid_dist):
-                                    point = simple_intercept({robot3.x,robot3.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
+                                    point = simple_intercept(robot3.x,robot3.y,ourgoal.x,ourgoal.y,me.x,me.y)
                                 else:
-                                    point = simple_intercept({shooter.x,shooter.y},{ourgoal.x,ourgoal.y},{me.x,me.y})
-                                """
-                                angle_to_obj = get_angle_to_send(us_to_obj_angle(me,ball))
+                                    point = simple_intercept(shooter.x,shooter.y,ourgoal.x,ourgoal.y,me.x,me.y)
+                                angle_to_obj = get_angle_to_send(us_to_obj_angle(me,point))
                                 time_to_turn = get_time_to_turn(angle_to_obj)
-                                time_to_object = get_time_to_travel(me.x,ball.x,me.y,ball.y)
+                                time_to_object = get_time_to_travel(me.x,point.x,me.y,point.y)
                                 comms.turn(angle_to_obj)
                                 if verbose == "y": print "Strategy: Duo: Trying to intercept"
                                 time.sleep(time_to_turn)
