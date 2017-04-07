@@ -73,7 +73,7 @@ bool TurnInstruction::progress() {
       lowerLimit = finalCompassReading - x;
     }  
 
-    /*Serial.print(F("Begin turn "));
+    Serial.print(F("Begin turn "));
     Serial.print(this->deg);
     Serial.println(F(" deg"));
     Serial.print(F("Initial reading: "));
@@ -85,7 +85,7 @@ bool TurnInstruction::progress() {
     Serial.print(F("Lower limit: "));
     Serial.println(lowerLimit);
     Serial.print(F("Upper limit: "));
-    Serial.println(upperLimit);*/
+    Serial.println(upperLimit);
 
     int power = 70;   
     greenMotorMove(LH_IDX, -power, (this->deg > 0) ? MOTOR_BWD : MOTOR_FWD);
@@ -101,7 +101,7 @@ bool TurnInstruction::progress() {
     sum[i] = bearing;
   }
   int avgBearing = mode(sum, 10);
-  //Serial.println(avgBearing);
+  Serial.println(avgBearing);
   
   if (avgBearing > lowerLimit && avgBearing < upperLimit) {
     greenMotorMove(LH_IDX, 100, MOTOR_BRAKE);
@@ -110,9 +110,9 @@ bool TurnInstruction::progress() {
     greenMotorMove(GRABBER_IDX, 100, MOTOR_BRAKE);
     motorStop(GRABBER_IDX);
     
-    /*Serial.print(F("The last last angle: "));
+    Serial.print(F("The last last angle: "));
     Serial.print(avgBearing);
-    Serial.println(F(" deg"));*/
+    Serial.println(F(" deg"));
     
     return true;
   }
