@@ -30,14 +30,12 @@ void setup() {
 
   motorAllStop();
 
-  compass_x_gainError = 0.90;
-  compass_y_gainError = 0.94;
-  compass_z_gainError = 0.58;
-  compass_x_offset = 699.25;
-  compass_y_offset = 752.89;
-  compass_z_offset = 1091.11;
-  
-  
+  compass_x_gainError = 0.86;
+  compass_y_gainError = 0.67;
+  compass_z_gainError = 0.54;
+  compass_x_offset = 571.45;
+  compass_y_offset = 854.89;
+  compass_z_offset = 1026.79;
 
   compass_init(2);
   //compass_offset_calibration(3);

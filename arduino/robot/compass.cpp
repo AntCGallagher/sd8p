@@ -84,9 +84,9 @@ void getCompass(){
   //Serial.println(compass_z_scalled);
   
   compass_heading();
-  Serial.print ("Heading angle = ");
-  Serial.print (bearing);
-  Serial.println(" Degree");
+  //Serial.print ("Heading angle = ");
+  //Serial.print (bearing);
+  //Serial.println(" Degree");
   
   dt = millis()-t;
   load = dt/(float)(Task_t/100);
