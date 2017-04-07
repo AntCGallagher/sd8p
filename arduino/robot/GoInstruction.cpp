@@ -38,6 +38,7 @@ bool GoInstruction::progress() {
   if (IRSensor.getDistanceCentimeter() < 8) {
     Serial.println(F("$BALL;"));
     greenMotorMove(GRABBER_IDX, 70, MOTOR_BWD);
+    delay(100);
     greenMotorMove(LH_IDX, 0, MOTOR_BRAKE);
     greenMotorMove(RH_IDX, 0, MOTOR_BRAKE);
     return true;
