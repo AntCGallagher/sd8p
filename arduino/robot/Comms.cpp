@@ -367,7 +367,7 @@ void Command::instantiateInstruction() {
       getCompass();
       break;
     case HASBALL:
-      if (IRSensor.getDistanceCentimeter() < 10) {
+      if (IRSensor.getDistanceCentimeter() < 8) {
         Serial.println(F("$BALL;"));
       }
       break;
