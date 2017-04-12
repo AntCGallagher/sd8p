@@ -355,7 +355,7 @@ if __name__ == '__main__':
 
     pitch_number = int(args.pitch)
            
-    subprocess.call("vision/xawtv.sh")
+    subprocess.call("xawtv.sh")
 
     # Initialize calibration window
     calibration = tools.get_colors(pitch_number)
