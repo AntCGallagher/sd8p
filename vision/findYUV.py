@@ -5,6 +5,7 @@ import consol
 
 import vision
 import tools
+import subprocess
 
 CONTROL = ["Lower threshold for brightness",
            "Upper threshold for brightness",
@@ -353,6 +354,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     pitch_number = int(args.pitch)
+           
+    subprocess.call("vision/xawtv.sh")
 
     # Initialize calibration window
     calibration = tools.get_colors(pitch_number)
